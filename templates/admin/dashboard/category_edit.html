@@ -1,0 +1,52 @@
+{% extends "admin/admin_base.html" %} 
+{% block title %}CATEGORY{% endblock title %} 
+{%block main %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Categories </h2>
+            <p>Add, edit or delete a category</p>
+        </div>
+        <div>
+            <input type="text" placeholder="Search Categories" class="form-control bg-white">
+        </div>
+    </div>
+    <div class="card">
+<div class="card-body">
+<div class="row">
+    {% for message in messages  %}
+    <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+      <strong>{{message}}</strong>
+      <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+    {% endfor %}
+<div class="col-md-3">
+    <form action="{% url 'category_manage:edit_category' id=cat.id %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="category_name" class="form-label">Name</label>
+            <input type="text" placeholder="Type here" class="form-control" name="category_name" value="{{ cat.category_name }}" />
+        </div>
+        <div class="mb-4">
+            <label class="form-label">Description</label>
+            <textarea placeholder="Type here" name="description" class="form-control">{{ cat.description }}</textarea>
+        </div>
+        <div class="mb-4">
+            <label for="formFile" class="form-label">Default file input example</label>
+            <input class="form-control" type="file" id="formFile" name="imgs">
+        </div>
+        <div class="d-grid">
+            <button class="btn btn-primary">Update category</button>
+        </div>
+    </form>
+</div>
+</div>
+</div> 
+</div> 
+ </section>
+
+ {% endblock main %}

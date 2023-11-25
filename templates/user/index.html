@@ -1,0 +1,115 @@
+{% extends "base.html" %} 
+{% block title %}USER LANDING{% endblock title %} 
+{%block main %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+
+
+<main class="main">       
+    <section class="banner-2 section-padding pb-0">
+        <div class="container">
+            <div class="banner-img banner-big wow fadeIn animated f-none">
+                <h1 class="fw-600 mt-50 text-black">We're a Rog Authorised Service Provider</h1>
+                <img src="{% static 'imgs/banner/banner-4.webp' %}" alt="">
+                <div class="banner-text d-md-block d-none">
+                    <a href="#" class="btn mt-50">Learn More <i class="fi-rs-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+   
+    <section class="popular-categories section-padding mt-15">
+        <div class="container wow fadeIn animated">
+            <h3 class="section-title mb-20"><span>Popular</span> Categories</h3>
+            <div class="carausel-6-columns-cover position-relative">
+                <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-arrows"></div>
+                <div class="carausel-6-columns" id="carausel-6-columns">
+                    {% for cat in category %}
+                    <div class="card-1">
+                        <figure class=" img-hover-scale overflow-hidden">
+                            <a href="{% url "user_side:category_page" %}"><img width="185px" height="150px" src="{{cat.category_img.url}}" alt=""></a>
+                        </figure>
+                        <h5><a href="#">{{cat.category_name}}</a></h5>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="banner-2 section-padding pb-0">
+        <div class="container">
+            <div class="banner-img banner-big wow fadeIn animated f-none">
+                <img src="{% static 'imgs/banner/banner4.1.jpeg' %}" alt="apple">
+                <div class="banner-text d-md-block d-none">
+                    <h4 class="mb-15 mt-40 text-brand">Repair Services</h4>
+                    <h1 class="fw-600 mb-20 text-warning">We're a Apple <br>Authorised Service Provider</h1>
+                    <a href="shop-grid-right.html" class="btn">Learn More <i class="fi-rs-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="pt-25 pb-20">
+        <div class="container wow fadeIn animated">
+            <h3 class="section-title mb-20"><span>Our</span> Products</h3>
+            <div class="carausel-6-columns-cover position-relative">
+                <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-2-arrows"></div>
+                <div class="carausel-6-columns carausel-arrow-center" id="carausel-6-columns-2">
+                   {% for pro in product %}
+                    <div class="product-cart-wrap small hover-up">
+                        <div class="product-img-action-wrap">
+                            <div class="product-img product-img-zoom">
+                                <a href="{% url "user_side:product_details" id=pro.id %}">
+                                    <img width="50px" height="150px" class="default-img" src="{{pro.thumbnail_img.url }}" alt="">
+                                </a>
+                            </div>
+                            <div class="product-action-1">
+                                {% if user.is_authenticated %}
+                                <a aria-label="Love and View" class="action-btn small hover-up" href="{% url "user_side:add_wishlist" id=pro.id %}" tabindex="0"><i class="fi-rs-heart"></i></a>
+                                {% endif %}
+                            </div>
+                            <div class="product-badges product-badges-position product-badges-mrg">
+                                <span class="sale">Sale</span>
+                            </div>
+                        </div>
+                        <div class="product-content-wrap">
+                            <h2><a href="{% url "user_side:product_details" id=pro.id %}">{{pro.get_variant_name}}</a></h2>
+                            <div class="rating-result" title="90%">
+                                <span>
+                                </span>
+                            </div>
+                            <div class="product-price">
+                                <span>{{pro.sale_price}} </span>
+                                <span class="old-price">{{pro.max_price}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container pb-20">
+            <h3 class="section-title mb-20 wow fadeIn animated"><span>Featured</span> Brands</h3>
+            <div class="carausel-6-columns-cover position-relative wow fadeIn animated">
+                <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-3-arrows"></div>
+                <div class="carausel-6-columns text-center" id="carausel-6-columns-3">
+                    {% for i in brand %}
+                    <div class="brand-logo" >
+                        <img width="90px" height="90px" id="img"  class="img-grey-hover" src="{{i.brand_img.url}}" alt="">
+                        <h5><a href="shop-grid-right.html">{{i.brand_name}}</a></h5>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock main %}

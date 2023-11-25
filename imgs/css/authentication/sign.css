@@ -1,0 +1,153 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background-color: #474747;
+    height: 900px;
+}
+
+.card{
+    margin-bottom:20px;
+    border:none;
+
+}
+
+.box {
+    width: 500px;
+    height: 750px;
+    padding: 40px;
+    position: absolute;
+    top: 20%;
+    left: 30%;
+    border-top-right-radius: 200px;
+    border-bottom-left-radius: 200px;
+    border-bottom-right-radius: 20px;
+    border-top-left-radius: 20px;
+    background: #b2b2b2; 
+    text-align: center;
+    transition: 0.25s;
+    margin-top: 100px;
+
+}
+
+.box input[type="text"],
+.box input[type="password"] {
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border: 2px solid rgb(0, 0, 0);
+    padding: 10px 10px;
+    width: 250px;
+    outline: none;
+    color: rgb(0, 0, 0);
+    border-radius: 24px;
+    transition: 0.25s
+}
+
+.box h1 {
+    color: rgb(0, 0, 0);
+    text-transform: uppercase;
+    font-weight: 500
+}
+
+.box input[type="text"]:focus,
+.box input[type="password"]:focus {
+    width: 300px;
+    border-color: #000000
+}
+
+.box input[type="submit"] {
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border: 2px solid #000000;
+    padding: 14px 40px;
+    outline: none;
+    color: rgb(0, 0, 0);
+    border-radius: 24px;
+    transition: 0.25s;
+    cursor: pointer
+}
+
+.box input[type="submit"]:hover {
+    background: #000000;
+    color: rgb(255, 255, 255);
+}
+
+.forgot {
+    text-decoration: underline
+}
+
+ul.social-network {
+    list-style: none;
+    display: inline;
+    margin-left: 0 !important;
+    padding: 0
+}
+
+ul.social-network li {
+    display: inline;
+    margin: 0 5px
+}
+
+
+
+
+
+.social-network a.icoGoogle:hover {
+    background-color: rgb(0, 0, 0);
+    border-radius: 50px;
+}
+
+.social-network a.icoFacebook:hover i,
+.social-network a.icoTwitter:hover i,
+.social-network a.icoGoogle:hover i {
+    color: #fff
+}
+
+a.socialIcon:hover,
+.socialHoverClass {
+    color: #44BCDD
+}
+
+.social-circle li a {
+    display: inline-block;
+    position: relative;
+    margin: 0 auto 0 auto;
+    border-radius: 10p;
+    text-align: center;
+    width: 300px;
+    height: 50px;
+    font-size: 50px;
+    margin-top:25px ;
+    margin-bottom: 25px;
+}
+
+.social-circle li i {
+    margin: 0;
+    line-height: 1px;
+    text-align: center
+}
+
+.social-circle li a:hover svg,
+.triggeredHover {
+    transform: rotate(360deg);
+    transition: all 0.2s
+}
+
+.social-circle i {
+    color: #000000;
+    transition: all 0.8s;
+    transition: all 0.8s
+}
+#skip{
+    position: relative;
+    width: 180px;
+    height: 50px;
+    left: 150px;
+    border-radius: 20px;
+}

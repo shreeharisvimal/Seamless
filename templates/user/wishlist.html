@@ -1,0 +1,82 @@
+{% extends "base.html" %} 
+{% block title %}PRODUCTS{% endblock title %} 
+{%block main %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+
+<div class="page-header breadcrumb-wrap">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{% url "user_side:landing" %}" rel="nofollow">Home</a>
+            <span></span> Wishlist
+        </div>
+    </div>
+</div>
+<div>
+    {% for message in messages  %}
+    <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+      <strong>{{message}}</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">CLICK ME</button>
+    {% endfor %}
+</div>
+
+<section class="mt-50 mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table shopping-summery text-center">
+                        <thead>
+                            <tr class="main-heading">
+                                <th scope="col" colspan="2">Product</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Stock Status</th>
+                                <th scope="col">Action</th>
+                                <th scope="col">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                         {% if items|default:""|length > 0 %} 
+                         {% for item in items %}
+                            <tr>
+                                <td class="image product-thumbnail"><img height="90px" width="90px"  src="{{item.thumbnail_img.url}}" alt="#"></td>
+                                <td class="product-des product-name">
+                                    <h5 class="product-name"><a href="{% url "user_side:product_details" id=item.id %}">{{item.product}}</a></h5>
+                                    <p class="font-xs">{{item.product_varient_slug}}
+                                    </p>
+                                </td>
+                                <td class="price" data-title="Price"><span>{{item.sale_price}}</span></td>
+                                <td class="text-center" data-title="Stock">
+                                    <span class="color3 font-weight-bold">{{item.stock}}</span>
+                                </td>
+                                <td class="text-right" data-title="Cart">
+                                  <a href="{% url "cart:add_cart" id=item.id %}"><button class="btn btn-sm"><i class="fi-rs-shopping-bag mr-5"></i>Add to cart</button></a>  
+                                </td>
+                                <td class="action" data-title="Remove"><a href="{% url "user_side:delete_wishlist" id=item.id %}"><i class="fi-rs-trash"></i></a></td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                
+                                
+                                <td><img width="80" height="80" src="https://img.icons8.com/dotty/80/nothing-found.png" alt="nothing-found"/></td>
+                                <td><img width="80" height="80" src="https://img.icons8.com/dotty/80/nothing-found.png" alt="nothing-found"/></td>
+                                <td><img width="80" height="80" src="https://img.icons8.com/dotty/80/nothing-found.png" alt="nothing-found"/></td>
+                                <td><img width="80" height="80" src="https://img.icons8.com/dotty/80/nothing-found.png" alt="nothing-found"/></td>
+                                <td><img width="80" height="80" src="https://img.icons8.com/dotty/80/nothing-found.png" alt="nothing-found"/></td>
+                                <td><img width="80" height="80" src="https://img.icons8.com/dotty/80/nothing-found.png" alt="nothing-found"/></td>
+                            </tr>
+                            {% endif %}  
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock main %}
+

@@ -1,0 +1,157 @@
+{% extends "admin/admin_base.html" %} 
+{% block title %}CATEGORY{% endblock title %} 
+
+{%block main %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+    }
+
+    form {
+        max-width: 500px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    select,
+    input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    input[type="file"] {
+        margin-bottom: 20px;
+    }
+
+    button {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+</style>
+{% for message in messages  %}
+<div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+  <strong>{{message}}</strong>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+<section class="content-main">
+   
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">ADD PRODUCT VARIANT</h2>
+            </div>
+        </div>
+            <form method="post" action="{% url 'products:product_variant'  %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                
+                <label for="product">Product:</label>
+                <select required name="product" id="product">
+                    {% for i in product %}
+                        <option value="{{ i.id }}">{{i.product_name}}</option>   
+                        {% endfor %} 
+                </select>
+               
+                <label for="model_id">Model ID:</label>
+                <input required type="text" name="model_id" required>
+                
+                
+                <label  for="color">Color:</label>
+                <select required name="color" id="color">
+                        {% for i in color %}
+                        <option  value="{{ i.id }}">{{ i.Attribute_value}}</option>
+                        {% endfor %}
+                </select>
+              
+
+
+                
+                <label for="ram">Ram:</label>
+                <select name="ram" id="ram">
+                    {% for i in ram %}
+                        <option value="{{ i.id }}">{{ i.Attribute_value }}</option>
+                        {% endfor %}
+                </select>
+               
+
+
+                <label for="storage">Storage:</label>
+                <select name="rom" id="rom">
+                    {% for i in storage %}
+                        <option value="{{ i.id }}">{{ i.Attribute_value }}</option>
+                    {% endfor %}
+                </select>
+
+
+
+               
+                <label for="os">OS:</label>
+                <select name="os" id="os">
+                    {% for i in os %}
+                        <option value="{{ i.id }}">{{ i.Attribute_value }}</option>
+                        {% endfor %}
+                </select>
+              
+
+                <label for="screen size">Screen size:</label>
+
+                
+                <select name="size" id="size">
+                        {% for i in size %}
+                        <option value="{{ i.id }}">{{ i.Attribute_value }}</option>
+                        {% endfor %}
+                </select>
+                
+                <label for="model_id">Max price:</label>
+                <input type="text" name="max_price" required>
+
+                <label for="model_id">Sale Price:</label>
+                <input type="text" name="sale_price" required>
+                <!-- Add other fields as needed -->
+
+                <!-- Stock Information -->
+                <label for="stock">Stock:</label>
+                <input type="number" name="stock" required>
+
+                <label for="stock">Description:</label>
+                <input type="text" name="description" required>
+                
+                <!-- Image Upload -->
+                <label for="thumbnail_img">Thumbnail Image:</label>
+                <input type="file" name="thumbnail_img" accept="image/*"  multiple required>
+                
+                <button type="submit">Save</button>
+            </form>
+
+       
+    </div>
+</section>
+
+{% endblock main %}

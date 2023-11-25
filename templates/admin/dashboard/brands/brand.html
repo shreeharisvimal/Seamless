@@ -1,0 +1,100 @@
+{% extends "admin/admin_base.html" %} 
+{% block title %}BRANDS{% endblock title %} 
+{%block main %}
+{% load static %}
+<style>
+    .rounded-img {
+        border-radius: 25px; 
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/admin_main.css'%}">
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Brand </h2>
+            <p>Brand and vendor management</p>
+        </div>
+        <div>
+            <a href="{% url "brands:brands_add" %}" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Add New Brand</a>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <header class="card-header">
+            <div class="row gx-3">
+                <div class="col-lg-4 mb-lg-0 mb-15 me-auto">
+                    <div class="col-search">
+                        <form class="searchform" action="{% url "admin_side:brand_search" %}" method="POST">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input list="search_terms" type="text" name="search_id" class="form-control" placeholder="Search term">
+                                <button class="btn btn-light bg" type="submit" ><i class="md-material-icons">GO</i></button>
+                            </div>
+                            <datalist id="search_terms">
+                                <option value="SAMSUNG">
+                                <option value="APPLE">
+                                <option value="DELL">
+                            </datalist>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-6">
+                    <input type="date" class="form-control" name="">
+                </div>
+            </div>
+        </header> <!-- card-header end// -->
+        {% for message in messages  %}
+        <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+          <strong>{{message}}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+
+        <div class="card-body">
+            <div class="row gx-3">
+                {% for i in brands %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+                    <figure class="card border-1">
+                        <div class="card-header bg-white text-center">
+                            <img height="50px" width="50px" src="{{i.brand_img.url}}" class="img-fluid rounded-img" alt="Logo">
+                        </div>
+                       
+                        <figcaption class="card-body text-center">
+                            <h6 class="card-title m-0">{{i.brand_name}}</h6>
+                            <a href="#"> {{i.count}} </a>
+                        </figcaption>
+                        <hr>
+                        
+                           
+                            <figcaption class="card-body text-center">
+                                <div>
+                                <form action="{% url "brands:brands_status" id=i.id %}" method='POST'>
+                                    {% csrf_token %}
+                                    {% if i.is_active%}
+                                    <button style='border: 2px solid #04AA6D;' class="btn" type="submit">ACTIVE</button>
+                                
+                                    {% else %}
+                                    <button style='border: 2px solid red;' class="btn" type="submit">INACTIVE</button>
+                                    {% endif %}
+                                </form>
+                                </div>
+                                <hr>
+                       
+                                <div>
+                                  <a href="{% url 'brands:brands_delete' id=i.id %}"><button style='border: 2px solid red;'><img width="40" height="40" src="https://img.icons8.com/color/48/delete-forever.png" alt="delete-forever"/></button></a> 
+                                </div>
+                            </figcaption>
+                     
+                    </figure>
+                </div> 
+                {% endfor %}<!-- col.// -->
+            </div>
+            <!-- row.// -->
+        </div> <!-- card-body end// -->
+       
+    </div> 
+      <!-- card end// -->
+</section>
+
+{% endblock main %}

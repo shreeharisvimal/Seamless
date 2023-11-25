@@ -1,0 +1,171 @@
+{% extends "base.html" %} 
+{% block title %}PRODUCTS{% endblock title %} 
+{%block main %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+<div>
+    {% for message in messages  %}
+    <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+      <strong>{{message}}</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    {% endfor %}
+</div>
+
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{% url "user_side:landing" %}" rel="nofollow">Home</a>
+                <span></span>Cart
+            </div>
+        </div>
+    </div>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table shopping-summery text-center clean">
+                            <thead>
+                                <tr class="main-heading">
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if item|default:""|length > 0 %} 
+                                {% for cart in item %}
+                                <tr>
+                                    <td class="image"><img src="{{cart.product.thumbnail_img.url}}" alt="#"></td>
+                                    <td class="product-des">
+                                        <h5 class="product-name"><a href="shop-product-right.html">{{cart.product.get_variant_name}}</a></h5>
+                                        <p class="font-xs">{{cart.product.model_id}}<br>
+                                        </p>
+                                    </td>
+                                    <td class="price" data-title="Price"><span>{{cart.product.sale_price}}</span></td>
+                                    <td class="text-center" data-title="Stock">
+                                        <div class="detail-qty border radius  m-auto">
+                                            <a href="{% url "cart:minus_item" id=cart.id %}" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                                            <span class="qty-val">{{cart.quantity}}</span>
+                                            <a href="{% url "cart:plus_item" id=cart.id %}" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                                        </div>
+                                    </td>
+                                    <td class="action" data-title="Remove"><a href="{% url "cart:delete_cart" id=cart.id %}" class="text-muted"><i class="fi-rs-trash"></i></a></td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td colspan="6" class="text-end">
+                                        <a href="{% url "cart:clear_cart" %}" class="text-muted"> <i class="fi-rs-cross-small"></i> Clear Cart</a>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td><img width="80" height="80" src="https://img.icons8.com/dotty/80/nothing-found.png" alt="nothing-found"/></td>
+                                    <td><img width="80" height="80" src="https://img.icons8.com/dotty/80/nothing-found.png" alt="nothing-found"/></td>
+                                    <td><img width="80" height="80" src="https://img.icons8.com/dotty/80/nothing-found.png" alt="nothing-found"/></td>
+                                    <td><img width="80" height="80" src="https://img.icons8.com/dotty/80/nothing-found.png" alt="nothing-found"/></td>
+                                    <td><img width="80" height="80" src="https://img.icons8.com/dotty/80/nothing-found.png" alt="nothing-found"/></td>
+                                   
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div  class="cart-action text-end">
+                        <a href="{% url "user_side:landing" %}" class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
+                    </div>
+                    <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
+                    <div class="row mb-50">
+                        <div class="col-lg-6 col-md-12">
+                            <div class="border p-md-4 p-30 border-radius cart-totals">
+                                {% for cart in cart %}
+                                <div class="mb-30 mt-30">
+                                    <div class="heading_s1 mb-3">
+                                        <h4>Apply Coupon</h4>
+                                    </div>
+                                    <div class="total-amount">
+                                        <div class="left">
+                                            <div class="coupon">
+                                                <form action="{% url "cart:view_cart" %}" method="post">
+                                                    {% csrf_token %}
+                                                    <div class="form-row row justify-content-center">
+                                                        <div class="form-group col-lg-6">
+                                                            {% if cart.coupon is None %}
+                                                            <input class="font-medium" name="user_coupon" placeholder="Enter Your Coupon" value=''>
+                                                            {% else %}
+                                                            <input class="font-medium" name="user_coupon" placeholder="Enter Your Coupon" value='{{cart.coupon}}'>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="form-group col-lg-6">
+                                                            <button Type='Submit' class="btn  btn-sm"><i class="fi-rs-label mr-10"></i>Apply</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                                <a href="{% url "cart:remove_coupon" id=cart.id %}"><button Type='Submit' class="btn  btn-sm"><i class="fi-rs-label mr-10"></i>Remove Coupon</button></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="heading_s1 mb-3">
+                                    <h4>Cart Total</h4>
+                                    <h6>Free Delivery upto Purchase of 200000rs</h6>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td class="cart_total_label">Cart Subtotal</td>
+                                               <td class="cart_total_amount"><span class="font-lg fw-900 text-brand"> ₹ {{pro_subtotal}}</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="cart_total_label">Discount</td>
+                                                {% if off %}
+                                                <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">₹ {{off}}</span></td>
+                                               {% else %}
+                                               <td class="cart_total_amount"><span class="font-lg fw-900 text-brand"> ₹ 0</span></td>
+                                                {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <td class="cart_total_label">Shipping</td>
+                                                {% if shipping %}
+                                                <td class="cart_total_amount"> <i class="ti-gift mr-5"></i>  ₹ {{shipping|floatformat:2}}</td>
+                                                {%  else  %}
+
+                                                <td class="cart_total_amount"> <i class="ti-gift mr-5"></i>Free shipping</td>
+                                                {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <td class="cart_total_label">Total</td>
+                                                {% if cart.sub_total is None %}
+                                                <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand"></span></strong> ₹ {{total|floatformat:2}}</td>
+                                                {% else %}
+                                                <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand"></span></strong> ₹ {{cart.sub_total|floatformat:2}}</td>
+                                                {% endif %}
+                                            </tr>
+                                           
+                                        </tbody>
+                                        
+                                    </table>
+                                    
+                                </div>
+                               
+                                <a href="#" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+
+
+{% endblock main %}
+

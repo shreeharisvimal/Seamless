@@ -1,0 +1,417 @@
+{% extends "admin/admin_base.html" %} 
+{% block title %}DASHBOARD{% endblock title %} 
+{%block main %}
+{% load static %}
+
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+    <!--FontAwesome CDN-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"
+        integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+
+    <!--Chartjs CDN-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+
+    <!--Custome CSS-->
+
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/admin_main.css' %}">
+    <link rel="shortcut icon" href="{% static 'imgs/favicon.png' %}"type="image/x-icon">
+</head>
+
+<div >
+<div style ='margin:20px'>
+
+</div>
+<h3>DASHBOARD</h3>
+<h6>A dashboard is a concise visual display of key information and data, providing quick insights and facilitating informed decision-making in a single glance.</h6>
+    <!--Topside-->
+    <div class="container" >
+        <div class="row mt-4" > 
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        Information
+                    </div>
+                    <div class="card-body">
+                        <marquee behavior="" direction="">
+                            <h3 class="my-4">This is the Information</h3>
+                        </marquee>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        Statistics
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <a class="text-decoration-none text-dark" href="products">
+                                    <div class="card my-card shadow text-center p-3">
+                                        <h4>Users<i class="fas fa-users"></i></h4>
+                                        <h3>{{total_users_count}}</h3>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a class="text-decoration-none text-dark" href="productmanagement">
+                                    <div class="card my-card shadow text-center p-3">
+                                        <h4>Products <i class="fas fa-box"></i></h4>
+                                        <h3>{{product_count}}</h3>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a class="text-decoration-none text-dark" href="order_list">
+                                    <div class="card my-card shadow text-center p-3">
+                                        <h4>Orders <i class="fas fa-shipping-fast"></i></h4>
+                                        <h3>{{order}}</h3>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End Topside-->
+
+    <!--Graphs-->
+    <div class="container">
+        <div class="row my-5">
+
+            <div class="col-md-12" style ="margin-bottom: 110px;margin-top: 20px;">
+                <div class="bg-white">
+                    <canvas id="myChart2" width="400" height="300"></canvas>
+                    <script>
+                        var ctx = document.getElementById('myChart2').getContext('2d');
+                        var myChart2 = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                //labels: [{% for i  in months%} '{{ i }}', {% endfor %}],
+                                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                                datasets: [{
+                                    label: 'sales by month',
+                                    //data: [{% for i  in totals%} {{ i}}, {% endfor %}],
+                                    data: [12, 19, 3, 5, 2, 3],
+                                    
+                                    backgroundColor: [
+                                        'rgba(255, 99, 132, 1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)',
+                                        'rgba(255, 199, 132, 1)',
+                                        'rgba(54, 362, 235, 1)',
+                                        'rgba(255, 806, 86, 1)',
+                                        'rgba(75, 792, 192, 1)',
+                                        'rgba(153, 602, 255, 1)',
+                                        'rgba(255, 90, 64, 1)',
+                                        'rgba(25, 999, 32, 1)',
+                                        'rgba(54, 462, 35, 1)',
+                                        'rgba(55, 806, 786, 1)',
+                                        'rgba(75, 2, 92, 1)',
+                                        'rgba(15, 10, 955, 1)',
+                                        'rgba(2, 755, 664, 1)',
+                                        'rgba(882, 9, 632, 1)',
+                                        'rgba(554, 0, 835, 1)',
+                                        'rgba(999, 80, 886, 1)',
+                                        'rgba(705, 2, 492, 1)',
+                                        'rgba(103, 602, 55, 1)',
+                                        'rgba(255, 99, 132, 1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)',
+                                        'rgba(255, 199, 132, 1)',
+                                        'rgba(54, 362, 235, 1)',
+                                        'rgba(255, 806, 86, 1)',
+                                        'rgba(75, 792, 192, 1)',
+                                        'rgba(153, 602, 255, 1)',
+                                        'rgba(255, 90, 64, 1)',
+                                        'rgba(25, 999, 32, 1)',
+                                        'rgba(54, 462, 35, 1)',
+                                        'rgba(55, 806, 786, 1)',
+                                        'rgba(75, 2, 92, 1)',
+                                        'rgba(15, 10, 955, 1)',
+                                        'rgba(2, 755, 664, 1)',
+                                        'rgba(882, 9, 632, 1)',
+                                        'rgba(554, 0, 835, 1)',
+                                        'rgba(999, 80, 886, 1)',
+                                        'rgba(705, 2, 492, 1)',
+                                        'rgba(103, 602, 55, 1)',
+                                    ],
+                                    borderColor: [
+                                        'rgba(255, 99, 132, 1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)',
+                                        'rgba(255, 199, 132, 1)',
+                                        'rgba(54, 362, 235, 1)',
+                                        'rgba(255, 806, 86, 1)',
+                                        'rgba(75, 792, 192, 1)',
+                                        'rgba(153, 602, 255, 1)',
+                                        'rgba(255, 90, 64, 1)',
+                                        'rgba(25, 999, 32, 1)',
+                                        'rgba(54, 462, 35, 1)',
+                                        'rgba(55, 806, 786, 1)',
+                                        'rgba(75, 2, 92, 1)',
+                                        'rgba(15, 10, 955, 1)',
+                                        'rgba(2, 775, 664, 1)',
+                                        'rgba(882, 9, 632, 1)',
+                                        'rgba(554, 0, 835, 1)',
+                                        'rgba(999, 80, 886, 1)',
+                                        'rgba(705, 2, 492, 1)',
+                                        'rgba(103, 602, 55, 1)',
+                                        'rgba(255, 99, 132, 1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)',
+                                        'rgba(255, 199, 132, 1)',
+                                        'rgba(54, 362, 235, 1)',
+                                        'rgba(255, 806, 86, 1)',
+                                        'rgba(75, 792, 192, 1)',
+                                        'rgba(153, 602, 255, 1)',
+                                        'rgba(255, 90, 64, 1)',
+                                        'rgba(25, 999, 32, 1)',
+                                        'rgba(54, 462, 35, 1)',
+                                        'rgba(55, 806, 786, 1)',
+                                        'rgba(75, 2, 92, 1)',
+                                        'rgba(15, 10, 955, 1)',
+                                        'rgba(2, 775, 664, 1)',
+                                        'rgba(882, 9, 632, 1)',
+                                        'rgba(554, 0, 835, 1)',
+                                        'rgba(999, 80, 886, 1)',
+                                        'rgba(705, 2, 492, 1)',
+                                        'rgba(103, 602, 55, 1)',
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    yAxes: [{
+                                        ticks: {
+                                            beginAtZero: true
+                                        }
+                                    }]
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card-body">
+    <div class="table-responsive">
+        <div class="table-responsive">
+            <table class="table align-middle table-nowrap mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="text-center">
+                            <div class="form-check align-middle">
+                                <input class="form-check-input" type="checkbox" id="transactionCheck01">
+                                <label class="form-check-label" for="transactionCheck01"></label>
+                            </div>
+                        </th>
+                        <th class="align-middle" scope="col">Order ID</th>
+                        <th class="align-middle" scope="col">Billing Name</th>
+                        <th class="align-middle" scope="col">Date</th>
+                        <th class="align-middle" scope="col">Total</th>
+                        <th class="align-middle" scope="col">Payment Status</th>
+                        <th class="align-middle" scope="col">Payment Method</th>
+                        <th class="align-middle" scope="col">View Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="transactionCheck02">
+                                <label class="form-check-label" for="transactionCheck02"></label>
+                            </div>
+                        </td>
+                        <td><a href="#" class="fw-bold">#SK2540</a> </td>
+                        <td>Neal Matthews</td>
+                        <td>
+                            07 Oct, 2021
+                        </td>
+                        <td>
+                            $400
+                        </td>
+                        <td>
+                            <span class="badge badge-pill badge-soft-success">Paid</span>
+                        </td>
+                        <td>
+                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Mastercard
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-xs"> View details</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="transactionCheck03">
+                                <label class="form-check-label" for="transactionCheck03"></label>
+                            </div>
+                        </td>
+                        <td><a href="#" class="fw-bold">#SK2541</a> </td>
+                        <td>Jamal Burnett</td>
+                        <td>
+                            07 Oct, 2021
+                        </td>
+                        <td>
+                            $380
+                        </td>
+                        <td>
+                            <span class="badge badge-pill badge-soft-danger">Chargeback</span>
+                        </td>
+                        <td>
+                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Visa
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-xs"> View details</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="transactionCheck04">
+                                <label class="form-check-label" for="transactionCheck04"></label>
+                            </div>
+                        </td>
+                        <td><a href="#" class="fw-bold">#SK2542</a> </td>
+                        <td>Juan Mitchell</td>
+                        <td>
+                            06 Oct, 2021
+                        </td>
+                        <td>
+                            $384
+                        </td>
+                        <td>
+                            <span class="badge badge-pill badge-soft-success">Paid</span>
+                        </td>
+                        <td>
+                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Paypal
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-xs"> View details</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="transactionCheck05">
+                                <label class="form-check-label" for="transactionCheck05"></label>
+                            </div>
+                        </td>
+                        <td><a href="#" class="fw-bold">#SK2543</a> </td>
+                        <td>Barry Dick</td>
+                        <td>
+                            05 Oct, 2021
+                        </td>
+                        <td>
+                            $412
+                        </td>
+                        <td>
+                            <span class="badge badge-pill badge-soft-success">Paid</span>
+                        </td>
+                        <td>
+                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Mastercard
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-xs"> View details</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="transactionCheck06">
+                                <label class="form-check-label" for="transactionCheck06"></label>
+                            </div>
+                        </td>
+                        <td><a href="#" class="fw-bold">#SK2544</a> </td>
+                        <td>Ronald Taylor</td>
+                        <td>
+                            04 Oct, 2021
+                        </td>
+                        <td>
+                            $404
+                        </td>
+                        <td>
+                            <span class="badge badge-pill badge-soft-warning">Refund</span>
+                        </td>
+                        <td>
+                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Visa
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-xs"> View details</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="transactionCheck07">
+                                <label class="form-check-label" for="transactionCheck07"></label>
+                            </div>
+                        </td>
+                        <td><a href="#" class="fw-bold">#SK2545</a> </td>
+                        <td>Jacob Hunter</td>
+                        <td>
+                            04 Oct, 2021
+                        </td>
+                        <td>
+                            $392
+                        </td>
+                        <td>
+                            <span class="badge badge-pill badge-soft-success">Paid</span>
+                        </td>
+                        <td>
+                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Paypal
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-xs"> View details</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div> <!-- table-responsive end// -->
+</div>
+</div>
+
+    <!--End Graphs-->
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+
+
+
+{% endblock main %}

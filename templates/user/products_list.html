@@ -1,0 +1,200 @@
+{% extends "base.html" %} 
+{% block title %}PRODUCT LIST{% endblock title %} 
+{%block main %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{% url "user_side:landing" %}" rel="nofollow">Home</a>
+                <span></span> Shop
+            </div>
+        </div>
+    </div>
+
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row flex-row-reverse">
+                <div class="col-lg-9">
+                    <div class="shop-product-fillter">
+                        <div class="totall-product">
+                            <p> We found <strong class="text-brand">{{total}}</strong> items for you!</p>
+                        </div>
+                    </div>
+                    <div class="row product-grid-3">
+                        {% for all in all_products %}
+                        <div class="col-lg-4 col-md-4 col-12 col-sm-6">
+                            <div class="product-cart-wrap mb-30">
+                                <div class="product-img-action-wrap">
+                                    <div class="product-img product-img-zoom">
+                                        <a href="{% url "user_side:product_details" id=all.id %}">
+                                            <img class="default-img" width='90px'  height='190px' src="{{all.thumbnail_img.url}}" alt="">
+                                        </a>
+                                    </div>
+                                    <div class="product-action-1">
+                                        {% if user.is_authenticated %}
+                                        <a aria-label="Love and View" class="action-btn hover-up" href="{% url "user_side:add_wishlist" id=all.id %}"><i class="fi-rs-heart"></i></a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="product-badges product-badges-position product-badges-mrg">
+                                        <span class="hot">Hot</span>
+                                    </div>
+                                </div>
+                                <div class="product-content-wrap">
+                                    <h2><a href="shop-product-right.html">{{ all.get_variant_name }}</a></h2>
+                                    <div class="rating-result" title="90%">
+                                        <span>
+                                            <span>90%</span>
+                                        </span>
+                                    </div>
+                                    <div class="product-price">
+                                        <span>{{all.sale_price}} </span>
+                                        <span class="old-price">{{all.max_price}}</span>
+                                    </div>
+                                    <div class="product-action-1 show">
+                                        {% if user.is_authenticated %}
+                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="{% url "cart:add_cart" id=all.id %}"><i class="fi-rs-shopping-bag-add"></i></a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <!--pagination-->
+                    <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-start">
+                                <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                                <li class="page-item"><a class="page-link" href="#">02</a></li>
+                                <li class="page-item"><a class="page-link" href="#">03</a></li>
+                                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                                <li class="page-item"><a class="page-link" href="#">16</a></li>
+                                <li class="page-item"><a class="page-link" href="#"><i class="fi-rs-angle-double-small-right"></i></a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="col-lg-3 primary-sidebar sticky-sidebar">
+                    <div class="widget-category mb-30">
+                        <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
+                        <ul class="categories">
+                            <li><a href="{% url "user_side:product_list"%}">ALL PRODUCTS</a></li>
+                            {% for cat in category%}
+                            <li><a href="{% url "user_side:product_list" id=cat.id%}">{{cat.category_name}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <!-- Fillter By Price -->
+        
+                    <!-- Product sidebar Widget -->
+                    <div class="sidebar-widget product-sidebar  mb-30 p-30 bg-grey border-radius-10">
+                        <div class="widget-category mb-30">
+                            <h5 class="section-title style-1 mb-30 wow fadeIn animated">ORDER BY</h5>
+                            <ul class="categories">
+                                <li><a href="{% url "user_side:product_sort" order_by='sale_price' %}">LOW - HIGH</a></li>
+                                <li><a href="{% url "user_side:product_sort" order_by='-sale_price' %}">HIGH - LOW</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+
+
+
+
+
+
+{% comment %} <section class="mt-50 mb-50">
+    <div class="container">
+        <div class="row flex-row-reverse">
+            <div class="col-lg-9">
+                <div class="shop-product-fillter">
+                    <div class="totall-product">
+                        <p> We found <strong class="text-brand">{{total}}</strong> items for you!</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 primary-sidebar">
+                    <div class="widget-category mb-30">
+                        <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
+                        <ul class="categories">
+                            <li><a href="">ALL PRODUCTS</a></li>
+                            {% for cat in category%}
+                            <li><a href="{% url "user_side:product_list"%}">{{cat.category_name}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="widget-category mb-30">
+                        <h5 class="section-title style-1 mb-30 wow fadeIn animated">ORDER BY</h5>
+                        <ul class="categories">
+                            <li><a href="{% url "user_side:product_sort" order_by='sale_price' %}">LOW - HIGH</a></li>
+                            <li><a href="{% url "user_side:product_sort" order_by='-sale_price' %}">HIGH TO LOW</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row product-grid-3">
+                    {% for all in all_products %}
+                    <div class="col-lg-4 col-md-4 col-12 col-sm-6">
+                        <div class="product-cart-wrap mb-30">
+                            <div class="product-img-action-wrap">
+                                <div class="product-img product-img-zoom">
+                                    <a href="{% url "user_side:product_details" id=all.id %}">
+                                        <img class="default-img" width='90px'  height='190px' src="{{all.thumbnail_img.url}}" alt="">
+                                    </a>
+                                </div>
+                                    <a aria-label="Love and View" class="action-btn hover-up" href="{% url "user_side:add_wishlist" id=all.id %}"><i class="fi-rs-heart"></i></a>
+                                </div>
+                                <div class="product-badges product-badges-position product-badges-mrg">
+                                    <span class="hot">Hot</span>
+                                </div>
+                            </div>
+                            <div class="product-content-wrap">
+                                <div class="product-category">
+                                    <a href="shop-grid-right.html"></a>
+                                </div>
+                                <h2><a href="shop-product-right.html">{{all.product}}</a></h2>
+                                <div class="rating-result" title="90%">
+                                    <span>
+                                        <span>90%</span>
+                                    </span>
+                                </div>
+                                <div class="product-price">
+                                    <span>{{all.sale_price}} </span>
+                                    <span class="old-price">{{all.max_price}}</span>
+                                </div>
+                                <div class="product-action-1 show">
+                                    <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <!--pagination-->
+                <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-start">
+                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                            <li class="page-item"><a class="page-link" href="#">02</a></li>
+                            <li class="page-item"><a class="page-link" href="#">03</a></li>
+                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">16</a></li>
+                            <li class="page-item"><a class="page-link" href="#"><i class="fi-rs-angle-double-small-right"></i></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>  {% endcomment %}
+
+
+{% endblock main %}

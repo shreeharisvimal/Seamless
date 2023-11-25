@@ -1,0 +1,47 @@
+{% extends "admin/admin_base.html" %} 
+{% block title %}ADD PRODUCT ATTRIBUTE{% endblock title %} 
+{%block main %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+<section class="content-main">
+    {% for message in messages  %}
+    <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+      <strong>{{message}}</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">PRODUCT MANAGEMENT</h2>
+            </div>
+        </div>
+{% if submitted %}
+        <p>it is submitted</p>
+        
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    {% else %}
+           
+                    <form action="{% url 'products:product_edit' id=pro.id %}" method="POST" enctype="multipart/form-data">
+                        
+                         {% csrf_token %}
+
+                         {{form.as_p}}
+                        <input type="submit"value="submit" class='btn btn-button secondary'>
+                        
+
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    {% endif %}
+</section>
+</div> 
+
+
+
+{% endblock main %}

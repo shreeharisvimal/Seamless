@@ -1,0 +1,96 @@
+{% extends "admin/admin_base.html" %} 
+{% block title %}ALL ATTRIBUTES{% endblock title %} 
+{%block main %}
+{% load static %}
+<style>
+
+    .rounded-img {
+        border-radius: 25px; 
+    }
+
+    
+   
+    
+
+</style>
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/admin_main.css'%}">
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">ALL ATTRIBUTES</h2>
+            <p>From here the admin can seen things and edit it</p>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <header class="card-header">
+            <div class="row gx-3">
+                <div class="col-lg-4 mb-lg-0 mb-15 me-auto">
+                    <div class="col-search">
+                        <form class="searchform" action="{% url "admin_side:attribute_search" %}" method="POST">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input list="search_terms" type="text" name="search_id" class="form-control" placeholder="Search term">
+                                <button class="btn btn-light bg" type="submit" ><i class="md-material-icons">GO</i></button>
+                            </div>
+                            <datalist id="search_terms">
+                                <option value="RAM">
+                                <option value="STORAGE">
+                                <option value="COLOR">
+                            </datalist>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </header> <!-- card-header end// -->
+        {% for message in messages  %}
+        <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+          <strong>{{message}}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    <section>
+            <div class="card-body">
+                <div class="row gx-3">
+                    {% for i in att %}
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+                        <figure class="card border-1">
+                            <figcaption class="card-body text-center">
+                                <h6 class="card-title m-0">{{i.Attribute}}</h6>
+                                <a href="#"> {{i.Attribute_value}} </a>
+                            </figcaption>
+                            <hr>
+                                <figcaption class="card-body text-center">
+                                    <div>
+                                    <form action="{% url "products:attribute_status" id=i.id %}" method='POST'>
+                                        {% csrf_token %}
+                                        {% if i.is_active%}
+                                        <button style='border: 2px solid #04AA6D;' class="btn" type="submit">ACTIVE</button>
+                                    
+                                        {% else %}
+                                        <button style='border: 2px solid red;' class="btn" type="submit">INACTIVE</button>
+                                        {% endif %}
+                                    </form>
+                                    </div>
+                                    <hr>
+                           
+                                    <div>
+                                      <a href="{% url "products:attribute_delete" id=i.id %}"><button style='border: 2px solid red;'><img width="40" height="40" src="https://img.icons8.com/color/48/delete-forever.png" alt="delete-forever"/></button></a> 
+                                    </div>
+                                </figcaption>
+                         
+                        </figure>
+                    </div> 
+                    {% endfor %}
+                </div>
+
+            </div>
+    </section>  
+
+    </div> 
+</section>
+
+{% endblock main %}

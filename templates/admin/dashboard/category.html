@@ -1,0 +1,135 @@
+    {% extends "admin/admin_base.html" %} 
+    {% block title %}CATEGORY{% endblock title %} 
+    {%block main %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Categories </h2>
+                <p>Add, edit or delete a category</p>
+            </div>
+            <div class="col-search">
+                <form class="searchform" action="{% url "admin_side:category_search" %}" method="POST">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input list="search_terms" type="text" name="search_id" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light bg" type="submit" ><i class="md-material-icons">GO</i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="MACBOOK">
+                        <option value="NOTEBOOK">
+                        <option value="GAMING">
+                    </datalist>
+                </form>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    {% for message in messages  %}
+                    <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+                      <strong>{{message}}</strong>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                    <div class="col-md-3">
+                        <form action="{% url "category_manage:add_category" %}" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label for="category_name" class="form-label">Name</label>
+                                <input type="text" placeholder="Type here" class="form-control" required name="category_name"/>
+                            </div>
+                            <div class="mb-4">
+                                    <label class="form-label">Parent</label>
+                                    <select class="form-select" name='parent'>
+                                        {% for category in categories %}
+                                        <option value="{{category.category_name}}">{{category.category_name}}</option>
+                                        {% endfor %}
+                                        <option value="None">None</option>
+                                    </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <textarea placeholder="Type here" required name="description" class="form-control"></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="formFile" class="form-label ">Default file input example</label>
+                                <input class="form-control" required type="file" id="formFile" name='imgs'>
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-primary">Create category</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" />
+                                            </div>
+                                        </th>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Slug</th>
+                                        <th>Image</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in categories %}
+                                    <tr>
+                                        <td class="text-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" />
+                                            </div>
+                                        </td>
+                                        <td>{{i.id}}</td>
+                                        <td><b>{{i.category_name}}</b></td>
+                                        <td>{{i.description}}</td>
+                                        <td>{{i.slug}}</td>
+                                        {% if i.category_img %}
+                                        <td><img height="50px" width="50px" src="{{i.category_img.url}}" class="img-fluid rounded-img" alt="Logo"></td>
+                                        {% else %}
+                                        <td><img height="50px" width="50px" src="" class="img-fluid rounded-img" alt="NO CATEGORY IMAGE"></td>
+                                        {% endif %}
+                                        <td> <form action="{% url "category_manage:status_category" id=i.id %}" method='POST'>
+                                            {% csrf_token %}
+                                            {% if i.is_available%}
+                                            <button style='border: 2px solid #04AA6D;' class="btn" type="submit">ACTIVE</button>
+                                        
+                                            {% else %}
+                                            <button style='border: 2px solid red;' class="btn" type="submit">INACTIVE</button>
+                                            {% endif %}
+                                        </form></td>
+                                        <td class="text-end">
+                                            <div class="dropdown">
+                                                <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"><img width="30" height="30" src="https://img.icons8.com/color/48/000000/pencil--v1.png" alt="pencil--v1"/></i> </a>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="{% url "category_manage:edit_category" id=i.id %}">Edit info</a>
+                                                    <a class="dropdown-item text-danger" href="{% url "category_manage:delete_category" slug=i.slug %}">Delete</a>
+                                                </div>
+                                            </div> <!-- dropdown //end -->
+                                        </td>
+                                        {% endfor %}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> <!-- .col// -->
+                </div> <!-- .row // -->
+            </div> <!-- card body .// -->
+        </div> <!-- card .// -->
+    </section>
+    
+
+
+
+{% endblock main %}

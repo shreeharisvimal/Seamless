@@ -1,0 +1,182 @@
+
+
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-ZiHRx2ZknQudL4G8r+Kh8PThLXumU5aw7rGNEeF8A6fn3eaUn7If+4e5v34EGZK/QFdPvJ5e6qsuGhELp1l/dQ==" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" integrity="sha512-W/zrbCncQnky/EzL+/AYwTtosvrM+YG/V6piQLSe2HuKS6cmbw89kjYkp3tWFn1dkWV7L1ruvJyKbLz73Vlgfg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" integrity="sha512-siarrzI1u3pCqFG2LEzi87McrBmq6Tp7juVsdmGY1Dr8Saw+ZBAzDzrGwX3vgxX1NkioYNCFOVC0GpDPss10zQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <link rel="shortcut icon" href="{% static 'imgs/favicon.png' %}"type="image/x-icon">
+    <style>
+        body {
+            background-color: #FFFFF; 
+            margin: 0; 
+        }
+
+        .height-100 {
+            min-height: 120vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            width: 400px;
+            border: none;
+            height: 350px;
+            box-shadow: 0px 5px 20px 0px #d2dae3;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff; 
+            border-radius: 5px;
+        }
+
+        .card h6 {
+            color: black;
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        .inputs {
+
+            display: flex;
+            align-items: center;
+        }
+
+        .inputs input {
+
+            width: 140px;
+            height: 40px;
+            text-align: center; 
+            border: 1px solid black;
+            margin: 0 5px; 
+        }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+
+        .validate {
+            border-radius: 20px;
+            height: 40px;
+            background-color: black;
+            border: 1px solid black;
+            width: 140px;
+            color: #fff; 
+            font-weight: bold; 
+            text-align: center; 
+            margin-top: 20px;
+            cursor: pointer; 
+        }
+        #re{
+            position: relative;
+            top: 4.3vh;
+        }
+    
+
+    </style>
+
+
+</head>
+<body>
+   
+    <div
+  class="container height-100 d-flex justify-content-center align-items-center"
+>
+
+  <div class="position-relative">
+    <div class="card p-2 text-center">
+      <h6>
+        Please enter the one time password <br />
+        to verify your account
+      </h6>
+  
+      <div><span>A code has been sent to</span> <small>***********@gmail.com</small></div>
+      {% for message in messages  %}
+      <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+        <strong>{{message}}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+      {% endfor %}
+
+      <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2">
+    
+        <form method="post" action="{% url 'authentication:otp_verify' %}">
+        {% csrf_token %}
+        <div class="mt-4">
+        <input type="text" name="otp"  class="inputs" maxlength="6" pattern="[0-9]{6}" required>
+    </div>
+        <div class="mt-4">
+            <button type="submit"  class="btn btn-danger px-4 validate" >Verify OTP</button>
+          </div>
+        
+    </form>
+
+    <form method="post" action="{% url 'authentication:otp_verify' %}">
+        {% csrf_token %}
+        <div class="mt-4">
+        <button type="submit" name="resend" id="re" class="btn btn-danger px-4 validate">Resend OTP</button>
+    </div>
+    </form>
+    </form>
+
+    </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/vendor/modernizr-3.6.0.min.js"></script>
+<script src="js/vendor/jquery-3.6.0.min.js"></script>
+<script src="js/vendor/jquery-migrate-3.3.0.min.js"></script>
+<script src="js/vendor/bootstrap.bundle.min.js"></script>
+<script src="js/plugins/slick.js"></script>
+<script src="js/plugins/jquery.syotimer.min.js"></script>
+<script src="js/plugins/wow.js"></script>
+<script src="js/plugins/jquery-ui.js"></script>
+<script src="js/plugins/perfect-scrollbar.js"></script>
+<script src="js/plugins/magnific-popup.js"></script>
+<script src="js/plugins/select2.min.js"></script>
+<script src="js/plugins/waypoints.js"></script>
+<script src="js/plugins/counterup.js"></script>
+<script src="js/plugins/jquery.countdown.min.js"></script>
+<script src="js/plugins/images-loaded.js"></script>
+<script src="js/plugins/isotope.js"></script>
+<script src="js/plugins/scrollup.js"></script>
+<script src="js/plugins/jquery.vticker-min.js"></script>
+<script src="js/plugins/jquery.theia.sticky.js"></script>
+<script src="js/vendors/jquery-3.6.0.min.js"></script>
+<script src="js/vendors/bootstrap.bundle.min.js"></script>
+<script src="js/vendors/select2.min.js"></script>
+<script src="js/vendors/perfect-scrollbar.js"></script>
+<script src="js/vendors/jquery.fullscreen.min.js"></script>
+<script src="js/vendors/chart.js"></script>
+<!-- Main Script -->
+<script src="js/main.js" type="text/javascript"></script>
+<script src="js/custom-chart.js" type="text/javascript"></script>
+<!-- Template JS -->
+<script src="js/main.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+</body>
+</html>
+
