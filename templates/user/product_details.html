@@ -1,10 +1,49 @@
 {% extends "base.html" %} 
 {% block title %}PRODUCT DETAILS{% endblock title %} 
-
-{%block main %}
+{% block main %}
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 <style>
+    #message-container {
+        width: 300px;
+        margin: 20px auto;
+    }
+
+    .message {
+        position: relative;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        font-weight: bold;
+        opacity: 1;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    #success-message {
+        background-color: #4CAF50; /* Green */
+        color: white;
+    }
+
+    #error-message {
+        background-color: #f44336; /* Red */
+        color: white;
+    }
+
+    .visible {
+        display: block;
+    }
+    
+    .hidden {
+        display: none;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        cursor: pointer;
+    }
+
     #cbt{
         position: relative;
         left:-270px;
@@ -16,6 +55,7 @@
         top:-42px;
     }
     #my_new_btn{
+        background-color:white;
         padding-top: 2px;
         padding-bottom: 1px;
 
@@ -27,6 +67,17 @@
             <a href="{% url "user_side:landing" %}" rel="nofollow">Home</a>
             <span></span> Products details 
         </div>
+    </div>
+</div>
+
+<div id="message-container">
+    <div id="success-message" class="message hidden">
+        Success: Item added to cart successfully
+        <span class="close-btn" onclick="closeMessage('success-message')">X</span>
+    </div>
+    <div id="error-message" class="message hidden">
+        Error: Something went wrong!
+        <span class="close-btn" onclick="closeMessage('error-message')">X</span>
     </div>
 </div>
     {% for message in messages  %}
@@ -47,9 +98,9 @@
                             <div class="detail-gallery">
                                 <span class="zoom-icon"><i class="fi-rs-search"></i></span>
                                 <!-- MAIN SLIDES -->
-                                <div class="product-image-slider">
-                                    <figure class="border-radius-10">
-                                        <img src="{{pro.thumbnail_img.url}}" alt="product image">
+                                <div class="product-image-slider magnific-popup">
+                                    <figure class="border-radius-10 magnific-popup">
+                                        <img src="{{pro.thumbnail_img.url}}" class="magnific-popup" alt="product image">
                                     </figure>
                                    
                                 </div>
@@ -111,26 +162,30 @@
                                 </div>
                                 <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                 <div class="detail-extralink">
-                                    <form id="myForm" action="{% url "cart:add_cart" id=pro.id %}" method="post">
+                                    <form>
                                         {% csrf_token %}
+                                        <input type="hidden" value='{{pro.id}}' class="prod_id">
                                         <div id="cbt" class="detail-qty border radius m-auto">
                                             <a class="qty-down" onclick="decreaseQuantity()"><i class="fi-rs-angle-small-down"></i></a>
                                             <span id="quantitySpan" name="c_count" class="qty-val">1</span>
-                                            <input type="hidden" id="quantityInput" name="quantity" value="1">
+                                            <input type="hidden" id="quantityInput" class='item_quantity' name="quantity" value="1">
                                             <a class="qty-up" onclick="increaseQuantity()"><i class="fi-rs-angle-small-up"></i></a>
                                         </div>
                                         <div id='cwb' class="product-extra-link2">
                                             {% if user.is_authenticated %}
-                                            <button id='my_new_btn' type="submit" class="action-btn hover-up" onclick="captureQuantity()"><img width="32" height="32" src="https://img.icons8.com/windows/32/000000/shopping-cart.png" alt="shopping-cart"/></button>
+                                            <button id='my_new_btn' type="submit" class="action-btn hover-up" onclick="addCart(event)"><img width="30" height="30" src="https://img.icons8.com/clouds/100/add-shopping-cart.png" alt="add-shopping-cart"/></button>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up" href="{% url "user_side:add_wishlist" id=pro.id %}"><i class="fi-rs-heart"></i></a>
                                             {% endif %}
+                                           
                                         </div>
+                                        <ul class="product-meta font-xs color-grey mt-50">
+                                            <li class="mb-5">MODEL ID: <a href="#">{{pro.model_id}}</a></li>
+                                            <li>Availability:<span class="in-stock text-success stock_val ml-5">{{pro.stock}} Items In Stock</span></li>
+                                        </ul>
+                                       
                                 </form>
                                 </div>
-                                <ul class="product-meta font-xs color-grey mt-50">
-                                    <li class="mb-5">MODEL ID: <a href="#">{{pro.model_id}}</a></li>
-                                    <li>Availability:<span class="in-stock text-success ml-5">{{pro.stock}} Items In Stock</span></li>
-                                </ul>
+                               
                             </div>
                             <!-- Detail Info -->
                         </div>
@@ -377,29 +432,79 @@
 </section>
 
 
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 <script>
-    function decreaseQuantity() {
-        var quantityElement = document.getElementById('quantitySpan');
-        var quantityInput = document.getElementById('quantityInput');
-        var currentQuantity = parseInt(quantityElement.textContent);
+        function decreaseQuantity() {
+            var quantityElement = document.getElementById('quantitySpan');
+            var quantityInput = document.getElementById('quantityInput');
+            var currentQuantity = parseInt(quantityElement.textContent);
     
-        if (currentQuantity > 1) {
-            quantityElement.textContent = currentQuantity - 1;
-            quantityInput.value = currentQuantity - 1;
+            if (currentQuantity > 1) {
+                quantityElement.textContent = currentQuantity - 1;
+                quantityInput.value = currentQuantity - 1;
+            }
         }
-    }
     
-    function increaseQuantity() {
-        var quantityElement = document.getElementById('quantitySpan');
-        var quantityInput = document.getElementById('quantityInput');
-        var currentQuantity = parseInt(quantityElement.textContent);
+        function increaseQuantity() {
+            var quantityElement = document.getElementById('quantitySpan');
+            var quantityInput = document.getElementById('quantityInput');
+            var currentQuantity = parseInt(quantityElement.textContent);
     
-        // Add any maximum quantity limit if needed
-        if (currentQuantity < 15) {
-            quantityElement.textContent = currentQuantity + 1;
-            quantityInput.value = currentQuantity + 1;
+            // Add any maximum quantity limit if needed
+            if (currentQuantity < 15) {
+                quantityElement.textContent = currentQuantity + 1;
+                quantityInput.value = currentQuantity + 1;
+            }
+        } 
+        function closeMessage(messageId) {
+            $('#' + messageId).animate({
+                opacity: 0
+            }, 500, function () {
+                $('#' + messageId).addClass('hidden').removeClass('visible').css('opacity', 1);
+            });
         }
-    }
+    
+    
+        function addCart(e) {
+            e.preventDefault();
+
+            function showSuccessMessage(message) {
+                $('#success-message').text(message);
+                $('#success-message').removeClass('hidden').addClass('visible');
+            }
+            function showErrorMessage(message) {
+                $('#error-message').text(message);
+                $('#error-message').removeClass('hidden').addClass('visible');
+
+            }
+
+            var prodQty = $('.item_quantity').val(); 
+            var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
+            var productId = $('.prod_id').val();
+    
+            $.ajax({
+                url: "{% url 'cart:add_cart'%}",  
+                method: "POST",
+                data: {
+                    'prod_qty': prodQty,
+                    'csrfmiddlewaretoken': csrfToken,
+                    'prod_id': productId,
+                },
+                success: function (response) {
+                    console.log(response);
+                    showSuccessMessage("Item added to cart");
+                    window.location.href = "{% url 'cart:view_cart' %}";
+                    
+                },
+                error: function (error) {
+                    console.error(error);
+                    showErrorMessage("Error: Cant add that much due to stock insufficiant.");
+
+                }
+            });
+        }
 </script>
 
 

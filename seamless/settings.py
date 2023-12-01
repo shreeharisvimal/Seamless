@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'social_django',
     'cart',
     'account',
+    'order_management',
 
 
 
@@ -90,6 +91,8 @@ TEMPLATES = [
                 'social_django.context_processors.backends',
                 'cart.context_processors.count_wish',
                 'cart.context_processors.count_cart',
+                'cart.context_processors.profile_pic',
+
             ],
         },
     },

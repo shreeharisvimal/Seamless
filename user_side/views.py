@@ -48,6 +48,10 @@ def product_details(request, id):
     return render(request, 'user/product_details.html', context)
 
 
+    
+
+
+
 
 def add_wishlist(request,id):
 

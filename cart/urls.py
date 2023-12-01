@@ -12,10 +12,11 @@ urlpatterns = [
     path('coupon-view',views.view_coupon,name='view_coupon'),
     path('cart-view',views.view_cart,name='view_cart'),
     path('cart-add/<int:id>/',views.add_cart,name='add_cart'),
+    path('cart-add/',views.add_cart,name='add_cart'),
     path('cart-delete/<int:id>/',views.delete_cart,name='delete_cart'),
-    path('plus-item/<int:id>/',views.item_plus,name='plus_item'),
-    path('minus-item/<int:id>/',views.item_minus,name='minus_item'),
-    path('remove-coupon/<int:id>/',views.remove_coupon,name='remove_coupon'),
+    path('plus-item/',views.item_plus,name='plus_item'),
+    path('minus-item/',views.item_minus,name='minus_item'),
+    path('remove-coupon/',views.remove_coupon,name='remove_coupon'),
     path('clear_cart/',views.clear_cart,name='clear_cart'),
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

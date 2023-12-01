@@ -15,11 +15,14 @@ class Coupon(models.Model):
 class Cart(models.Model):
     user = models.ForeignKey(NewUser, on_delete=models.CASCADE)
     coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE, null=True,blank=True)
+    total = models.DecimalField(decimal_places=2, max_digits=10,default=0, null=True)
     sub_total = models.DecimalField(decimal_places=2, max_digits=10,default=0, null=True)
+    shipping = models.DecimalField(decimal_places=2, max_digits=10,default=0, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.user}-cart'
+
     
 
 class Cart_Item(models.Model):

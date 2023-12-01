@@ -1,5 +1,6 @@
 from cart.models import Cart, Cart_Item
 from user_side.models import Wishlist
+from account.models import UserProfile
 
 def count_wish(request):
     try:
@@ -18,3 +19,16 @@ def count_cart(request):
     except:
         pass
     return {'cart_count': cart_count}
+
+def profile_pic(request):
+    
+    try:
+        if request.user.is_authenticated and not request.user.is_superuser :
+            user = UserProfile.objects.get(user = request.user)
+            return {'my_pic': user.profile_pic }
+        else:
+            return {'my_pic': 0 }
+    except:
+        pass
+
+        

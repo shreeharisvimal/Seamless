@@ -4,10 +4,11 @@ from django.db import models
 
 class UserProfile(models.Model):
     user = models.OneToOneField(NewUser, on_delete=models.CASCADE, primary_key=True)
-    full_name = models.CharField(max_length=60,blank=True, default='')
-    phone_number = models.CharField(max_length=15, default='')
+    full_name = models.CharField(max_length=60,blank=True, default='', null=True)
+    email = models.EmailField(max_length=60,blank=True, default='', null=True)
+    phone_number = models.CharField(max_length=15, default='', blank=True, null=True)
     profile_pic = models.ImageField(upload_to="profile_pic/", blank=True, null=True, default='')
-    nationality = models.CharField(max_length=50, null=True)
+    nationality = models.CharField(max_length=50, null=True, blank=True)
     DOB = models.DateField(blank=True, null=True)
 
     def save(self,*args, **kwargs):
@@ -42,17 +43,15 @@ class Address(models.Model):
 
     def save(self, *args, **kwargs):
         if self.is_default:
-            Address.objects.filter(user = self.user).exclude(pk = self.pk).update(is_default = False)
-            
-        if self.is_shipping:
-            Address.objects.filter(user = self.user,is_shipping=True).exclude(pk = self.pk).update(is_shipping = False)
-
-            Address.objects.filter(user=self.user, pk=self.pk).update(is_billing=False)
+            if self.is_shipping:
+                Address.objects.filter(user=self.user, is_shipping=True).exclude(pk=self.pk).update(is_default=False)
+            elif self.is_billing:
+                Address.objects.filter(user=self.user, is_billing=True).exclude(pk=self.pk).update(is_default=False)
         super(Address, self).save(*args, **kwargs)
 
 
     def FullAddress(self):  
-        address = [self.address_one]
+        address = [self.name,self.address_one]
         if self.address_two:
             address.append(self.address_two)
         address.extend([self.city, self.state, self.country])

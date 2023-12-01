@@ -2,6 +2,14 @@
 {% block title %}MY DASHBOARD{% endblock title %} 
 {%block main %}
 {% load static %}
+<style>
+    #main_content{
+        position: absolute;
+        z-index: 1;
+        top:70px;
+        left:370px
+    }
+</style>
 <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 <div>
     {% for message in messages  %}
@@ -41,7 +49,7 @@
                                     <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address" role="tab" aria-controls="address" aria-selected="true"><i class="fi-rs-marker mr-10"></i>My Address</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab" href="#account-detail" role="tab" aria-controls="account-detail" aria-selected="true"><i class="fi-rs-user mr-10"></i>Account details</a>
+                                    <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab" href="#account-detail" role="tab" aria-controls="account-detail" aria-selected="true"><i class="fi-rs-user mr-10"></i>Change Password</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{% url "authentication:logout" %}"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
@@ -51,15 +59,42 @@
                     </div>
                     <div class="col-md-8">
                         <div class="tab-content dashboard-content">
+                            
                             <div class="tab-pane fade active show" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5 class="mb-0">Hello {{request.user}}! </h5>
+                                        <div id="main_content">
+                                            {% if user %}
+                                            <p>NAME :<strong> {{myuser.full_name}}</strong></p>
+                                            <p>USER NAME :<strong> {{request.user}}</strong></p>
+                                            <p>PH :<strong> {{myuser.phone_number}}</strong></p>
+                                            <p>EMAIL :<strong> {{myuser.email}}</strong></p>
+                                            {% else %}
+                                            <p>NAME :<strong> No name Yet</strong></p>
+                                            <p>USER NAME :<strong> {{request.user}}</strong></p>
+                                            <p>PH :<strong> {{myuser.phone_number}}</strong></p>
+                                            <p>EMAIL :<strong> {{myuser.email}}</strong></p>
+                                            {% endif %}
+                                        </div>
+                                        <h5 class="mb-0">Hello {{myuser.full_name}}! </h5>
+                                        {% if myuser.profile_pic %}
+                                        <img width="180px" height="190px" class="img-xs rounded-circle" src="{{myuser.profile_pic.url}}" alt="User">
+                                        {% else %}
                                         <img style="width:180px" class="img-xs rounded-circle" src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="User">
+                                        {% endif %}
                                     </div>
+                                 
                                     <div class="card-body">
                                         <p>From your account dashboard. you can easily check &amp; view your <a href="#">recent orders</a>, manage your <a href="#">shipping and billing addresses</a> and <a href="#">edit your password and account details.</a></p>
                                     </div>
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>You can manage your account Details from here</h5>
+                                            </div>
+                                            
+                                                <a href="{% url "account:account_edit" %}"  type="submit" class="btn btn-fill-out submit" name="set_default" value="Submit">Edit Or view Account Details</a>
+                                            
+                                        </div>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
@@ -145,7 +180,6 @@
                                                     <div class="card-body">
                                                         <address>{{bill.name}} <br> {{bill.FullAddress}}<br>{{bill.pincode}}</address>
                                                         <p>Phone: {{bill.phone_number}}</p>
-                                                        <a href="#" class="btn-small">Edit</a>
                                                     </div>
                                                     {% else %}
                                                    
@@ -168,7 +202,6 @@
                                             <div class="card-body">
                                                 <address>{{ship.name}} <br> {{ship.FullAddress}}<br>{{ship.pincode}}</address>
                                                 <p>Phone: {{ship.phone_number}}</p>
-                                                <a href="#" class="btn-small">Edit</a>
                                             </div>
                                             {% else %}
                                             <div class="card-body">
@@ -184,50 +217,30 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="account-detail" role="tabpanel" aria-labelledby="account-detail-tab">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5>Account Details</h5>
+                                <div class="card-body">
+                                    <form method="post"  action='{% url "account:account_edit" %}' enctype="multipart/form-data" >
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="form-group col-md-12">
+                                            <label>Old password<span class="required"></span></label>
+                                            <input required  class="form-control square" name="old_password" type="password" >
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>New Password<span class="required"></span></label>
+                                            <input required  class="form-control square" name="new_password" type="password" >
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Conform password<span class="required"></span></label>
+                                            <input required  class="form-control square" name="con_password" type="password" >
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <button type="submit" class="btn btn-fill-out submit" name="save" value="Submit">Save Password</button>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
-                                        <p>Already have an account? <a href="page-login-register.html">Log in instead!</a></p>
-                                        <form method="post" name="enq">
-                                            <div class="row">
-                                                <div class="form-group col-md-6">
-                                                    <label>First Name <span class="required">*</span></label>
-                                                    <input required="" class="form-control square" name="name" type="text">
-                                                </div>
-                                                <div class="form-group col-md-6">
-                                                    <label>Last Name <span class="required">*</span></label>
-                                                    <input required="" class="form-control square" name="phone">
-                                                </div>
-                                                <div class="form-group col-md-12">
-                                                    <label>Display Name <span class="required">*</span></label>
-                                                    <input required="" class="form-control square" name="dname" type="text">
-                                                </div>
-                                                <div class="form-group col-md-12">
-                                                    <label>Email Address <span class="required">*</span></label>
-                                                    <input required="" class="form-control square" name="email" type="email">
-                                                </div>
-                                                <div class="form-group col-md-12">
-                                                    <label>Current Password <span class="required">*</span></label>
-                                                    <input required="" class="form-control square" name="password" type="password">
-                                                </div>
-                                                <div class="form-group col-md-12">
-                                                    <label>New Password <span class="required">*</span></label>
-                                                    <input required="" class="form-control square" name="npassword" type="password">
-                                                </div>
-                                                <div class="form-group col-md-12">
-                                                    <label>Confirm Password <span class="required">*</span></label>
-                                                    <input required="" class="form-control square" name="cpassword" type="password">
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <button type="submit" class="btn btn-fill-out submit" name="submit" value="Submit">Save</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
+                                
                         </div>
                     </div>
                 </div>
@@ -235,12 +248,4 @@
         </div>
     </div>
 </section>
-
-
-
-
-
-
-
-
 {% endblock main %}

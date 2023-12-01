@@ -1,8 +1,26 @@
 {% extends "base.html" %} 
 {% block title %}MY ADDRESS MANAGEMENT{% endblock title %} 
+
 {%block main %}
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+<style>
+  #address{
+    margin-top:20px;
+  }
+  #address_2{
+    margin-top:20px;
+  }
+  #address_3{
+    margin-top:20px;
+  }
+  #address_4{
+    margin-top:20px;
+  }
+  #address_5{
+    margin-top:20px;
+  }
+</style>
 <div>
     {% for message in messages  %}
     <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
@@ -10,15 +28,180 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     {% endfor %}
 </div>
+<div class="page-header breadcrumb-wrap">
+  <div class="container">
+      <div class="breadcrumb">
+          <a href="{% url "user_side:landing" %}" rel="nofollow">Home</a>
+          <span></span> 
+          <a href="{% url "account:my_dashboard" %}" rel="nofollow">My Account</a>
+          <span></span>Address
+      </div>
+  </div>
+</div>
 
 
+{% comment %} the default billing and shipping address {% endcomment %}
+
+<div class="container" >
+  <div class="row">
+    <div id='address_3' class="col-lg-5">
+      {% if default_shipping %}
+
+      {% else %}
+          <p>THERE IS NO DEFAULT SHIPPING ADDRESS</p>
+      {% endif %}
+  </div>
+  
+  <div  id='address_4' class="col-lg-5">
+      {% if default_billing %}
+      {% else %}
+          <p>THERE IS NO DEFAULT BILLING ADDRESS</p>
+      {% endif %}
+  </div>
+    
+    {% for d_ship in default_shipping %}
+    {% if 'd_ship.FullAddress' %}
+      <div id='address' class="col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Default Shipping Address</h5>
+            </div>
+            <div class="card-body">
+                <address>{{d_ship.name}} <br> {{d_ship.FullAddress}}<br>{{d_ship.pincode}}</address>
+                <p>Phone: {{d_ship.phone_number}}</p>
+                <a href="{% url "account:edit_address" id=d_ship.id %}" class="btn-small">Edit</a>
+                <a style="margin-left:20px" href="{% url "account:del_address" id=d_ship.id %}" class="btn-small text-danger">Delete</a>
+
+            </div>
+        </div>
+      </div>
+      {% else %}
+      <div id='address' class="col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Default Shipping Address</h5>
+            </div>
+            <div class="card-body">
+              <address>No default shipping address have been created so far<br> <br></address>
+              <p>Phone: None </p>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
 
 
+      
+      {% for d_bill in default_billing %}
+      {% if 'd_bill.FullAddress' %}
+      <div id='address' class="col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Default Billing Address</h5>
+            </div>
+            <div class="card-body">
+                <address>{{d_bill.name}} <br> {{d_bill.FullAddress}}<br>{{d_bill.pincode}}</address>
+                <p>Phone: {{d_bill.phone_number}}</p>
+                <a href="{% url "account:edit_address" id=d_bill.id %}" class="btn-small">Edit</a>
+                <a style="margin-left:20px" href="{% url "account:del_address" id=d_bill.id %}" class="btn-small text-danger">Delete</a>
+
+            </div>
+        </div>
+      </div>
+      {% else %}
+      <div id='address' class="col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Default Shipping Address</h5>
+            </div>
+            <div class="card-body">
+              <address>No default shipping address have been created so far<br> <br></address>
+              <p>Phone: None </p>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+  </div>
+</div>
 
 
+{% comment %} the normal shipping and billing address {% endcomment %}
+
+<div class="container" >
+  <div class="row">
+    {% for ship in shipping_address %}
+      <div id='address' class="col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Shipping Address</h5>
+            </div>
+            {% if 'ship.FullAddress' %}
+            <div class="card-body">
+                <address>{{ship.name}} <br> {{ship.FullAddress}}<br>{{ship.pincode}}</address>
+                <p>Phone: {{ship.phone_number}}</p>
+                <a href="{% url "account:edit_address" id=ship.id %}"  class="btn-small">Edit</a>
+                <a style="margin-left:20px" href="{% url "account:del_address" id=ship.id %}" class="btn-small text-danger">Delete</a>
+
+            </div>
+            {% else %}
+            <div class="card-body">
+                <address>No Billing address have been created so far<br> <br></address>
+                <p>Phone: None </p>
+            </div>
+            {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      {% for bill in billing_address %}
+      <div id='address_2' class="col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Billing Address</h5>
+            </div>
+            {% if 'bill.FullAddress' %}
+            <div class="card-body">
+                <address>{{bill.name}} <br> {{bill.FullAddress}}<br>{{bill.pincode}}</address>
+                <p>Phone: {{bill.phone_number}}</p>
+                <a href="{% url "account:edit_address" id=bill.id %}" class="btn-small">Edit</a>
+                <a style="margin-left:20px" href="{% url "account:del_address" id=bill.id %}" class="btn-small text-danger">Delete</a>
+
+            </div>
+            {% else %}
+            <div class="card-body">
+                <address>No Billing address have been created so far<br> <br></address>
+                <p>Phone: None </p>
+            </div>
+            {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+  </div>
 
 
+{% comment %} all address {% endcomment %}
+    <div class="col-lg-5">
+      {% if all_address %}
+      {% else %}
+          <p>THERE IS NO OTHER ADDRESS</p>
+      {% endif %}
+    </div>
+  
+      {% for all in all_address %}
+      <div id='address_5' class="col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Address</h5>
+            </div>
+            <div class="card-body">
+                <address>{{all.name}} <br> {{all.FullAddress}}<br>{{all.pincode}}</address>
+                <p>Phone: {{all.phone_number}}</p>
+                <a href="{% url "account:edit_address" id=all.id %}" class="btn-small">Edit</a>
+                <a style="margin-left:20px" href="{% url "account:del_address" id=all.id %}" class="btn-small text-danger">Delete</a>
 
-
-
+            </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
 {% endblock main %}

@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: sans-serif;
-    background-color: #474747;
+    background-color: #d3d3d3;
 }
 
 .card{
@@ -22,11 +22,34 @@ body {
     border-bottom-left-radius: 200px;
     border-bottom-right-radius: 20px;
     border-top-left-radius: 20px;
-    background: #b2b2b2; 
+    
     text-align: center;
     transition: 0.25s;
+    color: #333;
+    animation: gradientAnimation 10s infinite linear;
+    background: linear-gradient(to right,
+      #ffffff,  /* White */
+      #f0f0f0,  /* Light gray */
+      #add8e6,  /* Light blue */
+      #98fb98,  /* Light green */
+      #ffffe0,  /* Light yellow */
+      #ffb6c1,  /* Light pink */
+      #e6e6fa,  /* Lavender */
+      #ffdab9,  /* Light peach */
+      #e0ffff,  /* Light cyan */
+      #f5fffa   /* Light mint */
+    );
+    background-size: 200% 100%;
+  }
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 100% 50%;
+    }
+  }
 
-}
 
 .box input[type="text"],
 .box input[type="password"] {
