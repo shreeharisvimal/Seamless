@@ -15,21 +15,42 @@ def order_view(request):
     cart = Cart.objects.get(user = request.user)
     cart_item = Cart_Item.objects.filter(cart = cart.id)
     myuser =request.user
-    default_shipping = Address.objects.get(Q(is_shipping = True) & Q(is_default = True) & Q( user = myuser))
-    default_billing = Address.objects.get(Q(is_billing = True) & Q(is_default = True)& Q( user = myuser))
-    billing_address = Address.objects.filter(Q(is_billing = True) & Q(is_default = False) & Q(is_shipping = False) & Q( user = myuser))
-    shipping_address = Address.objects.filter(Q(is_shipping = True) & Q(is_default = False) & Q(is_billing = False) & Q( user = myuser))
-    print(shipping_address)
-    print(billing_address)
+    print(myuser)
+    default_billing = None
+    default_shipping = None
+    billing_address = None
+    shipping_address = None
+    try:
+        default_shipping = Address.objects.filter(Q(is_shipping = True) & Q(is_default = True) & Q( user = request.user))
+        default_billing = Address.objects.filter(Q(is_billing = True) & Q(is_default = True) & Q( user = request.user))
+        billing_address = Address.objects.filter(Q(is_billing = True) & Q(is_default = False) & Q( user = request.user))
+        shipping_address = Address.objects.filter(Q(is_shipping = True) & Q(is_default = False) & Q( user = request.user))
+        print(f' the shipping address{shipping_address}')
+        print(f'the billing address{billing_address}')
+        print(f'the default shipping address{default_shipping}')
+        print(f'the default billing address{default_billing}')
+    except Exception as e:
+        print(f'the error {e}')
     context = {
         'cart' : cart,  
         'cart_item': cart_item,
-        'default_billing' :default_billing if default_billing else None,
+        'default_billing' :default_billing if default_billing else None ,
         'default_shipping' :default_shipping if default_shipping else None,
         'billing_address':billing_address if billing_address else None,
         'shipping_address':shipping_address if shipping_address else None,
     }
-    return render(request, 'user/checkout.html', context)
+    # try:
+    #     context = {
+    #     'shipping_address':Address.objects.filter(Q(is_shipping = True) & Q(user= request.user) & ~Q(is_default = True)),
+    #     'billing_address':Address.objects.filter(Q(is_billing = True) & Q(user= request.user) & ~Q(is_default = True)),
+    #     'default_billing':Address.objects.filter(Q(is_billing = True) & Q(user= request.user) & Q(is_default = True)),
+    #     'default_shipping':Address.objects.filter(Q(is_shipping = True) & Q(user= request.user) & Q(is_default = True)),
+    #     'all_address':  Address.objects.filter(user = request.user, is_billing=False, is_shipping=False),
+    #     }
+    #     return render(request, 'user/checkout.html', context)
+    # except Exception as e:
+    #     print(f'the error is {e}')
+    return render(request, 'user/checkout.html',context)
 
 
 def order_coupon(request):

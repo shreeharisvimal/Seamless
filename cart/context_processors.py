@@ -21,14 +21,15 @@ def count_cart(request):
     return {'cart_count': cart_count}
 
 def profile_pic(request):
-    
     try:
         if request.user.is_authenticated and not request.user.is_superuser :
+            user = UserProfile.objects.get_or_create(user = request.user)
             user = UserProfile.objects.get(user = request.user)
             return {'my_pic': user.profile_pic }
         else:
             return {'my_pic': 0 }
-    except:
-        pass
+    except Exception as e:
+        print(f'the error is {e}')
+        
 
         

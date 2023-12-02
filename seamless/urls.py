@@ -46,6 +46,7 @@ urlpatterns = [
     path('account-management/', include('account.urls')), # for cart management
 
     path('order-management/', include('order_management.urls')), # for ordering and other stuffs
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,10 @@
 import traceback
 from django.shortcuts import render, redirect,get_object_or_404
+from django.urls import reverse_lazy
 from django.views.decorators.cache import cache_control
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.forms import PasswordChangeForm
+
 from django.contrib import messages
 from psycopg import IntegrityError
 from account.models import Address
@@ -17,10 +21,11 @@ def my_dashboard(request):
 
     shipping = Address.objects.filter(user = request.user, is_shipping=True, is_default=True)
     billing = Address.objects.filter(user = request.user, is_billing=True, is_default=True)
+    myuser = None
     try:
         myuser = UserProfile.objects.get(user = request.user)
-    except:
-        pass
+    except Exception as e:
+        print(f'the error {e}')
     context = {
         'shipping': shipping ,
         'billing':  billing ,
@@ -72,14 +77,17 @@ def manage_address(request):
             return redirect('admin_side:admin_login_handler')
         return redirect('user_side:landing')
     
-
-    context = {
-    'shipping_address':Address.objects.filter(Q(is_shipping = True) & Q(user= request.user) & ~Q(is_default = True)),
-    'billing_address':Address.objects.filter(Q(is_billing = True) & Q(user= request.user) & ~Q(is_default = True)),
-    'default_billing':Address.objects.filter(Q(is_billing = True) & Q(user= request.user) & Q(is_default = True)),
-    'default_shipping':Address.objects.filter(Q(is_shipping = True) & Q(user= request.user) & Q(is_default = True)),
-    'all_address':  Address.objects.filter(user = request.user, is_billing=False, is_shipping=False),
-    }
+    try:
+        context = {
+        'shipping_address':Address.objects.filter(Q(is_shipping = True) & Q(user= request.user) & ~Q(is_default = True)),
+        'billing_address':Address.objects.filter(Q(is_billing = True) & Q(user= request.user) & ~Q(is_default = True)),
+        'default_billing':Address.objects.filter(Q(is_billing = True) & Q(user= request.user) & Q(is_default = True)),
+        'default_shipping':Address.objects.filter(Q(is_shipping = True) & Q(user= request.user) & Q(is_default = True)),
+        'all_address':  Address.objects.filter(user = request.user, is_billing=False, is_shipping=False),
+        }
+    except Exception as e:
+        print(f'the error is {e}')
+    
     return render(request, 'user/dashboard/manage_address.html',context)
 
 
@@ -144,9 +152,17 @@ def account_edit(request):
             print(F'the error {e}')
             messages.error(request,f"An error occured while updating your profile.{e}")
             pass
+    myuser = UserProfile.objects.get_or_create(user = request.user)
     myuser = get_object_or_404(UserProfile, user = request.user)
+    print(myuser)
     context = {
         'myuser' : myuser
     }
 
     return render(request, 'user/dashboard/edit_account.html', context)
+
+
+
+class PasswordChangeView(PasswordChangeView):
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy('account:account_edit')

@@ -244,6 +244,9 @@
                             </div>
                         </div>
                         {% endif %}
+                            <div class="col-12" style="margin-top:20px; margin-left:40px">
+                                <a href="{% url "account:change_password" %}"><button type="submit" class="btn btn-fill-out submit"  value="Submit">Change Password</button></a>
+                            </div>
                         <ul class="social-link list-unstyled m-t-40 m-b-10">
                             <li><a href="#!" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="facebook" data-abc="true"><i class="mdi mdi-facebook feather icon-facebook facebook" aria-hidden="true"></i></a></li>
                             <li><a href="#!" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="twitter" data-abc="true"><i class="mdi mdi-twitter feather icon-twitter twitter" aria-hidden="true"></i></a></li>
@@ -272,10 +275,17 @@
                     <label>Username<span class="required"></span></label>
                     <input value="{{request.user}}" required class="form-control square" name="dname" type="text" readonly>
                 </div>
+                {% if myuser.profile_pic %}
                 <div class="form-group col-md-12">
                     <label  for="thumbnail_img">Profile Pic : {{myuser.profile_pic}}</label>
                     <input type="file"  value="{{myuser.profile_pic.url}}" name="Profile_img" accept="image/*">
                 </div>
+                 {% else %}
+                <div class="form-group col-md-12">
+                    <label  for="thumbnail_img">Profile Pic </label>
+                    <input type="file"  value="" name="Profile_img" accept="image/*">
+                </div>
+                {% endif %}
                 <div class="form-group col-md-12">
                     <label>Email Address <span class="required"></span></label>
                     <input required value="{{request.user.email}}" class="form-control square" name="email" type="email" readonly>

@@ -70,10 +70,16 @@
                 <div class="form-group">
                     <div  class="custom_select">
                         <select id='select' class="form-control">
-                            <option style="color: green;" value="">{{default_shipping}} - DEFAULT</option>
+                            {% if default_shipping or shipping_address  %}
+                            {% for default_shipping in default_shipping  %}
+                            <option style="color: green;" value=""><b>{{default_shipping.FullAddress}} - DEFAULT</b></option>
+                            {% endfor %}
                             {% for shipping in shipping_address %}
-                        <option value="{{shipping.id}}">{{shipping.FullAddress}}</option>
-                        {% endfor %}
+                        <option value="{{shipping.id}}"><b>{{shipping.FullAddress}}</option>
+                            {% endfor %}
+                        {% else %}
+                        <option style="color: green;" value=""><b>No address available</b></option>
+                        {% endif %}
                         </select>
                     </div>
                 </div>
@@ -81,11 +87,18 @@
                 <div class="form-group">
                     <div  class="custom_select">
                         <select id='select' class="form-control">
-                            <option style="color: green;" value="">{{ default_billing }} - DEFAULT</option>
-                            {% for billing in billing_address %}
-                        <option value="{{billing.id}}">{{billing.FullAddress}}</option>
-                        {% endfor %}
+                            {% if default_billing or billing_address  %}
+                            {% for default_billing in default_billing %}
+                            <option style="color: green;" value=""><b>{{ default_billing.FullAddress }} - DEFAULT</b></option>
+                            {% endfor %}
+                                {% for billing in billing_address %}
+                            <option value="{{billing.id}}"><b>{{billing.FullAddress}}</b></option>
+                                {% endfor %}
+                            {% else %}
+                            <option style="color: green;" value=""><b>No address available</b></option>
+                            {% endif %}
                         </select>
+                       
                     </div>
                 </div>
 
@@ -200,9 +213,6 @@
                   </form>
               </div>
               {% endif %}
-                                                                        <!--/ End Form -->
-<!--/ End Form --> <!--/ End Form --> <!--/ End Form --> <!--/ End Form --><!--/ End Form --> <!--/ End Form --><!--/ End Form --> <!--/ End Form --> <!--/ End Form --> <!--/ End Form -->
-                                                                        <!--/ End Form -->
 
 
               <div class="col-md-6">

@@ -15,16 +15,17 @@ def landing_handler(request):
     if request.user.is_superuser:
         return redirect('admin_side:admin_dash_handler')
 
-    
-    pro = ProductVariant.objects.filter(is_active = True)
-    cat = Category.objects.filter(is_available = True)
-    brand = Brand.objects.filter(is_active = True)
-    context = {
-        'product' : pro,
-        'category' : cat,
-        'brand' : brand,
-    }  
-
+    try:
+        pro = ProductVariant.objects.filter(is_active = True)
+        cat = Category.objects.filter(is_available = True)
+        brand = Brand.objects.filter(is_active = True)
+        context = {
+            'product' : pro,
+            'category' : cat,
+            'brand' : brand,
+        }  
+    except Exception as e:
+        print(f'the error is {e}')
     return render(request,'user/index.html', context)
 
 
