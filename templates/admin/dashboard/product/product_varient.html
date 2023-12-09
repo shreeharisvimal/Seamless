@@ -3,7 +3,11 @@
 
 {%block main %}
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/admin_css/admin_main.css' %}">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.min.css">
+
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -78,11 +82,7 @@
                         <option value="{{ i.id }}">{{i.product_name}}</option>   
                         {% endfor %} 
                 </select>
-               
-                <label for="model_id">Model ID:</label>
-                <input required type="text" name="model_id" required>
-                
-                
+                  
                 <label  for="color">Color:</label>
                 <select required name="color" id="color">
                         {% for i in color %}
@@ -142,10 +142,40 @@
 
                 <label for="stock">Description:</label>
                 <input type="text" name="description" required>
-                
+
+                <div class="modal fade" id="modalCrop">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                          <h4 class="modal-title">Crop the photo</h4>
+                        </div>
+                        <div class="modal-body">
+                          <img src="" id="image" style="max-width: 100%;">
+                        </div>
+                        <div class="modal-footer">
+                          <div class="btn-group pull-left" role="group">
+                            <button type="button" class="btn btn-default js-zoom-in">
+                              <span class="glyphicon glyphicon-zoom-in"></span>
+                            </button>
+                            <button type="button" class="btn btn-default js-zoom-out">
+                              <span class="glyphicon glyphicon-zoom-out"></span>
+                            </button>
+                          </div>
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                          <button type="button" class="btn btn-primary js-crop-and-upload">Crop and upload</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" style="margin-top: 20px">
+
+                  </div>
                 <!-- Image Upload -->
                 <label for="thumbnail_img">Thumbnail Image:</label>
-                <input type="file" name="thumbnail_img" accept="image/*"  multiple required>
+                <input type="file" name="images" accept="image/*" multiple required>
                 
                 <button type="submit">Save</button>
             </form>
@@ -153,5 +183,22 @@
        
     </div>
 </section>
+
+<script>
+    {% comment %} $("#id_file").change(function () {
+        if (this.files && this.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            $("#image").attr("src", e.target.result);
+            $("#modalCrop").modal("show");
+          }
+          reader.readAsDataURL(this.files[0]);
+        }
+      }); {% endcomment %}
+    $(document).ready(function () {
+
+        $("#modalCrop").modal("show");
+    });
+</script>
 
 {% endblock main %}

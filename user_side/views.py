@@ -19,6 +19,7 @@ def landing_handler(request):
         pro = ProductVariant.objects.filter(is_active = True)
         cat = Category.objects.filter(is_available = True)
         brand = Brand.objects.filter(is_active = True)
+        
         context = {
             'product' : pro,
             'category' : cat,

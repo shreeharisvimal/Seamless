@@ -1,7 +1,8 @@
+import uuid
 from django.shortcuts import render, redirect
 from django.views.decorators.cache import cache_control
 from django.contrib.auth.decorators import login_required
-from .models import Product,ProductVariant,AttributeValue
+from .models import Product,ProductVariant,AttributeValue,VariantImage
 from django.contrib import messages
 from .forms import ProductForm,AttributeForm,AttributeValueForm
 from django.db.models import Q
@@ -91,6 +92,9 @@ def product_variant(request):
         if request.method == 'POST':
             max_price = request.POST['max_price']
             sale_price =  request.POST['sale_price']
+            uu_order_id = int(uuid.uuid4().hex[:8],16)
+            uu_order_id = f"#{uu_order_id}"
+            model_id = uu_order_id
             stock = request.POST['stock']
             if '-' in str(max_price) or  '-' in str(sale_price) or  '-' in str(stock):
                 messages.warning(request,'cant add negative values')
@@ -99,20 +103,31 @@ def product_variant(request):
                 messages.warning(request,'cant add only 0 as values ')
                 return redirect('products:product_variant')
             else:
-                ProductVariant.objects.create(
+                images = request.FILES.getlist('images')
+                color = get_object_or_404(AttributeValue, id=request.POST['color'])
+                ram =  get_object_or_404(AttributeValue, id=request.POST['ram'])
+                storage = get_object_or_404(AttributeValue, id= request.POST['rom'])
+                os = get_object_or_404(AttributeValue, id=request.POST['os'])
+                screen_size = get_object_or_404(AttributeValue, id=request.POST['size'])
+                print(color)
+                print(os)
+                print(storage)
+                variant_new = ProductVariant.objects.create(
                     product = get_object_or_404(Product, id=request.POST['product']),
-                    model_id = request.POST['model_id'],
-                    color = get_object_or_404(AttributeValue, id=request.POST['color']),
-                    ram =  get_object_or_404(AttributeValue, id=request.POST['ram']),
-                    storage = get_object_or_404(AttributeValue, id= request.POST['rom']),
-                    os = get_object_or_404(AttributeValue, id=request.POST['os']),
-                    screen_size = get_object_or_404(AttributeValue, id=request.POST['size']),
+                    model_id = model_id,
+                    color = color.Attribute_value,
+                    ram =  ram.Attribute_value,
+                    storage = storage.Attribute_value,
+                    os = os.Attribute_value,
+                    screen_size = screen_size.Attribute_value,
                     max_price = max_price,
                     sale_price = sale_price,
                     stock = stock,
                     description =  request.POST['description'],
-                    thumbnail_img = request.FILES.get('thumbnail_img'),
                 )
+                variant_new.save()
+                for image in images:
+                    VariantImage.objects.create(variant = variant_new, images = image,)
                 messages.success(request, f'the product variant has added succesfully')
                 return redirect('products:product_variant')
     except Exception as e:
@@ -255,18 +270,21 @@ def variant_edit(request,id):
     var = get_object_or_404(ProductVariant, id=id)
 
     if request.method =="POST":
-        var.color = get_object_or_404(ProductVariant, id=request.POST['color']) 
-        var.ram = get_object_or_404(ProductVariant, id=request.POST['ram']) 
-        var.storage = get_object_or_404(ProductVariant, id=request.POST['rom'])
-        var.screen_size = get_object_or_404(ProductVariant, id=request.POST['size'])
+        var.color = request.POST['color']
+        var.ram = request.POST['ram']
+        var.storage = request.POST['rom']
+        var.screen_size = request.POST['size']
         var.max_price = request.POST['max_price']
         var.sale_price = request.POST['sale_price']
         var.stock = request.POST['stock']
         var.description = request.POST['description']
-        if  request.FILES.get('thumbnail_img'):
-            var.thumbnail_img = request.FILES.get('thumbnail_img')
-        try:    
+        try: 
             var.save()
+            if  request.FILES.getlist('images'):
+                new_images = request.FILES.getlist('images')
+                for image in new_images:
+                    VariantImage.objects.create(variant = var, images = image)
+            
             messages.success(request, f'the product variant {var.product} has added succesfully')
             return redirect("products:view_variant")
         except:
@@ -360,3 +378,19 @@ def product_delete(request, id):
     messages.info(request,f"the product variant has been deleted {pro.product_name}")
 
     return redirect("products:view_product")
+
+
+
+def variant_image_edit(request,id, var_id):
+    image = get_object_or_404(VariantImage, id=id, variant = var_id)
+    image.delete()
+    messages.info(request,'the image has been deleted')
+    return redirect('products:variant_edit', id=var_id)
+
+
+def product_select_variant(request, id):
+    variant = ProductVariant.objects.filter(product = id)
+    context = {
+        'variant':variant,
+    }
+    return render (request, 'admin/dashboard/product/variant_view.html', context)

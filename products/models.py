@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 from category_manage.models import Category
 from django.db.models import UniqueConstraint, Q
-
+from PIL import Image
 
 class Brand(models.Model):
     brand_name = models.CharField(max_length=30)
@@ -71,8 +71,7 @@ class ProductVariant(models.Model):
     max_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     stock = models.IntegerField()
-    thumbnail_img = models.ImageField(upload_to='varient_img/')
-    product_varient_slug = models.SlugField(unique=True, blank=True,max_length=50)
+    product_varient_slug = models.SlugField(unique=True, blank=True,max_length=350)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -92,6 +91,8 @@ class ProductVariant(models.Model):
         super(ProductVariant, self).save(*args, **kwargs)
 
 
+
+
     class Meta:
         constraints = [
             UniqueConstraint(
@@ -104,9 +105,15 @@ class ProductVariant(models.Model):
     
     def get_variant_name(self):
 
-        return f"{self.product.product_name} ({self.ram}, {self.storage}, {self.color})"
+        return f"{self.product.product_name} (RAM : {self.ram}, ROM :{self.storage}, COLOR : {self.color}, PRICE: {self.sale_price})"
     
     
+class VariantImage(models.Model):
+    variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)
+    images = models.ImageField(upload_to='varient_img/')
+
+    def __str__(self):
+        return f"Images for {self.variant.product_varient_slug}"
 
 
 

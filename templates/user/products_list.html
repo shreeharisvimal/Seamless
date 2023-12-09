@@ -26,12 +26,12 @@
                     </div>
                     <div class="row product-grid-3">
                         {% for all in all_products %}
-                        <div class="col-lg-4 col-md-4 col-12 col-sm-6">
+                        <div class="col-lg-4 col-md-4 col-12 col-sm-6" >
                             <div class="product-cart-wrap mb-30">
                                 <div class="product-img-action-wrap">
                                     <div class="product-img product-img-zoom">
                                         <a href="{% url "user_side:product_details" id=all.id %}">
-                                            <img class="default-img" width='90px'  height='190px' src="{{all.thumbnail_img.url}}" alt="">
+                                            <img class="default-img" width='90px'  height='230px' src="{{all.variantimage_set.first.images.url}}" alt="">
                                         </a>
                                     </div>
                                     <div class="product-action-1">
@@ -55,9 +55,13 @@
                                         <span class="old-price">{{all.max_price}}</span>
                                     </div>
                                     <div class="product-action-1 show">
-                                        {% if user.is_authenticated %}
-                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="{% url "cart:add_cart" id=all.id %}"><i class="fi-rs-shopping-bag-add"></i></a>
+
+                                        {% if all.stock < 1 %}
+                                    <img width="40" height="40" src="https://img.icons8.com/external-victoruler-linear-colour-victoruler/64/external-out-of-stock-logistics-victoruler-linear-colour-victoruler.png" alt="external-out-of-stock-logistics-victoruler-linear-colour-victoruler"/>
+                                    {% else %}      
+                                    <a aria-label="Add To Cart" class="action-btn hover-up" href="{% url "cart:add_cart" id=all.id %}"><i class="fi-rs-shopping-bag-add"></i></a>
                                         {% endif %}
+
                                     </div>
                                 </div>
                             </div>

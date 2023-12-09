@@ -12,6 +12,9 @@ class Coupon(models.Model):
     def __str__(self):
         return f"{self.code}- RS {self.discount}"
     
+    def coupon_name (self):
+        return f"{self.code}- RS {self.discount}"
+    
 class Cart(models.Model):
     user = models.ForeignKey(NewUser, on_delete=models.CASCADE)
     coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE, null=True,blank=True)

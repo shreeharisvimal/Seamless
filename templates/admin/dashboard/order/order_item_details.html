@@ -1,0 +1,132 @@
+{% extends "admin/admin_base.html" %} 
+{% block title %}ORDER MANAGEMENT{% endblock title %} 
+{%block main %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/admin_css/admin_main.css' %}">
+<!-- Example CDN link (replace with your version and path) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Order detail</h2>
+            <p>Details for Order ID:{{order_item.order.order_number}}</p>
+        </div>
+    </div>
+    <div class="card">
+        <header class="card-header">
+            <div class="row align-items-center">
+                {% if 'CANCELLED' in order_item.order_status %}
+                {% else %}
+                <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                    <select id="statusDropdown" class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
+                        <option>Change status</option>
+                        <option value="PLACED" value="PLACED">Order Placed</option>
+                        <option value="PROCESSING">Order Processing</option>
+                        <option value="SHIPPED">Order Shipped</option>
+                        <option value="OUT FOR DELIVERY">Out for delivery</option>
+                        <option value="DELIVERED">Order Delivered</option>
+                        <option value="CANCELLED">Order Cancelled</option>
+                    </select>
+                    <button class="btn btn-primary" type="submit" id="saveButton"  href="#">Save</button>
+                </div>
+                {% endif %}
+                <button id="go_back" class="btn button">GO BACK</button>
+            </div>
+        </header> <!-- card-header end// -->
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th width="20%">Product</th>
+                                    <th width="20%">name</th>
+                                    <th width="20%">Quantity</th>
+                                    <th width="20%">Order Item id</th>
+                                    <th width="20%">Status</th>
+                                    
+                                    <th width="20%" class="text-end">Price Per Unite</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a class="itemside">
+                                            <div class="left">
+                                                <img src="{{order_item.order_product.variantimage_set.first.images.url}}" width="150" height="150"  alt="Item">
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td><div class="info">{{order_item.order_product.get_variant_name}}</div></td>
+                                    <td>{{order_item.quantity}}</td>
+                                    <td id="order_item_id">{{order_item.order_item_id}}</td>
+                                    <td> {{order_item.order_status}}</td>
+                                    
+                                    <td class="text-end"> {{order_item.order_product.sale_price}}</td>
+                                </tr>
+                            </tbody>
+                            {% if 'CANCELLED' in order_item.order_status %}
+                            <td>Reason for cancellation : 
+                            {{order_item.cancel_reason}}</td>
+                            {% else %}
+                            {% endif %}
+                        </table>
+                    </div> <!-- table-responsive// -->
+                </div> <!-- col// -->
+            </div>
+        </div> <!-- card-body end// -->
+    </div> <!-- card end// -->
+</section> <!-- content-main end// -->
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    function saveStatus() {
+        // Get the selected value from the dropdown
+        var selectedValue = $("#statusDropdown").val();
+        console.log("Selected value: " + selectedValue);
+
+        var order_id = $("td:eq(3)").text();
+        console.log('Order ID: ' + order_id);
+
+        {% comment %} var csrfToken = $('input[name=csrfmiddlewaretoken]').val(); {% endcomment %}
+        var csrfToken = document.cookie.match(/csrftoken=([^;]*)/)[1];
+
+        $.ajax({
+            url: "{% url 'order:admin_order_status' %}",
+            method: "POST",
+            dataType: 'json',
+            data: {
+                'status': selectedValue,
+                'order_id': order_id,
+                'csrfmiddlewaretoken': csrfToken,
+            },
+            success: function (data) {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    console.error('Invalid request or other error:', data.message);
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error('AJAX request failed:', textStatus, errorThrown);
+            }
+           
+           
+        });
+    }
+    $(document).ready(function () { 
+        $("#saveButton").on("click", function () {
+            saveStatus();
+        });
+    });
+    function Go_back(){
+        history.back();
+
+    }
+
+    document.getElementById('go_back').addEventListener('click', Go_back);
+</script>
+    {% endblock main %}

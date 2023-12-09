@@ -1,0 +1,281 @@
+{% extends "base.html" %} 
+{% block title %}CART MANAGEMENT{% endblock title %} 
+{%block main %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+<style>
+body {
+            min-height: 100vh;
+            background-size: cover;
+            font-family: 'Lato', sans-serif;
+            
+
+        }
+        .container-fluid {
+            margin-top: 200px ;
+            overflow:hidden;
+        }
+
+        p {
+            font-size: 14px;
+            margin-bottom: 7px;
+
+        }
+
+        .small {
+            letter-spacing: 0.5px !important;
+        }
+
+        .card-1 {
+            box-shadow: 2px 2px 10px 0px rgb(190, 108, 170);
+        }
+
+        hr {
+            background-color: rgba(248, 248, 248, 0.667);
+        }
+
+
+        .bold {
+            font-weight: 500;
+        }
+
+        .change-color {
+            color: #AB47BC !important;
+        }
+
+        .card-2 {
+            box-shadow: 1px 1px 3px 0px rgb(112, 115, 139);
+
+        }
+
+        .fa-circle.active {
+            font-size: 8px;
+            color: #AB47BC;
+        }
+
+        .fa-circle {
+            font-size: 8px;
+            color: #aaa;
+        }
+
+        .rounded {
+            border-radius: 2.25rem !important;
+        }
+
+
+        .progress-bar {
+            background-color: #AB47BC !important;
+        }
+
+
+        .progress {
+            height: 10px !important;
+            margin-bottom: 0;
+        }
+
+        .invoice {
+            position: relative;
+            top: -70px;
+        }
+
+        .Glasses {
+            position: relative;
+            top: -12px !important;
+        }
+
+        .card-footer {
+            background-color: #AB47BC;
+            color: #fff;
+        }
+
+        h2 {
+            color: rgb(78, 0, 92);
+            letter-spacing: 2px !important;
+        }
+
+        .display-3 {
+            font-weight: 500 !important;
+        }
+
+        @media (max-width: 479px) {
+            .invoice {
+                position: relative;
+                top: 7px;
+            }
+
+            .border-line {
+                border-right: 0px solid rgb(226, 206, 226) !important;
+            }
+
+        }
+
+        @media (max-width: 700px) {
+
+            h2 {
+                color: rgb(78, 0, 92);
+                font-size: 17px;
+            }
+
+            .display-3 {
+                font-size: 28px;
+                font-weight: 500 !important;
+            }
+        }
+
+        .card-footer small {
+            letter-spacing: 7px !important;
+            font-size: 12px;
+        }
+
+        .border-line {
+            border-right: 1px solid rgb(226, 206, 226)
+        }
+</style>
+<div class="container-fluid my-5">
+    <div class="card-header bg-white">
+        <div class="media flex-sm-row flex-column-reverse justify-content-between  ">
+            <div class="col my-auto"> <h4 class="mb-0">Thanks for your Order So Far ,<span class="change-color">{{profile.full_name}}</span> !</h4> </div>
+        </div>
+    </div>
+    {% for order_item in order_item %}
+        <div class="row" style="height:25rem;">
+            <div class="col">
+                <div class="card card-2" style="padding-top:4rem;" >
+                    <div class="card-body">
+                        <div class="media">
+                            <div class="sq align-self-center" style='border-radius:30px; height:50px;' > <img width="60" height="50" style='border-radius:30px' class="img-fluid  " src="{{order_item.order_product.variantimage_set.first.images.url}}" /> </div>
+                            <div class="media-body my-auto text-right">
+                                {% if "CANCELLED" in order_item.order_status or 'OUT FOR DELIVERY' in order_item.order_status or 'DELIVERED' in order_item.order_status %}
+                                {% else %}
+                                <a href="{% url "order:cancel_order" id=order_item.id%}"><button class="btn button" style="position:relative; bottom:7rem; left:60rem;">REQUEST CANCEL</button></a> 
+                             {% endif %}   
+                             <div class="btn button" style="position:relative; bottom:7rem; left:62rem; background-color:yellow; color:black;" >{{order_item.get_order_status_display}}</div>
+                                <div class="row  my-auto flex-column flex-md-row">
+                                    <div style="margin-top:-130px; margin-left:150px"> <h4 class="mb-0">{{order_item.order_product.get_variant_name }}</h4>  </div>
+                                    {% if order_item.payment_details.cod_payment_id %}
+                                    <div class="col-auto my-auto">Payment ID : <small>{{order_item.payment_details.cod_payment_id}} </small></div>
+                                    {% else %}
+                                    <div class="col-auto my-auto">Payment ID : <small>{{order_item.payment_details.razorpay_payment_id}} </small></div>
+                                    {% endif %}
+                                    <div style="margin-left:200px"class="col my-auto">Order Number <small># {{order_item.order.order_number}} </small></div>
+                                    <div style="margin-left:200px"class="col my-auto">Order Item No <small>{{order_item.order_item_id}} </small></div>
+                                    <div class="col my-auto"> <small>Qty : {{order_item.quantity}}</small></div>
+                                    <div class="col my-auto"><h6 class="mb-0">Price: &#8377; {{order_item.order_product.sale_price}}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-3 ">
+                        <div class="row" style="position: relative; bottom:2rem;">
+                            <div class="col mt-auto">
+                                <div class="media row justify-content-between">
+                                    {% if order_item.order_status == 'PLACED'   %}
+                                    <div class="col"><span> <small  class="text-right mr-sm-2">Order placed</small> <i class="fa fa-circle active"></i> </span></div>
+                                    <div class="col"><span> <small  class="text-right mr-sm-2">Processing</small> <i class="fa fa-circle "></i> </span></div>
+                                    <div class="col"> <span> <small class="text-right mr-sm-2">Shipped</small><i class="fa fa-circle "></i></span></div>
+                                    <div class="col"> <span> <small class="text-right mr-sm-2">Out for delivary</small><i class="fa fa-circle "></i></span></div>
+                                    <div class="col"><small  class="text-right mr-sm-2">Delivered</small><span> <i  class="fa fa-circle"></i></span></div>
+                                    <div class="progress my-auto"><div class="progress-bar progress-bar  rounded" style="width: 10%" role="progressbar" aria-valuenow="25" aria-valuemin="0"  aria-valuemax="100"></div> </div>
+                                    {% elif order_item.order_status == 'PROCESSING' %}
+                                    <div class="col"><span> <small  class="text-right mr-sm-2">Order placed</small> <i class="fa fa-circle active"></i> </span></div>
+                                    <div class="col"><span> <small  class="text-right mr-sm-2">Processing</small> <i class="fa fa-circle active"></i> </span></div>
+                                    <div class="col"> <span> <small class="text-right mr-sm-2">Shipped</small><i class="fa fa-circle "></i></span></div>
+                                    <div class="col"> <span> <small class="text-right mr-sm-2">Out for delivary</small><i class="fa fa-circle "></i></span></div>
+                                    <div class="col"><small  class="text-right mr-sm-2">Delivered</small><span> <i  class="fa fa-circle"></i></span></div>
+                                    <div class="progress my-auto"><div class="progress-bar progress-bar  rounded" style="width: 30%" role="progressbar" aria-valuenow="25" aria-valuemin="0"  aria-valuemax="100"></div> </div>
+                                    {% elif order_item.order_status == 'SHIPPED' %}
+                                    <div class="col"><span> <small  class="text-right mr-sm-2">Order placed</small> <i class="fa fa-circle active"></i> </span></div>
+                                    <div class="col"><span> <small  class="text-right mr-sm-2">Processing</small> <i class="fa fa-circle active"></i> </span></div>
+                                    <div class="col"> <span> <small class="text-right mr-sm-2">Shipped</small><i class="fa fa-circle active"></i></span></div>
+                                    <div class="col"> <span> <small class="text-right mr-sm-2">Out for delivary</small><i class="fa fa-circle "></i></span></div>
+                                    <div class="col"><small  class="text-right mr-sm-2">Delivered</small><span> <i  class="fa fa-circle"></i></span></div>
+                                    <div class="progress my-auto"><div class="progress-bar progress-bar  rounded" style="width: 50%" role="progressbar" aria-valuenow="25" aria-valuemin="0"  aria-valuemax="100"></div> </div>
+                                    {% elif order_item.order_status == 'OUT FOR DELIVERY' %}
+                                   <div class="col"><span> <small  class="text-right mr-sm-2">Order placed</small> <i class="fa fa-circle active"></i> </span></div>
+                                   <div class="col"><span> <small  class="text-right mr-sm-2">Processing</small> <i class="fa fa-circle active"></i> </span></div>
+                                   <div class="col"> <span> <small class="text-right mr-sm-2">Shipped</small><i class="fa fa-circle active"></i></span></div>
+                                   <div class="col"> <span> <small class="text-right mr-sm-2">Out for delivary</small><i class="fa fa-circle active"></i></span></div>
+                                   <div class="col"><small  class="text-right mr-sm-2">Delivered</small><span> <i  class="fa fa-circle"></i></span></div>
+                                   <div class="progress my-auto"><div class="progress-bar progress-bar  rounded" style="width: 70%" role="progressbar" aria-valuenow="25" aria-valuemin="0"  aria-valuemax="100"></div> </div>
+                                   {% elif order_item.order_status == 'DELIVERED' %}
+                                   <div class="col"><span> <small  class="text-right mr-sm-2">Order placed</small> <i class="fa fa-circle active"></i> </span></div>
+                                   <div class="col"><span> <small  class="text-right mr-sm-2">Processing</small> <i class="fa fa-circle active"></i> </span></div>
+                                   <div class="col"> <span> <small class="text-right mr-sm-2">Shipped</small><i class="fa fa-circle active"></i></span></div>
+                                   <div class="col"> <span> <small class="text-right mr-sm-2">Out for delivary</small><i class="fa fa-circle active "></i></span></div>
+                                   <div class="col"><small  class="text-right mr-sm-2">Delivered</small><span> <i  class="fa fa-circle active"></i></span></div>
+                                   <div class="progress my-auto"><div class="progress-bar progress-bar  rounded" style="width: 100%" role="progressbar" aria-valuenow="25" aria-valuemin="0"  aria-valuemax="100"></div> </div> 
+                                   {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            {% endfor %}
+            <div class="col-md-6">
+                <div class="order_review">
+                    <div class="mb-20">
+                        <h4>Your Orders</h4>
+                    </div>
+                    <div class="table-responsive order_table text-center">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">Product</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              {% for cart_item in cart_item %}
+                                <tr>
+                                    <td class="image product-thumbnail"><img width="60px" height="80px" src="{{cart_item.product.variantimage_set.first.images.url}}" alt="#"></td>
+                                    <td>
+                                        <h5><a href="shop-product-full.html">{{cart_item.product.get_variant_name}}</a></h5> <span class="product-qty">x {{cart_item.quantity}}</span>
+                                    </td>
+                                    <td>{{cart_item.product.sale_price}} x {{cart_item.quantity}}</td>
+                                {% endfor %}
+                               
+                                <tr>
+                                    <th>SubTotal</th>
+                                    <td class="product-subtotal" colspan="2"> ₹ {{order.order_subtotal}}</td>
+                                    
+                                </tr>
+                                <tr>
+
+                                    <th>Shipping</th>
+                                    {% if order.order_shipping %}
+                                    <td colspan="2"><em>₹ {{order.order_shipping}}</em> <br><span style="font-size:11px; color:gray;"><b>WANT TO AVOID SHIPPING CHARGE PURCHASE UPTO  ₹ 200000</b></span></td>
+                                    {% else %}
+                                    <td colspan="2"><em>Free Shipping</em></td>
+                                    {% endif %}
+                                </tr>
+                                {% if order.order_coupon %}
+                                  <tr>
+                                    <th>Coupon</th>
+                                      <td colspan="2" class="product-subtotal"> ₹ {{order.order_coupon}}</td>
+                                  </tr>
+                                  {% else %}
+                                  <th>Coupon</th>
+                                  <td colspan="2" class="product-subtotal">No Coupons Used</td>
+                                  {% endif %}
+                              
+                                <tr>
+                                    {% if 'RazorPay' in order.payment_details.payment_method  %}
+                                    <th>Total Amount Paid</th>
+                                    <td colspan="2" class="product-subtotal"><span class="font-xl text-brand fw-900"> ₹ {{order.order_total}}</span></td>
+                                    {% else %}
+                                    <th>Total Amount To Pay</th>
+                                    <td colspan="2" class="product-subtotal"><span class="font-xl text-brand fw-900"> ₹ {{order.order_total}}</span></td>
+                                    {% endif %}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+        
+    </div>
+</div>
+
+{% endblock main %}

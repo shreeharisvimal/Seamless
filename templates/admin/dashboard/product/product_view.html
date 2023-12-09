@@ -57,7 +57,9 @@
                     <div class="col-xl-2 col-lg-3 col-md-4 col-6">
                         <figure class="card border-1" >
                             <div class="card-header bg-white text-center" >
+                                <a href="{% url "products:product_select_variant" id=i.id %}">
                                 <img height="60px" width="60px" src="{{i.product_img.url}}" class="rounded-img"   alt="Logo">
+                                </a>
                             </div>
                             <figcaption class="card-body text-center">
                                 <h6 class="card-title m-0">{{i.product_name}}</h6>

@@ -10,13 +10,7 @@
           text-decoration: none; /* Remove underline */
         }
       </style>
-    <div>
-        {% for message in messages  %}
-        <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
-        <strong>{{message}}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        {% endfor %}
-    </div>
+    
 
 
     <main class="main">
@@ -48,7 +42,7 @@
                                     {% if item|default:""|length > 0 %} 
                                         {% for cart in item %}
                                             <tr>
-                                                <td class="image"><img width="60px" height="80px" src="{{cart.product.thumbnail_img.url}}" alt="#"></td>
+                                                <td class="image"><img width="60px" height="80px" src="{{cart.product.variantimage_set.first.images.url}}" alt="#"></td>
                                                 <td class="product-des">
                                                     <h5 class="product-name"><a href="">{{cart.product.get_variant_name}}</a></h5>
                                                     <p class="font-xs">{{cart.product.model_id}}<br></p>
@@ -202,7 +196,7 @@
                 },
                 error: function (error) {
                     console.error(error);
-                    // Handle errors, e.g., show an error message to the user
+                    
                 }
             });
             
@@ -252,6 +246,14 @@
                 quantityInput.val(currentQuantity - 1);
 
             }
+            else{
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Minimum quantity',
+                    text: 'Cart item need Atleat 1 quantity',
+                });
+            }
+            
 
             minusCart(cart_id);
         }
@@ -265,6 +267,13 @@
             if (currentQuantity < productStock) {
                 quantityElement.text(currentQuantity + 1);
                 quantityInput.val(currentQuantity + 1);
+            }
+            else{
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Stock shortage',
+                    text: 'Cant add more than more stock',
+                });
             }
 
             plusCart(cart_id);

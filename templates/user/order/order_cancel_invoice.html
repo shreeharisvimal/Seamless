@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Cancellation Confirmation</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #333333;
+    }
+
+    p {
+      color: #555555;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      text-align: center;
+      text-decoration: none;
+      background-color: #3498db;
+      color: #ffffff;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container-fluid">
+    <h1>Your Cancellation Request Has Been Confirmed</h1>
+    <h4>We regret to inform you that your order cancellation request has been confirmed, and your order has been canceled successfully.</h4>
+    <div style="top:70px; position: relative;"> <h5 class="mb-0">{{Product.get_variant_name }}</h5></div>
+    <div style="top:70px; position: relative;"> <h5 class="mb-0">{{Product.description }}</h5></div>
+        <div style="position:relative; left:270px; bottom:50px;" class=" my-auto flex-column flex-md-">
+            <div  class="col"> <small>{{Product.color}} </small></div>
+            <div style="col"class="col my-auto"> <small>{{Product.screen_size}} </small></div>
+            <div class="col"> <small>Qty : {{order_item.quantity}}</small></div>
+            <div class="col"><h5 class="mb-0">Price: &#8377; {{Product.sale_price}}</h5>
+            <div class="col"><h5 class="mb-0">Payment Method: {{order.payment_details.payment_method}}</h5>
+            <div class="col"> <small>Payment ID : {% if order_item.order.payment_details.cod_payment_id %} {{order_item.order.payment_details.cod_payment_id}} {% else %} {{order_item.order.payment_details.razorpay_payment_id}} {% endif %}</small></div>
+            <div class="col"> <small>Order Number : {{order_item.order.order_number}}</small></div>
+        </div>
+        <P>Dear {{order_item.user.username}}, <br>As per Your request Your Order has have been cancelled</P>
+        <h4> CANCELLATION REASON : <br> {{order_item.cancel_reason}}</h4>
+    </div>
+    <p>If you have any questions or concerns, please feel free to contact our customer support team.</p>
+
+    <p>Thank you for choosing our services!</p>
+
+    <p>Best regards,<br>Seamless</p>
+
+    <p><a href="http://127.0.0.1:8000/" class="button">Visit Our Website</a></p>
+  </div>
+
+</body>
+</html>

@@ -146,19 +146,21 @@
                                         <h5 class="mb-0">Orders tracking</h5>
                                     </div>
                                     <div class="card-body contact-from-area">
-                                        <p>To track your order please enter your OrderID in the box below and press "Track" button. This was given to you on your receipt and in the confirmation email you should have received.</p>
+                                        <p>To see the progress or the full details of an order please enter your Order Item Number and the Payment id in  the box below and press "Track" button. This was given to you on your receipt and in the confirmation email you should have received.</p>
                                         <div class="row">
                                             <div class="col-lg-8">
-                                                <form class="contact-form-style mt-30 mb-50" action="#" method="post">
+                                                <form class="contact-form-style mt-30 mb-50" action="{% url "order:user_order_tracking" %}" method="post">
+                                                    {% csrf_token %}
                                                     <div class="input-style mb-20">
-                                                        <label>Order ID</label>
-                                                        <input name="order-id" placeholder="Found in your order confirmation email" type="text" class="square">
+                                                        <label>Order Item id</label>
+                                                        <input name="order-id" placeholder="Order Item id can be Found in the order history or mail" type="text" class="square">
                                                     </div>
                                                     <div class="input-style mb-20">
-                                                        <label>Billing email</label>
-                                                        <input name="billing-email" placeholder="Email you used during checkout" type="email" class="square">
+                                                        <label>Payment Id</label>
+                                                        <input name="billing-email" placeholder="Payment id can be Found in the order history or mail" type="text" class="square">
                                                     </div>
                                                     <button class="submit submit-auto-width" type="submit">Track</button>
+                                                    <a href="{% url "order:order_user_view" %}"><button  class="submit submit-auto-width" type="button">My Orders</button></a>
                                                 </form>
                                             </div>
                                         </div>

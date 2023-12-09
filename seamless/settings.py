@@ -92,7 +92,6 @@ TEMPLATES = [
                 'cart.context_processors.count_wish',
                 'cart.context_processors.count_cart',
                 'cart.context_processors.profile_pic',
-
             ],
         },
     },
@@ -189,6 +188,15 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1017029845031-a8jl5qi2lli4k3309rai0nsjrnil38kf.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 SOCIAL_AUTH_EMAIL_REQUIRED = True
+
+
+
+
+
+RAZORPAY_API_KEY = 'rzp_test_WOCu4tYSeELze1'
+RAZORPAY_API_SECRET = '6VjyPr9Lu6PtfgUSibZY319p'
+
+
 
 
 

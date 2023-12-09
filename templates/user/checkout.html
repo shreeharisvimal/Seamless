@@ -4,11 +4,7 @@
 {% load static %} 
 <link rel="stylesheet"  href="{% static 'css/main.css' %}"> 
 <div>
-    {% for message in messages  %}
-    <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
-    <strong>{{message}}</strong>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    {% endfor %}
+    
 </div>
 <main class="main">
   <div class="page-header breadcrumb-wrap">
@@ -69,33 +65,39 @@
                 <h4 style="margin-bottom: 20px;">Please select your Shipping address</h4>
                 <div class="form-group">
                     <div  class="custom_select">
-                        <select id='select' class="form-control">
+                        <select id='select_ship' class="form-control">
+                            <option value="">Please select Your shipping address</option>
+
                             {% if default_shipping or shipping_address  %}
-                            {% for default_shipping in default_shipping  %}
-                            <option style="color: green;" value=""><b>{{default_shipping.FullAddress}} - DEFAULT</b></option>
-                            {% endfor %}
-                            {% for shipping in shipping_address %}
-                        <option value="{{shipping.id}}"><b>{{shipping.FullAddress}}</option>
-                            {% endfor %}
-                        {% else %}
-                        <option style="color: green;" value=""><b>No address available</b></option>
-                        {% endif %}
+                                {% for default_shipping in default_shipping  %}
+                                <option style="color: green;" value="{{default_shipping.id}}"><b>{{default_shipping.FullAddress}} - DEFAULT</b></option>
+                                {% endfor %}
+                                    {% for shipping in shipping_address %}
+                                    <option value="{{shipping.id}}"><b>{{shipping.FullAddress}}</option>
+                                    {% endfor %}
+                                {% comment %} ---------------- {% endcomment %}
+                                {% else %}
+                                <option style="color: green;" value=""><b>No address available</b></option>
+                            {% endif %}
                         </select>
                     </div>
                 </div>
                 <h4 style="margin-bottom: 20px; margin-top:20px">Please select your Billing address</h4>
                 <div class="form-group">
                     <div  class="custom_select">
-                        <select id='select' class="form-control">
+                        <select id='select_bill' class="form-control">
+                            <option value="">Please select Your billing address</option>        
+
                             {% if default_billing or billing_address  %}
-                            {% for default_billing in default_billing %}
-                            <option style="color: green;" value=""><b>{{ default_billing.FullAddress }} - DEFAULT</b></option>
-                            {% endfor %}
-                                {% for billing in billing_address %}
-                            <option value="{{billing.id}}"><b>{{billing.FullAddress}}</b></option>
-                                {% endfor %}
-                            {% else %}
-                            <option style="color: green;" value=""><b>No address available</b></option>
+                                {% for default_billing in default_billing %}
+                                    <option style="color: green;" value="{{default_billing.id}}"><b>{{ default_billing.FullAddress }} - DEFAULT</b></option>
+                                    {% endfor %}
+                                        {% for billing in billing_address %}
+                                        <option value="{{billing.id}}"><b>{{billing.FullAddress}}</b></option>
+                                        {% endfor %}
+                                {% comment %} --------------------------- {% endcomment %}
+                                {% else %}
+                                <option style="color: green;" value=""><b>No address available</b></option>
                             {% endif %}
                         </select>
                        
@@ -231,7 +233,7 @@
                               <tbody>
                                 {% for cart_item in cart_item %}
                                   <tr>
-                                      <td class="image product-thumbnail"><img width="60px" height="80px" src="{{cart_item.product.thumbnail_img.url}}" alt="#"></td>
+                                      <td class="image product-thumbnail"><img width="60px" height="80px" src="{{cart_item.product.variantimage_set.first.images.url}}" alt="#"></td>
                                       <td>
                                           <h5><a href="shop-product-full.html">{{cart_item.product.get_variant_name}}</a></h5> <span class="product-qty">x {{cart_item.quantity}}</span>
                                       </td>
@@ -296,37 +298,18 @@
                               <h5>Payment</h5>
                           </div>
                           <div class="payment_option">
-                              <div style="margin-bottom:35px" class="custome-radio">
-                                  <input class="form-check-input" required type="radio" name="payment_option" id="exampleRadios3" checked="">
-                                  <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Direct Bank Transfer</label>
-                                  <div class="form-group collapse in" id="bankTranfer">
-                                      <p class="text-muted mt-5">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration. </p>
-                                  </div>
-                                  <img style=" position: relative; left: 25px; top: 15px;" width="45" height="45" src="https://img.icons8.com/external-flat-wichaiwi/64/external-bank-transfer-banking-and-financial-flat-wichaiwi.png" alt="external-bank-transfer-banking-and-financial-flat-wichaiwi"/>
-                              </div>
-                              <div class="custome-radio">
-                                  <input class="form-check-input" required type="radio" name="payment_option" id="exampleRadios5" checked="">
-                                  <label class="form-check-label" for="exampleRadios5" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">UPI</label>
-                                  <div class="form-group collapse in" id="paypal">
-                                      <p class="text-muted mt-5">Pay via PayPal; you can pay with your credit card if you don't have a PayPal account.</p>
-                                  </div>
-                                    <svg style="margin-left: 130px;" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 48 48">
-                                        <polygon fill="#388e3c" points="29,4 18,45 40,24"></polygon><polygon fill="#f57c00" points="21,3 10,44 32,23"></polygon>
-                                    </svg>
-                              </div>
-
-                                <div class="custome-radio">
-                                    <input class="form-check-input" required type="radio" name="payment_option" id="exampleRadios6" checked="">
-                                    <label class="form-check-label" for="exampleRadios6" data-bs-toggle="collapse" data-target="#cod" aria-controls="cod">Cash On Delivery</label>
-                                    <div class="form-group collapse in" id="cod">
-                                        <p class="text-muted mt-5">cash on delivary you can pay with your credit card if you don't have a PayPal account.</p>
-                                    </div>
-                                    <img style=" position: relative; left: 45px; top: 15px" width="45" height="45" src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/external-cash-on-delivery-web-store-flaticons-lineal-color-flat-icons-4.png" alt="external-cash-on-delivery-web-store-flaticons-lineal-color-flat-icons-4"/>
+                            <div class="custome-radio">
+                                <input class="form-check-input" required type="radio" name="payment_option" id="exampleRadios6" checked>
+                                <label class="form-check-label" for="exampleRadios6" data-bs-toggle="collapse" data-target="#cod" aria-controls="cod">Cash On Delivery</label>
+                                <div class="form-group collapse in" id="cod">
+                                    <p class="text-muted mt-5">Cash on delivery; you can pay with your credit card if you don't have a PayPal account.</p>
                                 </div>
-
+                                <img style="position: relative; left: 45px; top: 15px" width="45" height="45" src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/external-cash-on-delivery-web-store-flaticons-lineal-color-flat-icons-4.png" alt="external-cash-on-delivery-web-store-flaticons-lineal-color-flat-icons-4"/>
+                            </div>
                             </div>
                       </div>
-                      <a href="#" class="btn btn-fill-out btn-block mt-30">Place Order</a>
+                      <button Style="margin-top:33px;" type="button" id="paywithrazor" class="btn button">PAY WITH RAZOR</button>
+                      <a href="#" onclick="getSelectedPaymentOption(); place_order()" class="btn btn-fill-out btn-block mt-30">Place Order</a>
                   </div>
               </div>
           </div>
@@ -335,16 +318,165 @@
 </main>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
     $(document).ready(function() {
         function openAddress() {
             $('#my_address_form').toggle($('#flexCheckChecked').prop('checked'));
         }
-
         $('#flexCheckChecked').change(openAddress);
 
         openAddress();
     });
+    var shippingAddressId;
+    var billingAddressId;
+    $('#select_ship').change(function () {
+        shippingAddressId = $(this).val();
+        console.log('Selected shipping Address ID:', shippingAddressId);
+    });
+    $('#select_bill').change(function () {
+        billingAddressId = $(this).val();
+        console.log('Selected billing Address ID:', billingAddressId);
+    });
+    var payment;
+
+    function getSelectedPaymentOption() {
+        var radioButtons = document.querySelectorAll('input[name="payment_option"]');
+    
+        for (var i = 0; i < radioButtons.length; i++) {
+            console.log('RadioButton:', radioButtons[i].id, 'Checked:', radioButtons[i].checked);
+
+            if (radioButtons[i].checked) {
+                payment = radioButtons[i].id;
+                console.log('Selected payment option:', payment);
+                break;
+            }
+        }
+    }
+    function place_order(){ 
+        var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
+        console.log('Data being sent:', { 'shipping': shippingAddressId, 'billing': billingAddressId, 'payment_select': payment, 'csrfmiddlewaretoken': csrfToken });
+        
+
+        $.ajax({
+            url: "{% url 'order:place_order'%}",  
+            method: "POST",
+            dataType: 'json',
+            data: {
+                'shipping': shippingAddressId,
+                'billing': billingAddressId,
+                'payment_select': payment,  // Correct key here
+                'csrfmiddlewaretoken': csrfToken,
+            },
+            success: function (data) {
+                if(data.success){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Hooray',
+                        text: 'The order has Been placed succesfully',
+                    });
+                    window.location.href='view-invoice_showing';
+                }
+                else{
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Please select Your address',
+                        text: 'Select your Billing or shipping address',
+                    });
+                }
+                
+            },
+           
+        });
+    
+        
+    }
+    var shippingAddressId;
+    var billingAddressId;
+    $('#select_ship').change(function () {
+        shippingAddressId = $(this).val();
+        console.log('Selected shipping Address ID:', shippingAddressId);
+    });
+    $('#select_bill').change(function () {
+        billingAddressId = $(this).val();
+        console.log('Selected billing Address ID:', billingAddressId);
+    });
+    $('#paywithrazor').click(function (e) {
+        e.preventDefault(); // Add parentheses to call the function
+    
+        var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
+    
+        // Assuming shippingAddressId and billingAddressId are defined somewhere in your code
+        console.log(shippingAddressId)
+        console.log(billingAddressId)
+    
+        // Use POST method to send data to the server
+        $.ajax({
+            method: "POST", // Change to POST
+            url: "pay_with_razor",
+            data: {
+                'shipping': shippingAddressId,
+                'billing': billingAddressId,
+                'csrfmiddlewaretoken': csrfToken
+            },
+            success: function (response) {
+                console.log(response);
+                console.log(shippingAddressId)
+                console.log(billingAddressId)
+    
+                var options = {
+                    "key": "rzp_test_WOCu4tYSeELze1",
+                    "amount": 1*100, // Amount should be in paise
+                    "currency": "INR",
+                    "name": "SEAMLESS",
+                    "description": "Thank you for purchasing with seamless",
+                    "order_id": response.order_response.id,
+                    "image": "imgs/favicon.png",
+                    "handler": function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Hooray',
+                            text: 'The order has Been placed succesfully',
+                        });
+                        window.location.href='view-invoice_showing';
+                    },
+                    "prefill": {
+                        "name": response.full_name,
+                        "email": response.email,
+                        "contact": response.phone_number
+                    },
+                    "theme": {
+                        "color": "#3399cc"
+                    }
+                };
+    
+                var rzp1 = new Razorpay(options);
+    
+                rzp1.on('payment.failed', function (response) {
+                    // Handle payment failure
+                    console.log(shippingAddressId)
+                    console.log(billingAddressId)
+                    alert(response.error.code);
+                    alert(response.error.description);
+                    alert(response.error.source);
+                    alert(response.error.step);
+                    alert(response.error.reason);
+                    alert(response.error.metadata.order_id);
+                    alert(response.error.metadata.payment_id);
+                });
+    
+                rzp1.open();
+            },
+            error: function (error) {
+                console.log(error.responseText);
+                // Handle the error if necessary
+            }
+        });
+    });
+    
+    
+    
+
 </script>
 
 {% endblock main %}

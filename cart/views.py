@@ -84,124 +84,6 @@ def delete_coupon(request, id):
     return redirect('cart:view_coupon')
 
 
-# def view_cart(request):
-#     if not request.user.is_authenticated:
-#         if not request.user.is_superuser:
-#             return redirect('admin_side:admin_login_handler')
-#         return redirect('user_side:landing')
-    
-#     cart, check_cart = Cart.objects.get_or_create(user=request.user)
-#     cart_items = Cart_Item.objects.filter(cart=cart).order_by('id')   
-#     subtotal = sum(item.product.sale_price * item.quantity for item in cart_items)
-#     shipping = 0
-#     total = Decimal(0)
-#  #checking if the user can get free delivery 
-#     if subtotal < 200000:
-#         shipping = (subtotal * Decimal('0.1')) / 100
-#     total = subtotal
-#     off = 0
-
-#     if cart.coupon is not None:
-#         code = cart.coupon
-#         total -= code.discount
-#         off = code.discount
-#     if request.method == 'POST':
-#         coupon_code = request.POST.get('user_coupon')
-#         if cart.coupon is None:
-#             code = Coupon.objects.filter(Q(is_active=True) & Q(code=coupon_code)).first()
-#             if code is None:
-#                 messages.warning(request, f'{coupon_code} is invalid Coupon Code')
-#                 return redirect('cart:view_cart')
-
-#             elif total !=0:
-#                 cart.sub_total = total
-#                 total = total - code.discount
-#                 off = code.discount
-#                 cart.total = total
-#                 cart.coupon = code
-#                 cart.shipping = shipping if shipping else 0
-#                 cart.save()
-#             else:
-#                 messages.info(request,'cant you coupons without any cart items')
-
-#         else:
-#             # Handle the case where a user tries to add more than one coupon
-#             messages.info(request, 'Cannot add more than one coupon')
-
-#     # Check if the cart is empty and update the Cart model
-#     if not cart_items:
-#         cart.total = None
-#         cart.sub_total = None
-#         cart.coupon = None
-#         cart.shipping = None
-#         cart.save()
-#     context = {
-#         'item': cart_items,
-#         'pro_subtotal': subtotal,
-#         'shipping': shipping,
-#         'total': total,
-#         'off': off,
-#         'cart': Cart.objects.filter(user=request.user),
-#     }
-#     return render(request, 'user/cart.html', context)
-# def view_cart(request):
-#     if not request.user.is_authenticated:
-#         if not request.user.is_superuser:
-#             return redirect('admin_side:admin_login_handler')
-#         return redirect('user_side:landing')
-
-#     cart, check_cart = Cart.objects.get_or_create(user=request.user)
-#     cart_items = Cart_Item.objects.filter(cart=cart).order_by('id')
-#     subtotal = sum(item.product.sale_price * item.quantity for item in cart_items)
-#     shipping = 0
-#     total = Decimal(subtotal)
-#     off = 0
-
-#     # checking if the user can get free delivery
-#     if subtotal < 200000:
-#         shipping = (subtotal * Decimal('0.1')) / 100
-#     total = subtotal
-#     if cart.coupon is not None:
-#         # If a coupon is already applied, display a message or handle as needed
-#         messages.info(request, 'Cannot add more than one coupon')
-#     else:
-#         # Handle coupon application for the first time
-#         if request.method == 'POST':
-#             coupon_code = request.POST.get('user_coupon')
-#             code = Coupon.objects.filter(Q(is_active=True) & Q(code=coupon_code)).first()
-
-#             if code is None:
-#                 messages.warning(request, f'{coupon_code} is an invalid Coupon Code')
-#             elif total !=0:
-#                 cart.sub_total = subtotal
-#                 cart.total = total - code.discount
-#                 off = code.discount
-#                 cart.coupon = code
-#                 cart.total += shipping if shipping else 0
-#                 cart.shipping = shipping if shipping else 0
-#                 cart.save()
-
-#     # Check if the cart is empty and update the Cart model
-#     if not cart_items:
-#         cart.total = None
-#         cart.sub_total = None
-#         cart.coupon = None
-#         cart.shipping = None
-#         cart.save()
-
-#     context = {
-#         'item': cart_items,
-#         'pro_subtotal': cart.sub_total if cart.sub_total else subtotal,
-#         'shipping': cart.shipping if cart.shipping else shipping,
-#         'total': cart.total if cart.total else total,
-#         'off': cart.coupon.discount if cart.coupon else off,
-#         'cart': Cart.objects.filter(user=request.user),
-#     }
-#     return render(request, 'user/cart.html', context)\
-
-
-
-
 
 def view_cart(request):
     if not request.user.is_authenticated:
@@ -235,6 +117,8 @@ def view_cart(request):
             cart.coupon = code
             cart.shipping = shipping
             cart.save()
+            messages.success(request,'the Coupon have been added to the cart')
+            return redirect('cart:view_cart')
 
     # Check if the cart is empty and update the Cart model
     if not cart_items:
@@ -243,7 +127,8 @@ def view_cart(request):
         cart.coupon = None
         cart.shipping = None
         cart.save()
-
+        messages.info(request,'Cart is Running on Low')
+        
     context = {
         'item': cart_items,  # Renamed 'item' to 'items' for clarity
         'pro_subtotal': cart.sub_total if cart.sub_total else subtotal,
@@ -268,7 +153,7 @@ def add_cart(request, id=None):
     try:
         item_check = Cart_Item.objects.get(cart=cart, product=product)
     
-        if product_quantity > product.stock:
+        if product_quantity > product.stock :
             messages.warning(request, 'cant add that many due to stock insufficient')
             return redirect('cart:view_cart')
         elif item_check.quantity + product_quantity > product.stock:
@@ -383,7 +268,7 @@ def item_plus(request):
         except Exception as e:
             # Log the exception for debugging purposes
             print(f"An error occurred: {str(e)}")
-            return JsonResponse({'error': 'An error occurred'}, status=500)
+            messages.info(request, 'Cant add more product quantity than its products stock')
     return JsonResponse({'error': 'Invalid request'}, status=400)
       
 
@@ -443,7 +328,7 @@ def remove_coupon(request):
         messages.info(request, 'the coupon has removed')
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        messages.info(request, 'No coupon has been setted to remove')
+        messages.info(request, 'No coupon has been Used to remove')
     return redirect('cart:view_cart')
 
 def clear_cart(request):
@@ -452,4 +337,5 @@ def clear_cart(request):
     cart_item.delete()
     cart.coupon = None
     cart.save()
+    messages.info(request,'all the cart items have been deleted')
     return redirect('cart:view_cart')

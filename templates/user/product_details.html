@@ -1,512 +1,623 @@
-{% extends "base.html" %} 
-{% block title %}PRODUCT DETAILS{% endblock title %} 
-{% block main %}
-{% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
-<style>
-    #message-container {
-        width: 300px;
-        margin: 20px auto;
-    }
+    {% extends "base.html" %} 
+    {% block title %}PRODUCT DETAILS{% endblock title %} 
+    {% block main %}
+    {% load static %}
+    {% comment %} <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"> {% endcomment %}
+    <style>
+        #message-container {
+            width: 300px;
+            margin: 20px auto;
+        }
 
-    .message {
-        position: relative;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        font-weight: bold;
-        opacity: 1;
-        transition: opacity 0.5s ease-in-out;
-    }
+        .message {
+            position: relative;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
 
-    #success-message {
-        background-color: #4CAF50; /* Green */
-        color: white;
-    }
+        #success-message {
+            background-color: #4CAF50; /* Green */
+            color: white;
+        }
 
-    #error-message {
-        background-color: #f44336; /* Red */
-        color: white;
-    }
+        #error-message {
+            background-color: #f44336; /* Red */
+            color: white;
+        }
 
-    .visible {
-        display: block;
-    }
-    
-    .hidden {
-        display: none;
-    }
+        .visible {
+            display: block;
+        }
+        
+        .hidden {
+            display: none;
+        }
 
-    .close-btn {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        cursor: pointer;
-    }
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+        }
 
-    #cbt{
-        position: relative;
-        left:-270px;
-        top:2px
-    }
-    #cwb{
-        position: relative;
-        left:90px;
-        top:-42px;
-    }
-    #my_new_btn{
-        background-color:white;
-        padding-top: 2px;
-        padding-bottom: 1px;
+        #cbt{
+            position: relative;
+            left:-270px;
+            top:2px
+        }
+        #cwb{
+            position: relative;
+            left:90px;
+            top:-42px;
+        }
+        #my_new_btn{
+            background-color:white;
+            padding-top: 2px;
+            padding-bottom: 1px;
 
-    }
-</style>
-<div class="page-header breadcrumb-wrap">
-    <div class="container">
-        <div class="breadcrumb">
-            <a href="{% url "user_side:landing" %}" rel="nofollow">Home</a>
-            <span></span> Products details 
-        </div>
-    </div>
-</div>
+        }
 
-<div id="message-container">
-    <div id="success-message" class="message hidden">
-        Success: Item added to cart successfully
-        <span class="close-btn" onclick="closeMessage('success-message')">X</span>
-    </div>
-    <div id="error-message" class="message hidden">
-        Error: Something went wrong!
-        <span class="close-btn" onclick="closeMessage('error-message')">X</span>
-    </div>
-</div>
-    {% for message in messages  %}
-<div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
-  <strong>{{message}}</strong>
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-{% endfor %}
-</div>
+        .carousel-container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            border: 1px solid #ddd; /* Optional: Add a border for styling */
+        }
 
-<section class="mt-50 mb-50">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="product-detail accordion-detail">
-                    <div class="row mb-50">
-                        {% for pro in product %}
-                        <div class="col-md-6 col-sm-12 col-xs-12">
-                            <div class="detail-gallery">
-                                <span class="zoom-icon"><i class="fi-rs-search"></i></span>
-                                <!-- MAIN SLIDES -->
-                                <div class="product-image-slider magnific-popup">
-                                    <figure class="border-radius-10 magnific-popup">
-                                        <img src="{{pro.thumbnail_img.url}}" class="magnific-popup" alt="product image">
-                                    </figure>
-                                   
-                                </div>
+        /* Style the carousel wrapper */
+        .carousel-wrapper {
+            display: flex;
+            transition: transform 1s ease-in-out;
+        }
 
-                                <div class="slider-nav-thumbnails pl-15 pr-15">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-12 col-xs-12">
-                            <div class="detail-info">
-                                <h2 class="title-detail">{{pro.get_variant_name}}</h2>
-                                <div class="product-detail-rating">
-                                    <div class="product-rate-cover text-end">
-                                        <div class="product-rate d-inline-block">
-                                            <div class="product-rating" style="width:90%">
-                                            </div>
-                                        </div>
-                                        <span class="font-small ml-5 text-muted"> (25 reviews)</span>
-                                    </div>
-                                </div>
-                                <div class="clearfix product-price-cover">
-                                    <div class="product-price primary-color float-left">
-                                        <ins><span class="text-brand">Rs {{pro.sale_price}}</span></ins>
-                                        <ins><span class="old-price font-md ml-15">{{pro.max_price}}</span></ins>
-                                        <span class="save-price  font-md color3 ml-15">{{per}}.0 % OFF</span>
-                                    </div>
-                                </div>
-                                <div class="bt-1 border-color-1 mt-15 mb-15"></div>
-                                <div class="short-desc mb-30">
-                                    <p>{{pro.description}}</p>
-                                </div>
-                                <div class="product_sort_info font-xs mb-30">
-                                    <ul>
-                                        <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year Semaless Brand Warranty</li>
-                                        <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy</li>
-                                        <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
-                                    </ul>
-                                </div>
-                                <div class="attr-detail attr-color mb-15">
-                                    <strong class="mr-10">Color</strong>
-                                    <ul class="list-filter color-filter">
-                                        <li><a href="#" data-color="Red"><span class="product-color-red"></span></a></li>
-                                        <li><a href="#" data-color="Yellow"><span class="product-color-yellow"></span></a></li>
-                                        <li class="active"><a href="#" data-color="White"><span class="product-color-white"></span></a></li>
-                                        <li><a href="#" data-color="Orange"><span class="product-color-orange"></span></a></li>
-                                        <li><a href="#" data-color="Cyan"><span class="product-color-cyan"></span></a></li>
-                                        <li><a href="#" data-color="Green"><span class="product-color-green"></span></a></li>
-                                        <li><a href="#" data-color="Purple"><span class="product-color-purple"></span></a></li>
-                                    </ul>
-                                </div>
-                                <div class="attr-detail attr-size">
-                                    <strong class="mr-10">Screen Size</strong>
-                                    <ul class="list-filter size-filter font-small">
-                                        <li><a href="#">15</a></li>
-                                        <li class="active"><a href="#">15/5</a></li>
-                                        <li><a href="#">16</a></li>
-                                        <li><a href="#">17</a></li>
-                                    </ul>
-                                </div>
-                                <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-                                <div class="detail-extralink">
-                                    <form>
-                                        {% csrf_token %}
-                                        <input type="hidden" value='{{pro.id}}' class="prod_id">
-                                        <div id="cbt" class="detail-qty border radius m-auto">
-                                            <a class="qty-down" onclick="decreaseQuantity()"><i class="fi-rs-angle-small-down"></i></a>
-                                            <span id="quantitySpan" name="c_count" class="qty-val">1</span>
-                                            <input type="hidden" id="quantityInput" class='item_quantity' name="quantity" value="1">
-                                            <a class="qty-up" onclick="increaseQuantity()"><i class="fi-rs-angle-small-up"></i></a>
-                                        </div>
-                                        <div id='cwb' class="product-extra-link2">
-                                            {% if user.is_authenticated %}
-                                            <button id='my_new_btn' type="submit" class="action-btn hover-up" onclick="addCart(event)"><img width="30" height="30" src="https://img.icons8.com/clouds/100/add-shopping-cart.png" alt="add-shopping-cart"/></button>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="{% url "user_side:add_wishlist" id=pro.id %}"><i class="fi-rs-heart"></i></a>
-                                            {% endif %}
-                                           
-                                        </div>
-                                        <ul class="product-meta font-xs color-grey mt-50">
-                                            <li class="mb-5">MODEL ID: <a href="#">{{pro.model_id}}</a></li>
-                                            <li>Availability:<span class="in-stock text-success stock_val ml-5">{{pro.stock}} Items In Stock</span></li>
-                                        </ul>
-                                       
-                                </form>
-                                </div>
-                               
-                            </div>
-                            <!-- Detail Info -->
-                        </div>
-                        
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-10 m-auto entry-main-content">
-                            <h3 class="section-title style-1 mb-30">Device Specifications</h3>
-                            <table class="font-md mb-30">
-                                <tbody>
-                                    <tr class="stand-up">
-                                        <td>
-                                            <p>{{pro.color}}</p>
-                                        </td>
-                                    </tr>
-                                    <tr class="folded-wo-wheels">
-                                        <td>
-                                            <p>{{pro.ram}}</p>
-                                        </td>
-                                    </tr>
-                                    <tr class="folded-w-wheels">
-                                        <td>
-                                            <p>{{pro.storage}}</p>
-                                        </td>
-                                    </tr>
-                                    <tr class="door-pass-through">
-                                        <td>
-                                            <p>{{pro.os}}</p>
-                                        </td>
-                                    </tr>
-                                    <tr class="frame">
-                                        <td>
-                                            <p>{{pro.screen_size}}</p>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            {% endfor %}
-                            <div class="social-icons single-share">
-                                <ul class="text-grey-5 d-inline-block">
-                                    <li><strong class="mr-10">Share this:</strong></li>
-                                    <li class="social-facebook"><a href="#"><img src="assets/imgs/theme/icons/icon-facebook.svg" alt=""></a></li>
-                                    <li class="social-twitter"> <a href="#"><img src="assets/imgs/theme/icons/icon-twitter.svg" alt=""></a></li>
-                                    <li class="social-instagram"><a href="#"><img src="assets/imgs/theme/icons/icon-instagram.svg" alt=""></a></li>
-                                    <li class="social-linkedin"><a href="#"><img src="assets/imgs/theme/icons/icon-pinterest.svg" alt=""></a></li>
-                                </ul>
-                            </div>
-                            <h3 class="section-title style-1 mb-30 mt-30">Reviews (3)</h3>
-                            <!--Comments-->
-                            <div class="comments-area style-2">
-                                <div class="row">
-                                    <div class="col-lg-8">
-                                        <h4 class="mb-30">Customer questions & answers</h4>
-                                        <div class="comment-list">
-                                            <div class="single-comment justify-content-between d-flex">
-                                                <div class="user justify-content-between d-flex">
-                                                    <div class="thumb text-center">
-                                                        <img src="assets/imgs/page/avatar-6.jpg" alt="">
-                                                        <h6><a href="#">Jacky Chan</a></h6>
-                                                        <p class="font-xxs">Since 2012</p>
-                                                    </div>
-                                                    <div class="desc">
-                                                        <div class="product-rate d-inline-block">
-                                                            <div class="product-rating" style="width:90%">
-                                                            </div>
-                                                        </div>
-                                                        <p>Thank you very fast shipping from Poland only 3days.</p>
-                                                        <div class="d-flex justify-content-between">
-                                                            <div class="d-flex align-items-center">
-                                                                <p class="font-xs mr-30">December 4, 2020 at 3:12 pm </p>
-                                                                <a href="#" class="text-brand btn-reply">Reply <i class="fi-rs-arrow-right"></i> </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!--single-comment -->
-                                            <div class="single-comment justify-content-between d-flex">
-                                                <div class="user justify-content-between d-flex">
-                                                    <div class="thumb text-center">
-                                                        <img src="assets/imgs/page/avatar-7.jpg" alt="">
-                                                        <h6><a href="#">Ana Rosie</a></h6>
-                                                        <p class="font-xxs">Since 2008</p>
-                                                    </div>
-                                                    <div class="desc">
-                                                        <div class="product-rate d-inline-block">
-                                                            <div class="product-rating" style="width:90%">
-                                                            </div>
-                                                        </div>
-                                                        <p>Great low price and works well.</p>
-                                                        <div class="d-flex justify-content-between">
-                                                            <div class="d-flex align-items-center">
-                                                                <p class="font-xs mr-30">December 4, 2020 at 3:12 pm </p>
-                                                                <a href="#" class="text-brand btn-reply">Reply <i class="fi-rs-arrow-right"></i> </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!--single-comment -->
-                                            <div class="single-comment justify-content-between d-flex">
-                                                <div class="user justify-content-between d-flex">
-                                                    <div class="thumb text-center">
-                                                        <img src="assets/imgs/page/avatar-8.jpg" alt="">
-                                                        <h6><a href="#">Steven Keny</a></h6>
-                                                        <p class="font-xxs">Since 2010</p>
-                                                    </div>
-                                                    <div class="desc">
-                                                        <div class="product-rate d-inline-block">
-                                                            <div class="product-rating" style="width:90%">
-                                                            </div>
-                                                        </div>
-                                                        <p>Authentic and Beautiful, Love these way more than ever expected They are Great earphones</p>
-                                                        <div class="d-flex justify-content-between">
-                                                            <div class="d-flex align-items-center">
-                                                                <p class="font-xs mr-30">December 4, 2020 at 3:12 pm </p>
-                                                                <a href="#" class="text-brand btn-reply">Reply <i class="fi-rs-arrow-right"></i> </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!--single-comment -->
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <h4 class="mb-30">Customer reviews</h4>
-                                        <div class="d-flex mb-30">
-                                            <div class="product-rate d-inline-block mr-15">
-                                                <div class="product-rating" style="width:90%">
-                                                </div>
-                                            </div>
-                                            <h6>4.8 out of 5</h6>
-                                        </div>
-                                        <div class="progress">
-                                            <span>5 star</span>
-                                            <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
-                                        </div>
-                                        <div class="progress">
-                                            <span>4 star</span>
-                                            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-                                        </div>
-                                        <div class="progress">
-                                            <span>3 star</span>
-                                            <div class="progress-bar" role="progressbar" style="width: 45%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">45%</div>
-                                        </div>
-                                        <div class="progress">
-                                            <span>2 star</span>
-                                            <div class="progress-bar" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65%</div>
-                                        </div>
-                                        <div class="progress mb-30">
-                                            <span>1 star</span>
-                                            <div class="progress-bar" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%</div>
-                                        </div>
-                                        <a href="#" class="font-xs text-muted">How are ratings calculated?</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--comment form-->
-                            <div class="comment-form">
-                                <h4 class="mb-15">Add a review</h4>
-                                <div class="product-rate d-inline-block mb-30">
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-8 col-md-12">
-                                        <form class="form-contact comment_form" action="#" id="commentForm">
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-group">
-                                                        <textarea class="form-control w-100" name="comment" id="comment" cols="30" rows="9" placeholder="Write Comment"></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-group">
-                                                        <input class="form-control" name="name" id="name" type="text" placeholder="Name">
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="form-group">
-                                                        <input class="form-control" name="email" id="email" type="email" placeholder="Email">
-                                                    </div>
-                                                </div>
-                                                <div class="col-12">
-                                                    <div class="form-group">
-                                                        <input class="form-control" name="website" id="website" type="text" placeholder="Website">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <button type="submit" class="button button-contactForm">Submit
-                                                    Review</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <section class="pt-25 pb-20">
-                        <div class="container wow fadeIn animated">
-                            <h3 class="section-title mb-20"><span>Our</span> Other Products</h3>
-                            <div class="carausel-6-columns-cover position-relative">
-                                <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-2-arrows"></div>
-                                <div class="carausel-6-columns carausel-arrow-center" id="carausel-6-columns-2">
-                                    {% for all in prod %}
-                                    <div class="product-cart-wrap small hover-up">
-                                        <div class="product-img-action-wrap">
-                                            <div class="product-img product-img-zoom">
-                                                <a href="{% url "user_side:product_details" id=all.id %}">
-                                                    <img width="50px" height="150px" class="default-img" src="{{all.thumbnail_img.url }}" alt="">
-                                                </a>
-                                            </div>
-                                            <div class="product-action-1">
-                                                {% if user.is_authenticated %}
-                                                <a aria-label="Love and View" class="action-btn small hover-up" href="{% url "user_side:add_wishlist" id=all.id %}" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                                {% endif %}
-                                            </div>
-                                            <div class="product-badges product-badges-position product-badges-mrg">
-                                                <span class="sale">Sale</span>
-                                            </div>
-                                        </div>
-                                        <div class="product-content-wrap">
-                                            <h2><a href="{% url "user_side:product_details" id=all.id %}">{{all.get_variant_name}}</a></h2>
-                                            <div class="rating-result" title="90%">
-                                                <span>
-                                                </span>
-                                            </div>
-                                            <div class="product-price">
-                                                <span>{{all.sale_price}} </span>
-                                                <span class="old-price">{{all.max_price}}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
+        /* Style individual carousel items (images) */
+        .carousel-item {
+            min-width: 100%;
+        }
+
+        /* Style navigation buttons */
+        .nav-button {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: #333;
+            background-color: transparent;
+            border: none;
+            outline: none;
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+        
+    </style>
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{% url "user_side:landing" %}" rel="nofollow">Home</a>
+                <span></span> Products details 
             </div>
         </div>
     </div>
-</section>
 
 
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="product-detail accordion-detail">
+                        <div class="row mb-50">
+                            {% for pro in product %}
+                            <div class="col-md-6 col-sm-12 col-xs-12" >
+                                <div class="detail-gallery">
+                                    <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+                                    <!-- MAIN SLIDES -->
+                                    <div class="product-image-slider">
+                                        {% for image in pro.variantimage_set.all %}
+                                        <figure class="border-radius-10">
+                                            <img src="{{image.images.url}}"  alt="product image">
+                                        </figure>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="slider-nav-thumbnails pl-15 pr-15">
+                                        {% for image in pro.variantimage_set.all %}
+                                        <div><img height="90px" src="{{image.images.url}}" alt="product image"></div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                <div class="detail-info">
+                                    <h2 class="title-detail">{{pro.get_variant_name}}</h2>
+                                    <div class="product-detail-rating">
+                                        <div class="product-rate-cover text-end">
+                                            <div class="product-rate d-inline-block">
+                                                <div class="product-rating" style="width:90%">
+                                                </div>
+                                            </div>
+                                            <span class="font-small ml-5 text-muted"> (25 reviews)</span>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix product-price-cover">
+                                        <div class="product-price primary-color float-left">
+                                            <ins><span class="text-brand">Rs {{pro.sale_price}}</span></ins>
+                                            <ins><span class="old-price font-md ml-15">{{pro.max_price}}</span></ins>
+                                            <span class="save-price  font-md color3 ml-15">{{per}}.0 % OFF</span>
+                                        </div>
+                                    </div>
+                                    <div class="bt-1 border-color-1 mt-15 mb-15"></div>
+                                    <div class="short-desc mb-30">
+                                        <p>{{pro.description}}</p>
+                                    </div>
+                                    <div class="product_sort_info font-xs mb-30">
+                                        <ul>
+                                            <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year Semaless Brand Warranty</li>
+                                            <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy</li>
+                                            <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
+                                        </ul>
+                                    </div>
+                                    <div class="attr-detail attr-color mb-15">
+                                        <strong class="mr-10">Color</strong>
+                                        <ul class="list-filter color-filter">
+                                            <li><a href="#" data-color="Red"><span class="product-color-red"></span></a></li>
+                                            <li><a href="#" data-color="Yellow"><span class="product-color-yellow"></span></a></li>
+                                            <li class="active"><a href="#" data-color="White"><span class="product-color-white"></span></a></li>
+                                            <li><a href="#" data-color="Orange"><span class="product-color-orange"></span></a></li>
+                                            <li><a href="#" data-color="Cyan"><span class="product-color-cyan"></span></a></li>
+                                            <li><a href="#" data-color="Green"><span class="product-color-green"></span></a></li>
+                                            <li><a href="#" data-color="Purple"><span class="product-color-purple"></span></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="attr-detail attr-size">
+                                        <strong class="mr-10">Screen Size</strong>
+                                        <ul class="list-filter size-filter font-small">
+                                            <li><a href="#">15</a></li>
+                                            <li class="active"><a href="#">15/5</a></li>
+                                            <li><a href="#">16</a></li>
+                                            <li><a href="#">17</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                                    <div class="detail-extralink">
+                                        <form>
+                                            {% csrf_token %}
+                                            <input type="hidden" value='{{pro.id}}' class="prod_id">
+                                            <div id="cbt" class="detail-qty border radius m-auto">
+                                                <a class="qty-down" onclick="decreaseQuantity()"><i class="fi-rs-angle-small-down"></i></a>
+                                                <span id="quantitySpan" name="c_count" class="qty-val">1</span>
+                                                <input type="hidden" id="quantityInput" class='item_quantity' name="quantity" value="1">
+                                                <a class="qty-up" onclick="increaseQuantity()"><i class="fi-rs-angle-small-up"></i></a>
+                                            </div>
+                                            <div id='cwb' class="product-extra-link2">
+                                                {% if user.is_authenticated %}
+                                                {% if pro.stock < 1 %}
+                                                <img width="45" height="45" src="https://img.icons8.com/external-victoruler-linear-colour-victoruler/64/external-out-of-stock-logistics-victoruler-linear-colour-victoruler.png" alt="external-out-of-stock-logistics-victoruler-linear-colour-victoruler"/>
+                                                {% else %}
+                                                <button id='my_new_btn' type="submit" class="action-btn hover-up" onclick="addCart(event)"><img width="30" height="30" src="https://img.icons8.com/clouds/100/add-shopping-cart.png" alt="add-shopping-cart"/></button>
+                                                {% endif %}
+                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="{% url "user_side:add_wishlist" id=pro.id %}"><i class="fi-rs-heart"></i></a>
+                                                {% endif %}
+                                            
+                                            </div>
+                                            <ul class="product-meta font-xs color-grey mt-50">
+                                                <li class="mb-5">MODEL ID: <a href="#">{{pro.model_id}}</a></li>
+                                                <li>Availability:<span class="in-stock text-success stock_val ml-5" value="{{pro.stock}}">{{pro.stock}} Items In Stock</span></li>
+                                            </ul>
+                                        
+                                    </form>
+                                    </div>
+                                
+                                </div>
+                                <!-- Detail Info -->
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-10 m-auto entry-main-content">
+                                <h3 class="section-title style-1 mb-30">Device Specifications</h3>
+                                <table class="font-md mb-30">
+                                    <tbody>
+                                        <tr class="stand-up">
+                                            <td>
+                                                <p>{{pro.color}}</p>
+                                            </td>
+                                        </tr>
+                                        <tr class="folded-wo-wheels">
+                                            <td>
+                                                <p>{{pro.ram}}</p>
+                                            </td>
+                                        </tr>
+                                        <tr class="folded-w-wheels">
+                                            <td>
+                                                <p>{{pro.storage}}</p>
+                                            </td>
+                                        </tr>
+                                        <tr class="door-pass-through">
+                                            <td>
+                                                <p>{{pro.os}}</p>
+                                            </td>
+                                        </tr>
+                                        <tr class="frame">
+                                            <td>
+                                                <p>{{pro.screen_size}}</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                {% endfor %}
+                                <div class="social-icons single-share">
+                                    <ul class="text-grey-5 d-inline-block">
+                                        <li><strong class="mr-10">Share this:</strong></li>
+                                        <li class="social-facebook"><a href="#"><img src="assets/imgs/theme/icons/icon-facebook.svg" alt=""></a></li>
+                                        <li class="social-twitter"> <a href="#"><img src="assets/imgs/theme/icons/icon-twitter.svg" alt=""></a></li>
+                                        <li class="social-instagram"><a href="#"><img src="assets/imgs/theme/icons/icon-instagram.svg" alt=""></a></li>
+                                        <li class="social-linkedin"><a href="#"><img src="assets/imgs/theme/icons/icon-pinterest.svg" alt=""></a></li>
+                                    </ul>
+                                </div>
+                                <h3 class="section-title style-1 mb-30 mt-30">Reviews (3)</h3>
+                                <!--Comments-->
+                                <div class="comments-area style-2">
+                                    <div class="row">
+                                        <div class="col-lg-8">
+                                            <h4 class="mb-30">Customer questions & answers</h4>
+                                            <div class="comment-list">
+                                                <div class="single-comment justify-content-between d-flex">
+                                                    <div class="user justify-content-between d-flex">
+                                                        <div class="thumb text-center">
+                                                            <img src="assets/imgs/page/avatar-6.jpg" alt="">
+                                                            <h6><a href="#">Jacky Chan</a></h6>
+                                                            <p class="font-xxs">Since 2012</p>
+                                                        </div>
+                                                        <div class="desc">
+                                                            <div class="product-rate d-inline-block">
+                                                                <div class="product-rating" style="width:90%">
+                                                                </div>
+                                                            </div>
+                                                            <p>Thank you very fast shipping from Poland only 3days.</p>
+                                                            <div class="d-flex justify-content-between">
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="font-xs mr-30">December 4, 2020 at 3:12 pm </p>
+                                                                    <a href="#" class="text-brand btn-reply">Reply <i class="fi-rs-arrow-right"></i> </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--single-comment -->
+                                                <div class="single-comment justify-content-between d-flex">
+                                                    <div class="user justify-content-between d-flex">
+                                                        <div class="thumb text-center">
+                                                            <img src="assets/imgs/page/avatar-7.jpg" alt="">
+                                                            <h6><a href="#">Ana Rosie</a></h6>
+                                                            <p class="font-xxs">Since 2008</p>
+                                                        </div>
+                                                        <div class="desc">
+                                                            <div class="product-rate d-inline-block">
+                                                                <div class="product-rating" style="width:90%">
+                                                                </div>
+                                                            </div>
+                                                            <p>Great low price and works well.</p>
+                                                            <div class="d-flex justify-content-between">
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="font-xs mr-30">December 4, 2020 at 3:12 pm </p>
+                                                                    <a href="#" class="text-brand btn-reply">Reply <i class="fi-rs-arrow-right"></i> </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--single-comment -->
+                                                <div class="single-comment justify-content-between d-flex">
+                                                    <div class="user justify-content-between d-flex">
+                                                        <div class="thumb text-center">
+                                                            <img src="assets/imgs/page/avatar-8.jpg" alt="">
+                                                            <h6><a href="#">Steven Keny</a></h6>
+                                                            <p class="font-xxs">Since 2010</p>
+                                                        </div>
+                                                        <div class="desc">
+                                                            <div class="product-rate d-inline-block">
+                                                                <div class="product-rating" style="width:90%">
+                                                                </div>
+                                                            </div>
+                                                            <p>Authentic and Beautiful, Love these way more than ever expected They are Great earphones</p>
+                                                            <div class="d-flex justify-content-between">
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="font-xs mr-30">December 4, 2020 at 3:12 pm </p>
+                                                                    <a href="#" class="text-brand btn-reply">Reply <i class="fi-rs-arrow-right"></i> </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--single-comment -->
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <h4 class="mb-30">Customer reviews</h4>
+                                            <div class="d-flex mb-30">
+                                                <div class="product-rate d-inline-block mr-15">
+                                                    <div class="product-rating" style="width:90%">
+                                                    </div>
+                                                </div>
+                                                <h6>4.8 out of 5</h6>
+                                            </div>
+                                            <div class="progress">
+                                                <span>5 star</span>
+                                                <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+                                            </div>
+                                            <div class="progress">
+                                                <span>4 star</span>
+                                                <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                                            </div>
+                                            <div class="progress">
+                                                <span>3 star</span>
+                                                <div class="progress-bar" role="progressbar" style="width: 45%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">45%</div>
+                                            </div>
+                                            <div class="progress">
+                                                <span>2 star</span>
+                                                <div class="progress-bar" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65%</div>
+                                            </div>
+                                            <div class="progress mb-30">
+                                                <span>1 star</span>
+                                                <div class="progress-bar" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%</div>
+                                            </div>
+                                            <a href="#" class="font-xs text-muted">How are ratings calculated?</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--comment form-->
+                                <div class="comment-form">
+                                    <h4 class="mb-15">Add a review</h4>
+                                    <div class="product-rate d-inline-block mb-30">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-8 col-md-12">
+                                            <form class="form-contact comment_form" action="#" id="commentForm">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            <textarea class="form-control w-100" name="comment" id="comment" cols="30" rows="9" placeholder="Write Comment"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <input class="form-control" name="name" id="name" type="text" placeholder="Name">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <input class="form-control" name="email" id="email" type="email" placeholder="Email">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            <input class="form-control" name="website" id="website" type="text" placeholder="Website">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <button type="submit" class="button button-contactForm">Submit
+                                                        Review</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <section class="pt-25 pb-20">
+                            <div class="container wow fadeIn animated">
+                                <h3 class="section-title mb-20"><span>Our</span> Other Products</h3>
+                                <div class="carausel-6-columns-cover position-relative">
+                                    <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-2-arrows"></div>
+                                    <div class="carausel-6-columns carausel-arrow-center" id="carausel-6-columns-2">
+                                        {% for all in prod %}
+                                        <div class="product-cart-wrap small hover-up">
+                                            <div class="product-img-action-wrap">
+                                                <div class="product-img product-img-zoom">
+                                                    <a href="{% url "user_side:product_details" id=all.id %}">
+                                                        <img width="50px" height="150px" class="default-img" src="{{all.variantimage_set.first.images.url }}" alt="">
+                                                    </a>
+                                                </div>
+                                                <div class="product-action-1">
+                                                    {% if user.is_authenticated %}
+                                                    <a aria-label="Love and View" class="action-btn small hover-up" href="{% url "user_side:add_wishlist" id=all.id %}" tabindex="0"><i class="fi-rs-heart"></i></a>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="product-badges product-badges-position product-badges-mrg">
+                                                    <span class="sale">Sale</span>
+                                                </div>
+                                            </div>
+                                            <div class="product-content-wrap">
+                                                <h2><a href="{% url "user_side:product_details" id=all.id %}">{{all.get_variant_name}}</a></h2>
+                                                <div class="rating-result" title="90%">
+                                                    <span>
+                                                    </span>
+                                                </div>
+                                                <div class="product-price">
+                                                    <span>{{all.sale_price}} </span>
+                                                    <span class="old-price">{{all.max_price}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<script>
-        function decreaseQuantity() {
-            var quantityElement = document.getElementById('quantitySpan');
-            var quantityInput = document.getElementById('quantityInput');
-            var currentQuantity = parseInt(quantityElement.textContent);
-    
-            if (currentQuantity > 1) {
-                quantityElement.textContent = currentQuantity - 1;
-                quantityInput.value = currentQuantity - 1;
+
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script>
+            function decreaseQuantity() {
+                var quantityElement = document.getElementById('quantitySpan');
+                var quantityInput = document.getElementById('quantityInput');
+                var currentQuantity = parseInt(quantityElement.textContent);
+        
+                if (currentQuantity > 1) {
+                    quantityElement.textContent = currentQuantity - 1;
+                    quantityInput.value = currentQuantity - 1;
+                }
             }
-        }
-    
-        function increaseQuantity() {
-            var quantityElement = document.getElementById('quantitySpan');
-            var quantityInput = document.getElementById('quantityInput');
-            var currentQuantity = parseInt(quantityElement.textContent);
-    
-            // Add any maximum quantity limit if needed
-            if (currentQuantity < 15) {
-                quantityElement.textContent = currentQuantity + 1;
-                quantityInput.value = currentQuantity + 1;
+        
+            {% comment %} function increaseQuantity() {
+                var quantityElement = document.getElementById('quantitySpan');
+                var quantityInput = document.getElementById('quantityInput');
+                var currentQuantity = parseInt(quantityElement.textContent);
+        
+                // Add any maximum quantity limit if needed
+                if (currentQuantity < 15) {
+                    quantityElement.textContent = currentQuantity + 1;
+                    quantityInput.value = currentQuantity + 1;
+                }
+            }  {% endcomment %}
+            function increaseQuantity() {
+                var quantitySpan = document.getElementById('quantitySpan');
+                var quantityInput = document.getElementById('quantityInput');
+                var stockValue = parseInt($(".stock_val").attr("value"));
+        
+                // Get the current quantity
+                var currentQuantity = parseInt(quantitySpan.innerText);
+        
+                // Increase the quantity by 1, but ensure it doesn't exceed stock
+                var newQuantity = Math.min(currentQuantity + 1, stockValue);
+        
+                // Update the span and hidden input values
+                quantitySpan.innerText = newQuantity;
+                quantityInput.value = newQuantity;
             }
-        } 
-        function closeMessage(messageId) {
-            $('#' + messageId).animate({
-                opacity: 0
-            }, 500, function () {
-                $('#' + messageId).addClass('hidden').removeClass('visible').css('opacity', 1);
-            });
-        }
-    
-    
-        function addCart(e) {
-            e.preventDefault();
-
-            function showSuccessMessage(message) {
-                $('#success-message').text(message);
-                $('#success-message').removeClass('hidden').addClass('visible');
+            function closeMessage(messageId) {
+                $('#' + messageId).animate({
+                    opacity: 0
+                }, 500, function () {
+                    $('#' + messageId).addClass('hidden').removeClass('visible').css('opacity', 1);
+                });
             }
-            function showErrorMessage(message) {
-                $('#error-message').text(message);
-                $('#error-message').removeClass('hidden').addClass('visible');
+            
+        
+            function addCart(e) {
+                e.preventDefault();
 
-            }
-
-            var prodQty = $('.item_quantity').val(); 
-            var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
-            var productId = $('.prod_id').val();
-    
-            $.ajax({
-                url: "{% url 'cart:add_cart'%}",  
-                method: "POST",
-                data: {
-                    'prod_qty': prodQty,
-                    'csrfmiddlewaretoken': csrfToken,
-                    'prod_id': productId,
-                },
-                success: function (response) {
-                    console.log(response);
-                    showSuccessMessage("Item added to cart");
-                    window.location.href = "{% url 'cart:view_cart' %}";
-                    
-                },
-                error: function (error) {
-                    console.error(error);
-                    showErrorMessage("Error: Cant add that much due to stock insufficiant.");
+                function showSuccessMessage(message) {
+                    $('#success-message').text(message);
+                    $('#success-message').removeClass('hidden').addClass('visible');
+                }
+                function showErrorMessage(message) {
+                    $('#error-message').text(message);
+                    $('#error-message').removeClass('hidden').addClass('visible');
 
                 }
+
+                var prodQty = $('.item_quantity').val(); 
+                var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
+                var productId = $('.prod_id').val();
+        
+                $.ajax({
+                    url: "{% url 'cart:add_cart'%}",  
+                    method: "POST",
+                    data: {
+                        'prod_qty': prodQty,
+                        'csrfmiddlewaretoken': csrfToken,
+                        'prod_id': productId,
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        window.location.href = "{% url 'cart:view_cart' %}";
+                    
+                    },
+                    error: function (error) {
+                        console.error(error);
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Stock shortage',
+                            text: 'Cant add that much due to stock insufficiant.',
+                        });
+                    }
+                });
+            }
+            $(document).ready(function() {
+                // Get the value from the span
+                var stockValue = parseInt($(".stock_val").attr("value"));
+                var prodQty = $('#quantitySpan').text(); 
+                // Check if the stock value is less than 1
+                if (stockValue < 1) {
+                    // If it is, hide the button
+                    $("#my_new_btn").hide();
+                }
+                else if
+                (prodQty >= stockValue){
+                    $("#my_new_btn").hide();
+                }
             });
+    </script>
+    <script>
+        // Set the interval for auto-scrolling (in milliseconds)
+        const interval = 3000; // 3 seconds
+    
+        // Get the carousel wrapper element
+        const carousel = document.getElementById('carousel');
+    
+        // Function to scroll the carousel to the next image
+        function nextImage() {
+        // Get the width of a single carousel item
+        const itemWidth = document.querySelector('.carousel-item').offsetWidth;
+    
+        // Move the carousel to the left by the width of a single item
+        carousel.style.transform = `translateX(-${itemWidth}px)`;
+    
+        // After a short delay, move the first item to the end for continuous scrolling
+        setTimeout(() => {
+            carousel.appendChild(carousel.firstElementChild);
+            carousel.style.transition = 'none';
+            carousel.style.transform = 'translateX(0)';
+            setTimeout(() => {
+            carousel.style.transition = 'transform 1s ease-in-out';
+            });
+        }, 1000); // Adjust the delay as needed
         }
-</script>
+    
+        // Function to scroll the carousel to the previous image
+        function prevImage() {
+        // Get the width of a single carousel item
+        const itemWidth = document.querySelector('.carousel-item').offsetWidth;
+    
+        // Move the last item to the beginning for continuous scrolling
+        carousel.insertBefore(carousel.lastElementChild, carousel.firstElementChild);
+    
+        // Set the initial position to the left of the width of a single item
+        carousel.style.transition = 'none';
+        carousel.style.transform = `translateX(-${itemWidth}px)`;
+    
+        // After a short delay, move the carousel to the right
+        setTimeout(() => {
+            carousel.style.transition = 'transform 1s ease-in-out';
+            carousel.style.transform = 'translateX(0)';
+        }, 100);
+        }
+    
+        // Set an interval to call the nextImage function at regular intervals
+        setInterval(nextImage, interval);
+    </script>
 
 
 
-{% endblock %}
+    {% endblock %}

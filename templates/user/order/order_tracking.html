@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Add your custom styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .header {
+            text-align: center;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-decoration: none;
+            background-color: #007BFF;
+            color: #fff;
+            border-radius: 5px;
+        }
+
+        .item-list {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Order Tracking Request</h2>
+            <p>Dear [User's Name],</p>
+            <p>Thank you for reaching out to us for tracking your order with Seamless.</p>
+        </div>
+
+        <div class="item-list">
+            <p><strong>Ordered Items:</strong></p>
+            <ul>
+                
+                <li>
+                    <strong>{{ order_item.order_product.name }}</strong><br>
+                    Quantity: {{ order_item.quantity }}<br>
+                    Price: {{ order_item.product_price }}<br>
+                    SKU: {{ order_item.order_product.sku }}<br>
+                    Color: {{ order_item.order_product.color }}<br>
+                    Size: {{ order_item.order_product.size }}
+                </li>
+                
+            </ul>
+        </div>
+
+        <p><strong>Order Information:</strong></p>
+        <table>
+            <tr>
+                <td>Order Number:</td>
+                <td>{{ order.order_number }}</td>
+            </tr>
+            <tr>
+                <td>Order Date:</td>
+                <td>{{ order.order_time }}</td>
+            </tr>
+            <tr>
+                <td>Delivery Address:</td>
+                <td>{{ order.shipping_address.address_line1 }}, {{ order.shipping_address.city }}, {{ order.shipping_address.state }}, {{ order.shipping_address.country }}, {{ order.shipping_address.zip_code }}</td>
+            </tr>
+        </table>
+
+        <p><strong>Summary of Charges:</strong></p>
+        <table>
+            <tr>
+                <td>Subtotal:</td>
+                <td>{{ order.order_subtotal }}</td>
+            </tr>
+            <tr>
+                <td>Shipping:</td>
+                <td>{{ order.order_shipping }}</td>
+            </tr>
+            <tr>
+                <td>Coupon Discount:</td>
+                <td>{% if order.order_coupon %}{{ order.order_coupon.discount }}{% else %}0.00{% endif %}</td>
+            </tr>
+            <tr>
+                <td>Total Amount:</td>
+                <td>{{ order.order_total }}</td>
+            </tr>
+        </table>
+
+        <p><strong>Payment Method:</strong> {{ order.payment_details.payment_method }}</p>
+            {% if order_item.cancel_reason %}
+        <p><strong>Additional Instructions:</strong></p>
+        <p>{{ order_item.cancel_reason }}</p>
+        {% else %}
+        {% endif %}
+        <p>To track the status of your order, please click the button below:</p>
+        <a href="http://127.0.0.1:8000/order-management/view-order_listing" class="button">Track My Order</a>
+        <p>If the button above doesn't work, you can also copy and paste the following link into your browser:</p>
+        <a href="http://127.0.0.1:8000/"><p>CLICK ME TO SEE SEAMLESS</p></a>
+
+        <p>We appreciate your business with Seamless. If you have any further questions or concerns, please feel free to reply to this email.</p>
+
+        <p>Best regards,<br>
+        The Seamless Team</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,224 @@
+{% extends "admin/admin_base.html" %} 
+{% block title %}ORDER MANAGEMENT{% endblock title %} 
+{%block main %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/admin_css/admin_main.css' %}">
+<!-- Example CDN link (replace with your version and path) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
+
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Order detail</h2>
+            <span id="order_id">Details for Order ID: {{ order.order_number }}</span>
+        </div>
+    </div>
+    <div class="card">
+        <header class="card-header">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                    <span>
+                        <i class="material-icons md-calendar_today"></i> <b>Wed, Aug 13, 2020, 4:34PM</b>
+                    </span> <br>
+                    <small class="text-muted">Order ID: {{order}}</small>
+                </div>
+                <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                    <select id="statusDropdown" class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
+                        <option>Change status</option>
+                        <option value="PLACED" value="PLACED">Order Placed</option>
+                        <option value="PROCESSING">Order Processing</option>
+                        <option value="SHIPPED">Order Shipped</option>
+                        <option value="OUT FOR DELIVERY">Out for delivery</option>
+                        <option value="DELIVERED">Order Delivered</option>
+                        <option value="CANCELLED">Order Cancelled</option>
+                    </select>
+                    <button class="btn btn-primary" type="submit" id="saveButton"  href="#">Save</button>
+                </div>
+            </div>
+        </header> <!-- card-header end// -->
+        <div class="card-body">
+            <div class="row mb-50 mt-20 order-info-wrap">
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-person"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Customer</h6>
+                            <p class="mb-1">
+                                {{order.user.username}} <br>{{order.user.email}}<br>{{order.user.phone_number}}
+                            </p>
+                            <a href="#">View profile</a>
+                        </div>
+                    </article>
+                </div> <!-- col// -->
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-local_shipping"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Order info</h6>
+                            <p class="mb-1">
+                                Shipping: Seam express <br> Pay method: {{order.payment_details.payment_method}} <br>
+                            </p>
+                            <a href="#">Download info</a>
+                        </div>
+                    </article>
+                </div> <!-- col// -->
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-place"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Deliver to</h6>
+                            <p class="mb-1">
+                                {{order.shipping_address}}
+                            </p>
+                            <a href="#">View profile</a>
+                        </div>
+                    </article>
+                </div> <!-- col// -->
+            </div> <!-- row // -->
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th width="40%">Product</th>
+                                    <th width="20%">Quantity</th>
+                                    <th width="20%">status</th>
+                                    <th width="20%" class="text-end">Price Per Unite</th>
+                                </tr>
+                            </thead>
+                            
+
+                            <tbody>
+                                
+                                {% for order_item in order_item %}
+                                <tr>
+                                    <td>
+                                        <a class="itemside" href="{% url "order:admin_order_item_details" id=order_item.id %}" >
+                                            <div class="left" >
+                                                <img src="{{order_item.order_product.variantimage_set.first.images.url}}" width="40" height="40" class="img-xs" alt="Item" >
+                                            </div>
+                                            <div class="info">{{order_item.order_product.get_variant_name}}</div>
+                                        </a>
+                                    </td>
+                                    <td> {{order_item.quantity}}</td>
+                                    <td> {{order_item.order_status}}</td>
+                                    <td class="text-end"> {{order_item.order_product.sale_price}}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td colspan="4">
+                                        <article class="float-end">
+                                            <dl class="dlist">
+                                                <dt>Subtotal:</dt>
+                                                <dd>₹ {{order.order_subtotal}}</dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt>Shipping cost:</dt>
+                                                {% if order.order_shipping %}
+                                                <dd>  {{order.order_shipping}}</dd>
+                                                {% else %}
+                                                <dd> Free Shipping</dd>
+                                                {% endif %}
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt>Coupons:</dt>
+                                                {% if order.order_coupon %}
+                                                <dd> {{order.order_coupon}}</dd>
+                                                {% else %}
+                                                <dd>No Coupons</dd>
+                                                {% endif %}
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt>Grand total:</dt>
+                                                <dd> <b class="h5">₹ {{order.order_total}}</b> </dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt class="text-muted">Payment Status:</dt>
+                                                <dd>
+                                                    {% if 'COD' in order.payment_details.payment_method %}
+                                                    <span class="badge rounded-pill alert-success text-warning">COD</span>
+                                                    {% else %}
+                                                    <span class="badge rounded-pill alert-success text-success">Payment done</span>
+                                                    {% endif %}
+                                                </dd>
+                                            </dl>
+                                        </article>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive// -->
+                </div> <!-- col// -->
+                <div class="col-lg-1"></div>
+                <div class="col-lg-4">
+                    <div class="box shadow-sm bg-light">
+                        <h6 class="mb-15">Payment info</h6>
+                        <p>
+                            Method : {{order.payment_details.payment_method}} <br>
+                            Payment ID : {{order.payment_details}}
+                        </p>
+                    </div>
+                </div> <!-- col// -->
+            </div>
+        </div> <!-- card-body end// -->
+    </div> <!-- card end// -->
+</section> <!-- content-main end// -->
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+   
+       
+        function saveStatus() {
+            // Get the selected value from the dropdown
+            var selectedValue = $("#statusDropdown").val();
+            console.log("Selected value: " + selectedValue);
+
+            // Get the order ID from the span
+            var order_id = $("#order_id").text().replace("Details for Order ID:", "").trim();
+            console.log('Order ID: ' + order_id);
+
+            {% comment %} var csrfToken = $('input[name=csrfmiddlewaretoken]').val(); {% endcomment %}
+            var csrfToken = document.cookie.match(/csrftoken=([^;]*)/)[1];
+
+            $.ajax({
+                url: "{% url 'order:admin_order_status_all' %}",
+                method: "POST",
+                dataType: 'json',
+                data: {
+                    'status': selectedValue,
+                    'order_id': order_id,
+                    'csrfmiddlewaretoken': csrfToken,
+                },
+                success: function (data) {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        console.error('Invalid request or other error:', data.message);
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error('AJAX request failed:', textStatus, errorThrown);
+                }
+               
+               
+            });
+        }
+    $(document).ready(function () {
+        $("#saveButton").on("click", function () {
+            saveStatus();
+        });
+        
+    });
+</script>
+
+
+{% endblock main %}
