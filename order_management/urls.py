@@ -23,7 +23,8 @@ urlpatterns = [
     path('view-invoice_showing', views.invoice_showing, name="invoice_showing"),
     path('order_user_view', views.order_user_view, name="order_user_view"),
     path('pay_with_razor', views.pay_with_razor, name="pay_with_razor"),
-
+    path('user_details_views/<int:id>', views.user_details_views, name="user_details_views"),
+    path('order_search', views.order_search, name="order_search"),
 
 
     

@@ -103,8 +103,14 @@
                             </div>
                     </div>
                     {% else %}
-                  
+                    {% comment %} <div class="header-action-icon-2" style="position: absolute; left:67rem" >
+                        <a href="{% url "cart:view_cart" %}" class="right_nav">
+                            <img width="50" height="50" src="https://img.icons8.com/clouds/100/add-shopping-cart.png" alt="add-shopping-cart"/>
+                            <span class="pro-count blue">{{cart_count}}</span>
+                        </a>
+                    </div> {% endcomment %}
                     <div class="col-lg-2 d-flex justify-content-end">
+                        
                         <h5 style="margin-right:20px;">Hello, <br>Guest</h5>
                         <div class="header-action-2">
                             <div class="header-action-icon-2">

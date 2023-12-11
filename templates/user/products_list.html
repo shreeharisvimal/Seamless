@@ -54,6 +54,7 @@
                                         <span>{{all.sale_price}} </span>
                                         <span class="old-price">{{all.max_price}}</span>
                                     </div>
+                                    {% if user.is_authenticated %}
                                     <div class="product-action-1 show">
 
                                         {% if all.stock < 1 %}
@@ -61,8 +62,9 @@
                                     {% else %}      
                                     <a aria-label="Add To Cart" class="action-btn hover-up" href="{% url "cart:add_cart" id=all.id %}"><i class="fi-rs-shopping-bag-add"></i></a>
                                         {% endif %}
-
+                                        
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

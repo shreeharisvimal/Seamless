@@ -49,7 +49,7 @@
                             <p class="mb-1">
                                 {{order.user.username}} <br>{{order.user.email}}<br>{{order.user.phone_number}}
                             </p>
-                            <a href="#">View profile</a>
+                            <a href="{% url "order:user_details_views" id=order.user.id %}">View profile</a>
                         </div>
                     </article>
                 </div> <!-- col// -->
@@ -77,7 +77,6 @@
                             <p class="mb-1">
                                 {{order.shipping_address}}
                             </p>
-                            <a href="#">View profile</a>
                         </div>
                     </article>
                 </div> <!-- col// -->

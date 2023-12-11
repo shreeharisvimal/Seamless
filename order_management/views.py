@@ -4,7 +4,7 @@ import uuid
 from django.http import Http404, JsonResponse
 from django.shortcuts import  get_object_or_404, render, redirect
 from django.contrib import messages
-from django.urls import reverse
+from user_side.models import NewUser
 from cart.models import Coupon,Cart_Item,Cart
 from account.models import Address
 from django.db.models import Q
@@ -422,7 +422,7 @@ def admin_order_status_all(request):
             order_id = request.POST.get('order_id')
             select_status = request.POST.get('status')
             order = get_object_or_404(Order, order_number=order_id)
-            order_item = OrderItem.objects.filter(Q(order=order) & ~Q(order_status='CANCELLED'))
+            order_item = OrderItem.objects.filter(Q(order=order) & ~Q(order_status='CANCELLED') & ~Q(order_status = 'DELIVERED'))
             for item in order_item:
                 print('inside the looop')
                 item.order_status = select_status
@@ -578,3 +578,33 @@ def pay_with_razor(request):
     })
 
 
+def user_details_views(request,id):
+    user = get_object_or_404(NewUser, id=id)
+    order = None
+    shipping = None
+    billing = None
+    try:
+        # order = Order.objects.filter(user = user).count()
+        shipping = Address.objects.get(Q(user = user) & Q(is_shipping=True) & Q(is_default=True))
+        billing= Address.objects.get(Q(user = user) & Q(is_billing=True) & Q(is_default=True))
+    except Exception as e:
+        print(e)
+    context = {
+
+        'user' :user,
+        'user_profile':UserProfile.objects.get(user = user),
+        'billing': billing if billing else Address.objects.filter(Q(user = user) & Q(is_billing=True)).first(),
+        'shipping': shipping if shipping else Address.objects.filter(Q(user = user) & Q(is_shipping=True)).first(),
+        'order_count':order,
+    }
+
+    return render(request, 'admin/dashboard/order/admin_user_view.html',context)
+    
+def order_search(request):
+    if request.method == 'POST':
+        search_id = request.POST['search_id']
+        order = Order.objects.filter(Q(order_number__icontains = search_id) | Q(order_time__icontains = search_id) | Q(order_total__icontains = search_id))
+    context ={
+        'order':order,
+    }
+    return render(request, 'admin/dashboard/order/order_view.html',context)

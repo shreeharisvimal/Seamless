@@ -2,6 +2,14 @@
 {% block title %}USER CHECKOUT PAGE{% endblock title %} 
 {%block main %}
 {% load static %} 
+<style>
+    .form-control option {
+        padding: 20px;
+        font-family:  sans-serif; 
+        font-size: 17px; 
+        color:black;
+    }
+</style>
 <link rel="stylesheet"  href="{% static 'css/main.css' %}"> 
 <div>
     
@@ -73,7 +81,7 @@
                                 <option style="color: green;" value="{{default_shipping.id}}"><b>{{default_shipping.FullAddress}} - DEFAULT</b></option>
                                 {% endfor %}
                                     {% for shipping in shipping_address %}
-                                    <option value="{{shipping.id}}"><b>{{shipping.FullAddress}}</option>
+                                    <option value="{{shipping.id}}"><b>{{shipping.FullAddress}} </b></option>
                                     {% endfor %}
                                 {% comment %} ---------------- {% endcomment %}
                                 {% else %}
@@ -105,7 +113,7 @@
                 </div>
 
                 <a href="{% url "account:add_address" %}" style="margin-top:20px"><button class="btn">Add new address</button></a>
-                
+                <a href="{% url "account:manage_address" %}" style="margin-top:-46.5px; margin-left:190px"><button class="btn">Manage All Address</button></a>
                 <hr>
                 
                 <form method="post">

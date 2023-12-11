@@ -77,7 +77,9 @@ class OrderItem(models.Model):
     
 
 
-
+# class Wallet(models.Model):
+#     user = models.ForeignKey(NewUser, on_delete=models.CASCADE)
+#     wallet_balance = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 
     
 

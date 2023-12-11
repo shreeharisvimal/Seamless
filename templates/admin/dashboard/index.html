@@ -91,133 +91,21 @@
     <div class="container">
         <div class="row my-5">
 
-            <div class="col-md-12" style ="margin-bottom: 110px;margin-top: 20px;">
-                <div class="bg-white">
-                    <canvas id="myChart2" width="400" height="300"></canvas>
-                    <script>
-                        var ctx = document.getElementById('myChart2').getContext('2d');
-                        var myChart2 = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                //labels: [{% for i  in months%} '{{ i }}', {% endfor %}],
-                                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                                datasets: [{
-                                    label: 'sales by month',
-                                    //data: [{% for i  in totals%} {{ i}}, {% endfor %}],
-                                    data: [12, 19, 3, 5, 2, 3],
-                                    
-                                    backgroundColor: [
-                                        'rgba(255, 99, 132, 1)',
-                                        'rgba(54, 162, 235, 1)',
-                                        'rgba(255, 206, 86, 1)',
-                                        'rgba(75, 192, 192, 1)',
-                                        'rgba(153, 102, 255, 1)',
-                                        'rgba(255, 159, 64, 1)',
-                                        'rgba(255, 199, 132, 1)',
-                                        'rgba(54, 362, 235, 1)',
-                                        'rgba(255, 806, 86, 1)',
-                                        'rgba(75, 792, 192, 1)',
-                                        'rgba(153, 602, 255, 1)',
-                                        'rgba(255, 90, 64, 1)',
-                                        'rgba(25, 999, 32, 1)',
-                                        'rgba(54, 462, 35, 1)',
-                                        'rgba(55, 806, 786, 1)',
-                                        'rgba(75, 2, 92, 1)',
-                                        'rgba(15, 10, 955, 1)',
-                                        'rgba(2, 755, 664, 1)',
-                                        'rgba(882, 9, 632, 1)',
-                                        'rgba(554, 0, 835, 1)',
-                                        'rgba(999, 80, 886, 1)',
-                                        'rgba(705, 2, 492, 1)',
-                                        'rgba(103, 602, 55, 1)',
-                                        'rgba(255, 99, 132, 1)',
-                                        'rgba(54, 162, 235, 1)',
-                                        'rgba(255, 206, 86, 1)',
-                                        'rgba(75, 192, 192, 1)',
-                                        'rgba(153, 102, 255, 1)',
-                                        'rgba(255, 159, 64, 1)',
-                                        'rgba(255, 199, 132, 1)',
-                                        'rgba(54, 362, 235, 1)',
-                                        'rgba(255, 806, 86, 1)',
-                                        'rgba(75, 792, 192, 1)',
-                                        'rgba(153, 602, 255, 1)',
-                                        'rgba(255, 90, 64, 1)',
-                                        'rgba(25, 999, 32, 1)',
-                                        'rgba(54, 462, 35, 1)',
-                                        'rgba(55, 806, 786, 1)',
-                                        'rgba(75, 2, 92, 1)',
-                                        'rgba(15, 10, 955, 1)',
-                                        'rgba(2, 755, 664, 1)',
-                                        'rgba(882, 9, 632, 1)',
-                                        'rgba(554, 0, 835, 1)',
-                                        'rgba(999, 80, 886, 1)',
-                                        'rgba(705, 2, 492, 1)',
-                                        'rgba(103, 602, 55, 1)',
-                                    ],
-                                    borderColor: [
-                                        'rgba(255, 99, 132, 1)',
-                                        'rgba(54, 162, 235, 1)',
-                                        'rgba(255, 206, 86, 1)',
-                                        'rgba(75, 192, 192, 1)',
-                                        'rgba(153, 102, 255, 1)',
-                                        'rgba(255, 159, 64, 1)',
-                                        'rgba(255, 199, 132, 1)',
-                                        'rgba(54, 362, 235, 1)',
-                                        'rgba(255, 806, 86, 1)',
-                                        'rgba(75, 792, 192, 1)',
-                                        'rgba(153, 602, 255, 1)',
-                                        'rgba(255, 90, 64, 1)',
-                                        'rgba(25, 999, 32, 1)',
-                                        'rgba(54, 462, 35, 1)',
-                                        'rgba(55, 806, 786, 1)',
-                                        'rgba(75, 2, 92, 1)',
-                                        'rgba(15, 10, 955, 1)',
-                                        'rgba(2, 775, 664, 1)',
-                                        'rgba(882, 9, 632, 1)',
-                                        'rgba(554, 0, 835, 1)',
-                                        'rgba(999, 80, 886, 1)',
-                                        'rgba(705, 2, 492, 1)',
-                                        'rgba(103, 602, 55, 1)',
-                                        'rgba(255, 99, 132, 1)',
-                                        'rgba(54, 162, 235, 1)',
-                                        'rgba(255, 206, 86, 1)',
-                                        'rgba(75, 192, 192, 1)',
-                                        'rgba(153, 102, 255, 1)',
-                                        'rgba(255, 159, 64, 1)',
-                                        'rgba(255, 199, 132, 1)',
-                                        'rgba(54, 362, 235, 1)',
-                                        'rgba(255, 806, 86, 1)',
-                                        'rgba(75, 792, 192, 1)',
-                                        'rgba(153, 602, 255, 1)',
-                                        'rgba(255, 90, 64, 1)',
-                                        'rgba(25, 999, 32, 1)',
-                                        'rgba(54, 462, 35, 1)',
-                                        'rgba(55, 806, 786, 1)',
-                                        'rgba(75, 2, 92, 1)',
-                                        'rgba(15, 10, 955, 1)',
-                                        'rgba(2, 775, 664, 1)',
-                                        'rgba(882, 9, 632, 1)',
-                                        'rgba(554, 0, 835, 1)',
-                                        'rgba(999, 80, 886, 1)',
-                                        'rgba(705, 2, 492, 1)',
-                                        'rgba(103, 602, 55, 1)',
-                                    ],
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    yAxes: [{
-                                        ticks: {
-                                            beginAtZero: true
-                                        }
-                                    }]
-                                }
-                            }
-                        });
-                    </script>
-                </div>
-            </div>
+            <article class="card-body">
+                <h5 class="card-title">Sale statistics</h5>
+                <input type="hidden" value="<%= monthlyOrderCounts %>" id="monthlySalesArray" />
+                <input type="hidden" value="<%= dailyOrderCounts %>" id="dailyOrderArray" />
+               
+            
+                <input type="hidden" value="<%= yearlyOrderCounts %>" id="yearlyOrderCounts" />
+           
+                <button class="btn btn-xs   btn btn-sm btn-light font-xs rounded" onclick="displayChart('Weekly', this)">Weekly</button>
+                <button class="btn btn-sm btn-light font-xs rounded" onclick="displayChart('Monthly', this)">Monthly</button>
+                <button class="btn btn-sm btn-light font-xs rounded" onclick="displayChart('Yearly', this)">Yearly</button>
+                <canvas id="myChartWeekly" height="120px"></canvas>
+                <canvas id="myChartMonthly" height="120px" style="display: none;"></canvas>
+                <canvas id="myChartYearly" height="120px" style="display: none;"></canvas>
+            </article>
         </div>
     </div>
 </div>

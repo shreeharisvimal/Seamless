@@ -201,12 +201,18 @@
                                             </div>
                                             <div id='cwb' class="product-extra-link2">
                                                 {% if user.is_authenticated %}
-                                                {% if pro.stock < 1 %}
-                                                <img width="45" height="45" src="https://img.icons8.com/external-victoruler-linear-colour-victoruler/64/external-out-of-stock-logistics-victoruler-linear-colour-victoruler.png" alt="external-out-of-stock-logistics-victoruler-linear-colour-victoruler"/>
-                                                {% else %}
-                                                <button id='my_new_btn' type="submit" class="action-btn hover-up" onclick="addCart(event)"><img width="30" height="30" src="https://img.icons8.com/clouds/100/add-shopping-cart.png" alt="add-shopping-cart"/></button>
-                                                {% endif %}
+                                                    {% if pro.stock < 1 %}
+                                                    <img width="45" height="45" src="https://img.icons8.com/external-victoruler-linear-colour-victoruler/64/external-out-of-stock-logistics-victoruler-linear-colour-victoruler.png" alt="external-out-of-stock-logistics-victoruler-linear-colour-victoruler"/>
+                                                    {% else %}
+                                                    <button id='my_new_btn' type="submit" class="action-btn hover-up" onclick="addCart(event)"><img width="30" height="30" src="https://img.icons8.com/clouds/100/add-shopping-cart.png" alt="add-shopping-cart"/></button>
+                                                    {% endif %}
                                                 <a aria-label="Add To Wishlist" class="action-btn hover-up" href="{% url "user_side:add_wishlist" id=pro.id %}"><i class="fi-rs-heart"></i></a>
+                                                {% else %}
+                                                {% comment %} {% if pro.stock < 1 %}
+                                                    <img width="45" height="45" src="https://img.icons8.com/external-victoruler-linear-colour-victoruler/64/external-out-of-stock-logistics-victoruler-linear-colour-victoruler.png" alt="external-out-of-stock-logistics-victoruler-linear-colour-victoruler"/>
+                                                    {% else %}
+                                                    <button id='my_new_btn' type="submit" class="action-btn hover-up" onclick="addCart(event)"><img width="30" height="30" src="https://img.icons8.com/clouds/100/add-shopping-cart.png" alt="add-shopping-cart"/></button>
+                                                    {% endif %} {% endcomment %}
                                                 {% endif %}
                                             
                                             </div>
@@ -225,36 +231,43 @@
                         </div>
                         <div class="row">
                             <div class="col-lg-10 m-auto entry-main-content">
+                                <div class="col-4">
                                 <h3 class="section-title style-1 mb-30">Device Specifications</h3>
                                 <table class="font-md mb-30">
                                     <tbody>
                                         <tr class="stand-up">
+                                            <th>COLOR  </th>
                                             <td>
-                                                <p>{{pro.color}}</p>
+                                               <p> {{pro.color}}</p>
                                             </td>
                                         </tr>
                                         <tr class="folded-wo-wheels">
+                                            <th>RAM  </th>
                                             <td>
                                                 <p>{{pro.ram}}</p>
                                             </td>
                                         </tr>
                                         <tr class="folded-w-wheels">
+                                            <th>STORAGE  </th>
                                             <td>
                                                 <p>{{pro.storage}}</p>
                                             </td>
                                         </tr>
                                         <tr class="door-pass-through">
+                                            <th>OS  </th>
                                             <td>
                                                 <p>{{pro.os}}</p>
                                             </td>
                                         </tr>
                                         <tr class="frame">
+                                            <th>SCREEN SIZE  </th>
                                             <td>
                                                 <p>{{pro.screen_size}}</p>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
                                 {% endfor %}
                                 <div class="social-icons single-share">
                                     <ul class="text-grey-5 d-inline-block">
