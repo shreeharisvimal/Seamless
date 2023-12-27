@@ -43,7 +43,7 @@
                     </div>
                     <div class="card-body">
                         <marquee behavior="" direction="">
-                            <h3 class="my-4">This is the Information</h3>
+                            <h3 class="my-4">NEW MEMBERS COUNT : {{new_members}}</h3>
                         </marquee>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
                                 <a class="text-decoration-none text-dark" href="order_list">
                                     <div class="card my-card shadow text-center p-3">
                                         <h4>Orders <i class="fas fa-shipping-fast"></i></h4>
-                                        <h3>{{order}}</h3>
+                                        <h3>{{orders_count}}</h3>
                                     </div>
                                 </a>
                             </div>
@@ -90,22 +90,18 @@
     <!--Graphs-->
     <div class="container">
         <div class="row my-5">
-
             <article class="card-body">
                 <h5 class="card-title">Sale statistics</h5>
-                <input type="hidden" value="<%= monthlyOrderCounts %>" id="monthlySalesArray" />
-                <input type="hidden" value="<%= dailyOrderCounts %>" id="dailyOrderArray" />
-               
-            
-                <input type="hidden" value="<%= yearlyOrderCounts %>" id="yearlyOrderCounts" />
-           
-                <button class="btn btn-xs   btn btn-sm btn-light font-xs rounded" onclick="displayChart('Weekly', this)">Weekly</button>
+                <input type="hidden" value="{{ weekly_sales_data }}" id="weeklySalesArray" />
+                <input type="hidden" value="{{ monthly_sales_data }}" id="monthlySalesArray" />
+                <input type="hidden" value="{{ yearly_sales_data }}" id="yearlySalesArray" />
+                <button class="btn btn-xs btn btn-sm btn-light font-xs rounded" onclick="displayChart('Weekly', this)">Weekly</button>
                 <button class="btn btn-sm btn-light font-xs rounded" onclick="displayChart('Monthly', this)">Monthly</button>
                 <button class="btn btn-sm btn-light font-xs rounded" onclick="displayChart('Yearly', this)">Yearly</button>
                 <canvas id="myChartWeekly" height="120px"></canvas>
                 <canvas id="myChartMonthly" height="120px" style="display: none;"></canvas>
                 <canvas id="myChartYearly" height="120px" style="display: none;"></canvas>
-            </article>
+            </article>
         </div>
     </div>
 </div>
@@ -300,6 +296,137 @@
         integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
         crossorigin="anonymous"></script>
 
+    <script>
+        (function ($) {
+            "use strict";
+            let weeklySalesArray = document.getElementById("weeklySalesArray").value;
+            let monthlySalesArray = document.getElementById("monthlySalesArray").value;
+            let yearlySalesArray = document.getElementById("yearlySalesArray").value;
+        
+            weeklySalesArray = weeklySalesArray.trim().split(",").map(item => Number(item));
+            monthlySalesArray = monthlySalesArray.trim().split(",").map(item => Number(item));
+            yearlySalesArray = yearlySalesArray.trim().split(",").map(item => Number(item));
+        
+            if ($('#myChartWeekly').length) {
+                var ctxWeekly = document.getElementById('myChartWeekly').getContext('2d');
+                var chartWeekly = new Chart(ctxWeekly, {
+                    type: 'line',
+                    data: {
+                        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                        datasets: [{
+                            label: 'Weekly',
+                            tension: 0.3,
+                            fill: true,
+                            backgroundColor: 'rgba(44, 120, 220, 0.2)',
+                            borderColor: 'rgba(44, 120, 220)',
+                            data: weeklySalesArray
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    usePointStyle: true
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        
+            if ($('#myChartMonthly').length) {
+                var ctxMonthly = document.getElementById('myChartMonthly').getContext('2d');
+                var chartMonthly = new Chart(ctxMonthly, {
+                    type: 'bar',
+                    data: {
+                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                        datasets: [{
+                            label: 'Monthly',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1,
+                            data: monthlySalesArray
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    usePointStyle: true
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        
+            if ($('#myChartYearly').length) {
+                var ctxYearly = document.getElementById('myChartYearly').getContext('2d');
+                var chartYearly = new Chart(ctxYearly, {
+                    type: 'bar',
+                    data: {
+                        labels: ['2023', '2024', '2025'],  // Replace with your actual years
+                        datasets: [{
+                            label: 'Yearly',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1,
+                            data: yearlySalesArray
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    usePointStyle: true
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        
+        })(jQuery);
+        
+    </script>
 
+    <script>
+            // Functions to display respective charts
+            function displayChart(chartType, button) {
+            highlightButton(button);
+          
+            if (chartType === 'Weekly') {
+                showChart('myChartWeekly');
+                hideChart('myChartMonthly');
+                hideChart('myChartYearly');
+            } else if (chartType === 'Monthly') {
+                hideChart('myChartWeekly');
+                showChart('myChartMonthly');
+                hideChart('myChartYearly');
+            } else if (chartType === 'Yearly') {
+                hideChart('myChartWeekly');
+                hideChart('myChartMonthly');
+                showChart('myChartYearly');
+            }
+          }
+          
+          function showChart(chartId) {
+            document.getElementById(chartId).style.display = 'block';
+          }
+          
+          function hideChart(chartId) {
+            document.getElementById(chartId).style.display = 'none';
+          }
+          
+          function highlightButton(button) {
+          
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => btn.classList.remove('btn-xs'));
+          
+            button.classList.add('btn-xs');
+          }
+          
+          
+    </script>
 
 {% endblock main %}

@@ -146,15 +146,20 @@ body {
                         <div class="media">
                             <div class="sq align-self-center" style='border-radius:30px; height:50px;' > <img width="60" height="50" style='border-radius:30px' class="img-fluid  " src="{{order_item.order_product.variantimage_set.first.images.url}}" /> </div>
                             <div class="media-body my-auto text-right">
-                                {% if "CANCELLED" in order_item.order_status or 'OUT FOR DELIVERY' in order_item.order_status or 'DELIVERED' in order_item.order_status %}
+                                {% if 'DELIVERED' in order_item.order_status or 'RETURNED' in order_item.order_status %}
+                            <a href="{% url "review:review_view" id=order_item.id %}" style="position:absolute;">Rate This Product</a>
+                            {% endif %}
+                                {% if "CANCELLED" in order_item.order_status or 'OUT FOR DELIVERY' in order_item.order_status or 'RETURNED' in order_item.order_status %}
+                                {% elif 'DELIVERED' in order_item.order_status %}
+                                <a href="{% url "order:return_order" id=order_item.id%}"><button class="btn button" style="position:relative; bottom:7rem; left:60rem;">REQUEST RETURN</button></a> 
                                 {% else %}
                                 <a href="{% url "order:cancel_order" id=order_item.id%}"><button class="btn button" style="position:relative; bottom:7rem; left:60rem;">REQUEST CANCEL</button></a> 
                              {% endif %}   
                              <div class="btn button" style="position:relative; bottom:7rem; left:62rem; background-color:yellow; color:black;" >{{order_item.get_order_status_display}}</div>
                                 <div class="row  my-auto flex-column flex-md-row">
                                     <div style="margin-top:-130px; margin-left:150px"> <h4 class="mb-0">{{order_item.order_product.get_variant_name }}</h4>  </div>
-                                    {% if order_item.payment_details.cod_payment_id %}
-                                    <div class="col-auto my-auto">Payment ID : <small>{{order_item.payment_details.cod_payment_id}} </small></div>
+                                    {% if order_item.payment_details.payment_id %}
+                                    <div class="col-auto my-auto">Payment ID : <small>{{order_item.payment_details.payment_id}} </small></div>
                                     {% else %}
                                     <div class="col-auto my-auto">Payment ID : <small>{{order_item.payment_details.razorpay_payment_id}} </small></div>
                                     {% endif %}
@@ -164,8 +169,11 @@ body {
                                     <div class="col my-auto"><h6 class="mb-0">Price: &#8377; {{order_item.order_product.sale_price}}</h6>
                                     </div>
                                 </div>
+
                             </div>
+                            
                         </div>
+
                         <hr class="my-3 ">
                         <div class="row" style="position: relative; bottom:2rem;">
                             <div class="col mt-auto">

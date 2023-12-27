@@ -1,4 +1,5 @@
-from datetime import datetime
+
+from datetime import datetime, timedelta, timezone
 from django.shortcuts import render, redirect,get_object_or_404
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate,logout,login
@@ -10,7 +11,17 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from products.models import AttributeValue,Atrribute,Product,ProductVariant,Brand
 from category_manage.models import Category
-from django.db.models import Prefetch
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from django.db.models import Sum, Count, Q
+from datetime import timedelta
+from order_management.models import Payment, Order, OrderItem
+from products.models import ProductVariant
+from django.db.models import Sum
+from django.db.models.functions import ExtractMonth, ExtractYear, ExtractWeekDay
+from django.utils import timezone
+from datetime import timedelta
+from order_management.models import Payment
 
 
 
@@ -63,19 +74,105 @@ def admin_login_handler(request):
     return render(request, 'admin/authentication/login.html')
 
 
+
+
 @cache_control(no_cache=True, must_revalidate=True, max_age=0,no_store = True)
 @login_required(login_url='authentication:login_handler')
 def admin_dash_handler(request):
     if request.user.is_authenticated and not request.user.is_superuser or not request.user.is_authenticated:
         return redirect('user_side:landing')
     time = datetime.now()
-    coup = Coupon.objects.filter(valid_to__lt = time)
+    coup = Coupon.objects.filter(valid_to__lt=time)
     for coupon in coup:
         coupon.is_active = False
         coupon.save()
-    print(coupon.is_active)
 
-    return render(request, 'admin/dashboard/index.html')
+    current_date = timezone.now() - timedelta(days=6)
+    login_date = timezone.now() - timedelta(days=10)
+    total_revenue = Payment.objects.filter(payment_status='SUCCESS').aggregate(Sum('amount_paid'))['amount_paid__sum'] or 0
+    orders_count = OrderItem.objects.filter(order_status = 'DELIVERED').count() or 0
+    product_count = ProductVariant.objects.all().count()
+    monthly_sales = Payment.objects.filter(payment_time__month=timezone.now().month, payment_status="SUCCESS").aggregate(Sum('amount_paid'))['amount_paid__sum'] or 0
+    yearly_sales = Payment.objects.filter(payment_time__year=timezone.now().year, payment_status="SUCCESS").aggregate(Sum('amount_paid'))['amount_paid__sum'] or 0
+    user = NewUser.new_manager.filter(is_active = True).count()
+    new_member = NewUser.new_manager.filter(start_time__gt=current_date)
+    orders = Order.objects.filter(is_complete=True)
+    
+    weekly_sales_data = get_weekly_sales()
+    monthly_sales_data = get_monthly_sales()
+    yearly_sales_data = get_yearly_sales()
+
+    # Convert data to string for use in JavaScript
+    weekly_sales_str = ",".join(map(str, weekly_sales_data))
+    monthly_sales_str = ",".join(map(str, monthly_sales_data))
+    yearly_sales_str = ",".join(map(str, yearly_sales_data))
+
+    print(weekly_sales_str)
+    print(monthly_sales_str)
+    print(yearly_sales_str)
+
+
+    context = {
+        'revenue': total_revenue,
+        'orders_count': orders_count,
+        'product_count': product_count,
+        'weekly_sales_data': weekly_sales_str,
+        'monthly_sales_data': monthly_sales_str,
+        'yearly_sales_data': yearly_sales_str,
+        'monthly_sales': monthly_sales,
+        'yearly_sales': yearly_sales,
+        'orders': orders,
+        'total_users_count': user,
+        'new_members': new_member if new_member else 0,
+    }
+    return render(request, 'admin/dashboard/index.html', context)
+
+def get_monthly_sales():
+    # Query to get monthly sales for the current year
+    monthly_sales = Payment.objects.filter(
+        payment_time__year=timezone.now().year,
+        payment_status="SUCCESS"
+    ).annotate(month=ExtractMonth('payment_time')).values('month').annotate(monthly_total=Sum('amount_paid')).order_by('month')
+
+    monthly_sales_values = [0] * 12
+    print(monthly_sales)
+    for entry in monthly_sales:
+        month_index = entry['month'] - 1
+        monthly_sales_values[month_index] = entry['monthly_total']
+
+    return monthly_sales_values
+
+def get_yearly_sales():
+    yearly_sales = Payment.objects.filter(
+       payment_time__year=timezone.now().year,
+        payment_status="SUCCESS"
+    ).annotate(year=ExtractYear('payment_time')).values('year').annotate(yearly_total=Sum('amount_paid')).order_by('year')
+
+    yearly_sales_values = [0] * 12  # Assuming you want data for each month in a year
+    for entry in yearly_sales:
+        year_index = entry['year'] - timezone.now().year  # Adjust to get a 0-based index
+        yearly_sales_values[year_index] = entry['yearly_total']
+
+    return yearly_sales_values
+
+
+def get_weekly_sales():
+    today = timezone.now().date()
+    start_of_week = today - timedelta(days=today.weekday())
+    end_of_week = start_of_week + timedelta(days=7)
+    print(start_of_week,'\n',end_of_week)
+    weekly_sales = Payment.objects.filter(
+        payment_time__date__range=[start_of_week, end_of_week],
+        payment_status="SUCCESS"
+    ).annotate(day_of_week=ExtractWeekDay('payment_time')).values('day_of_week').annotate(weekly_total=Sum('amount_paid')).order_by('day_of_week')
+    print(weekly_sales)
+    weekly_sales_values = [0] * 7
+    for entry in weekly_sales:
+  
+        adjusted_index = entry['day_of_week'] - 2
+        weekly_sales_values[adjusted_index] = entry['weekly_total']
+
+    return weekly_sales_values
 
 @cache_control(no_cache=True, must_revalidate=True, max_age=0)
 @login_required(login_url='authentication:login_handler')

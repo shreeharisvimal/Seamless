@@ -35,7 +35,7 @@
         .card {
             width: 400px;
             border: none;
-            height: 350px;
+            height: 380px;
             box-shadow: 0px 5px 20px 0px #d2dae3;
             z-index: 1;
             display: flex;
@@ -118,7 +118,7 @@
 
       <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2">
     
-        <form method="post" action="{% url 'authentication:otp_verify' %}">
+        <form id="otpForm" method="post" action="{% url 'authentication:otp_verify' %}">
         {% csrf_token %}
         <div class="mt-4">
         <input type="text" name="otp"  class="inputs" maxlength="6" pattern="[0-9]{6}" required>
@@ -128,20 +128,62 @@
           </div>
         
     </form>
-
+    
     <form method="post" action="{% url 'authentication:otp_verify' %}">
         {% csrf_token %}
         <div class="mt-4">
+           
         <button type="submit" name="resend" id="re" class="btn btn-danger px-4 validate">Resend OTP</button>
     </div>
     </form>
-    </form>
-
+        
     </div>
+    <div id="otp-expiry-time" style="margin-top:20px"></div>
     </div>
+    
     </div>
   </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const otpForm = document.querySelector('#otp form');
+        const otpInputs = otpForm.querySelectorAll('input[name="otp"]');
+        const resendLink = document.getElementById('re');
+
+
+        var storedCountdownValue = localStorage.getItem('countdownValue');
+        var countdownValue = storedCountdownValue ? parseInt(storedCountdownValue) : 30;
+
+        var countdownInterval;
+
+        window.onload = function () {
+            resendOTP();
+        };
+
+        function resendOTP() {
+            console.log('Resend OTP button clicked');
+            resendLink.style.pointerEvents = 'none'; // Disable link
+            resendLink.style.color = 'gray'; // Change link color
+
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(function() {
+                countdownValue--;
+
+                if (countdownValue <= 0) {
+                    clearInterval(countdownInterval);
+                    resendLink.style.pointerEvents = 'auto'; // Enable link when countdown ends
+                    resendLink.style.color = 'white'; // Restore original link color
+                    $("#otp-expiry-time").text('');
+                    countdownValue = 60;
+                } else {
+                    $("#otp-expiry-time").text('Resend in ' + countdownValue + ' seconds');
+                }
+
+                localStorage.setItem('countdownValue', countdownValue.toString());
+            }, 1000);
+        }
+    });
+</script>
 
 <script src="js/vendor/modernizr-3.6.0.min.js"></script>
 <script src="js/vendor/jquery-3.6.0.min.js"></script>

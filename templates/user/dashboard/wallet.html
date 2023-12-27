@@ -1,0 +1,61 @@
+{% extends "base.html" %} 
+{% block title %}MY WALLET MANAGEMENT{% endblock title %} 
+
+{%block main %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+<div class="container">
+    <span class=" button btn" style="margin-top:20px; margin-bottom:20px;">CURRENT BALANCE : ₹ {{seam.balance}}</span>
+
+<div class="card-header">
+    <h5 class="mb-0">My Wallet</h5>
+</div>
+<div class="table-responsive">
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Order Id</th>
+                <th>Order Item</th>
+                <th>Payment Method</th>
+                <th>Payment Id</th>
+                <th>Amount</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if wallet %}
+            {% for wallet in wallet%}
+            <tr>
+                <td>{{wallet.created_at}}</td>
+                <td>{{wallet.order_id}}</td>
+                <td>{{wallet.order_item.order_product.get_variant_name}}</td>
+                <td>{{wallet.payment.payment_method}}</td>
+                <td> {% if wallet.payment.payment_id %}{{wallet.payment.payment_id}}{% else %}{{wallet.payment.razorpay_payment_id}}{% endif %}</td>
+                <td>{{wallet.amount}}</td>
+                <td>{% if wallet.is_debit is True %} DEBIT  {% else %} CREDIT {% endif %}</td>
+            </tr>
+            {% endfor %}
+            {% else %}  
+            <td>No Transaction's Yet !</td>
+            <td>No Transaction's Yet !</td>
+            <td>No Transaction's Yet !</td>
+            <td>No Transaction's Yet !</td>
+            <td>No Transaction's Yet !</td>
+            <td>No Transaction's Yet !</td>
+            <td>No Transaction's Yet !</td>
+
+            {% endif %}
+        </tbody>
+    </table>
+
+</div>
+</div>
+
+
+
+
+
+
+{% endblock main %}

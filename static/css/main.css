@@ -6464,16 +6464,9 @@ h6.post-title {
   color: #333;
   animation: gradientAnimation 10s infinite linear;
   background: linear-gradient(to right,
-    #ffffff,  /* White */
-    #f0f0f0,  /* Light gray */
+  
     #add8e6,  /* Light blue */
-    #98fb98,  /* Light green */
-    #ffffe0,  /* Light yellow */
-    #ffb6c1,  /* Light pink */
-    #e6e6fa,  /* Lavender */
-    #ffdab9,  /* Light peach */
-    #e0ffff,  /* Light cyan */
-    #f5fffa   /* Light mint */
+
   );
   background-size: 200% 100%;
 }
@@ -6821,7 +6814,7 @@ span.fi-rs-apps {
   display: inline-block;
   font-size: 16px;
   font-weight: 700;
-  color: #ffffff;
+  color: gray;
 }
 
 .main-menu > nav > ul > li > a i {
@@ -6831,7 +6824,7 @@ span.fi-rs-apps {
 }
 
 .main-menu > nav > ul > li > a.active {
-  color: #ffffff;
+  color: gray;
 }
 
 .main-menu > nav > ul > li ul.sub-menu {

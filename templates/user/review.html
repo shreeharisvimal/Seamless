@@ -1,0 +1,241 @@
+{% extends "base.html" %} 
+{% block title %}PRODUCT RATING{% endblock title %} 
+{%block main %}
+{% load static %}
+<style>
+    .scrollable-div {
+      height: 200px; /* Set the height of the div */
+      overflow: auto; /* Add a scrollbar when content overflows */
+      border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+    }
+   
+      .rating {
+        display: inline-block;
+        unicode-bidi: bidi-override;
+        direction: rtl;
+      }
+  
+      .rating input {
+        display: none;
+      }
+  
+      .rating label {
+        cursor: pointer;
+        width: 1em;
+        font-size: 1.5em;
+        color: #ccc;
+        float: right;
+      }
+  
+      .rating label:before {
+        content: '★';
+      }
+  
+      .rating input:checked ~ label {
+        color: #f39c12; /* Change this color to your desired highlight color */
+      }
+  
+  </style>
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+
+
+<section class="mt-50 mb-50">
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="product-detail accordion-detail">
+                <div class="row mb-50">
+                    <div class="col-md-6 col-sm-12 col-xs-12" >
+                        <div class="detail-gallery">
+                            <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+                            <!-- MAIN SLIDES -->
+                            <div class="product-image-slider">
+                                {% for image in pro.variantimage_set.all %}
+                                <figure class="border-radius-10">
+                                    <img src="{{image.images.url}}"  alt="product image">
+                                </figure>
+                                {% endfor %}
+                            </div>
+                            <div class="slider-nav-thumbnails pl-15 pr-15">
+                                {% for image in pro.variantimage_set.all %}
+                                <div><img height="90px" src="{{image.images.url}}" alt="product image"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-xs-12">
+                        <div class="detail-info">
+                            <h2 class="title-detail">{{pro.get_variant_name}}</h2>
+                            <div class="product-detail-rating">
+                                
+                            </div>
+                            <div class="clearfix product-price-cover">
+                                <div class="product-price primary-color float-left">
+                                    <ins><span class="text-brand">Rs {{pro.sale_price}}</span></ins>
+                                    <ins><span class="old-price font-md ml-15">{{pro.max_price}}</span></ins>
+                                    {% if per != 0 %}
+                                    <span class="save-price  font-md color3 ml-15">{{per}}.0 % OFF</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="bt-1 border-color-1 mt-15 mb-15"></div>
+                            <div class="short-desc mb-30">
+                                <p>{{pro.description}}</p>
+                            </div>
+                            <div class="attr-detail attr-color mb-15">
+                                <div class="col-lg-10 m-auto entry-main-content">
+                                    <div class="col-9">
+                                    <table class="font-md mb-30">
+                                        <tbody>
+                                            <tr class="stand-up">
+                                                <th>COLOR  </th>
+                                                <td>
+                                                   <p> {{pro.color}}</p>
+                                                </td>
+                                            </tr>
+                                            <tr class="folded-wo-wheels">
+                                                <th>RAM  </th>
+                                                <td>
+                                                    <p>{{pro.ram}}</p>
+                                                </td>
+                                            </tr>
+                                            <tr class="folded-w-wheels">
+                                                <th>STORAGE  </th>
+                                                <td>
+                                                    <p>{{pro.storage}}</p>
+                                                </td>
+                                            </tr>
+                                            <tr class="door-pass-through">
+                                                <th>OS  </th>
+                                                <td>
+                                                    <p>{{pro.os}}</p>
+                                                </td>
+                                            </tr>
+                                            <tr class="frame">
+                                                <th>SCREEN SIZE  </th>
+                                                <td>
+                                                    <p>{{pro.screen_size}}</p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <!-- Detail Info -->
+                    </div>
+                    
+                </div>
+                <div class="row">
+                    
+
+                        
+                        <!--comment form-->
+                        <div class="comment-form">
+                            <h4 class="mb-15">Add a review</h4>
+                            <div class="rating" style="width:50">
+                                <input  type="radio" id="star5" name="rating" value="5"><label for="star5"></label>
+                                <input type="radio" id="star4" name="rating" value="4"><label for="star4"></label>
+                                <input type="radio" id="star3" name="rating" value="3"><label for="star3"></label>
+                                <input type="radio" id="star2" name="rating" value="2"><label for="star2"></label>
+                                <input type="radio" id="star1" name="rating" value="1"><label for="star1"></label>
+                              </div>
+                            
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-8 col-md-12">
+                                    <form action='{% url "review:add_review_view" %}' method="POST" class="form-contact comment_form" action="#" id="commentForm">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <textarea class="form-control w-100 h-100" name="comment" id="comment" cols="30" rows="9" placeholder="Write Comment"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="stars" id="starsHiddenInput" value="">
+                                        <div class="form-group">
+                                            <button type="submit" class="button button-contactForm">Submit
+                                                Review</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+
+<script>
+
+    const ratingInputs = document.querySelectorAll('input[name="rating"]');
+    const starsHiddenInput = document.getElementById('starsHiddenInput');
+  
+    ratingInputs.forEach(input => {
+      input.addEventListener('click', () => {
+        const selectedRating = input.value;
+  
+        // Update the value of the hidden input
+        starsHiddenInput.value = selectedRating;
+  
+        // Log the selected rating to the console
+        console.log('Radio vutton Rating:', input.value);
+        console.log('Selected Rating:', selectedRating);
+      });
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Select the form and submit button
+        const form = document.getElementById('commentForm');
+        const submitButton = form.querySelector('button[type="submit"]');
+
+        // Add an event listener to the form on submit
+        form.addEventListener('submit', function (event) {
+            // Check if the comment is empty
+            const commentInput = document.getElementById('comment');
+            if (commentInput.value.trim() === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Need review',
+                    text: 'Please Add your review in the Given box',
+                });
+                event.preventDefault();  // Prevent form submission
+                return;
+            }
+
+            // Check if a radio button is selected
+            const ratingInputs = document.querySelectorAll('input[name="rating"]');
+            let ratingSelected = false;
+            ratingInputs.forEach(input => {
+                if (input.checked) {
+                    ratingSelected = true;
+                }
+            });
+
+            if (!ratingSelected) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Select a rating',
+                    text: 'Please select your rating',
+                });
+                event.preventDefault();  // Prevent form submission
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+{% endblock main %}

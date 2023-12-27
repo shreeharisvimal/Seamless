@@ -23,4 +23,13 @@ class Category(models.Model):
     def __str__(self):
         return self.category_name
     
-    
+
+class CategoryOffer(models.Model):
+    category_name = models.OneToOneField(Category, on_delete = models.CASCADE)
+    discount = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, default=0.0)
+    valid_from = models.DateTimeField(auto_now_add=True)
+    valid_to = models.DateTimeField()
+    is_active = models.BooleanField(default= False)
+
+    def __str__(self):
+        return f'{self.category_name} - RS {self.discount}'

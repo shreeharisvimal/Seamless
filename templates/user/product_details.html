@@ -4,6 +4,43 @@
     {% load static %}
     {% comment %} <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"> {% endcomment %}
     <style>
+        .scrollable-div {
+          height: 200px; /* Set the height of the div */
+          overflow: auto; /* Add a scrollbar when content overflows */
+          border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+        }
+        .progress-column {
+            position: sticky;
+            bottom:0 ;
+          }
+          .rating {
+            display: inline-block;
+            unicode-bidi: bidi-override;
+            direction: rtl;
+          }
+      
+          .rating input {
+            display: none;
+          }
+      
+          .rating label {
+            cursor: pointer;
+            width: 1em;
+            font-size: 1.5em;
+            color: #ccc;
+            float: right;
+          }
+      
+          .rating label:before {
+            content: '★';
+          }
+      
+          .rating input:checked ~ label {
+            color: #f39c12; /* Change this color to your desired highlight color */
+          }
+      
+      </style>
+    <style>
         #message-container {
             width: 300px;
             margin: 20px auto;
@@ -142,19 +179,27 @@
                                     <h2 class="title-detail">{{pro.get_variant_name}}</h2>
                                     <div class="product-detail-rating">
                                         <div class="product-rate-cover text-end">
-                                            <div class="product-rate d-inline-block">
-                                                <div class="product-rating" style="width:90%">
-                                                </div>
-                                            </div>
-                                            <span class="font-small ml-5 text-muted"> (25 reviews)</span>
+                                            {% if stars.total %}
+                                            <span class="font-small ml-5 text-muted"> ({{stars.total}} reviews)</span>
+                                            {% else %}
+                                            No Ratings So Far !
+                                            {% endif %}
                                         </div>
                                     </div>
                                     <div class="clearfix product-price-cover">
+                                        {% if pro.sale_price < 0 %}
+                                        <div class="product-price primary-color float-left">
+                                            <ins><span class="text-brand">Currently Unavailable</span></ins>
+                                        </div>
+                                        {% else %}
                                         <div class="product-price primary-color float-left">
                                             <ins><span class="text-brand">Rs {{pro.sale_price}}</span></ins>
                                             <ins><span class="old-price font-md ml-15">{{pro.max_price}}</span></ins>
+                                            {% if per != 0 %}
                                             <span class="save-price  font-md color3 ml-15">{{per}}.0 % OFF</span>
+                                            {% endif %}
                                         </div>
+                                        {% endif %}
                                     </div>
                                     <div class="bt-1 border-color-1 mt-15 mb-15"></div>
                                     <div class="short-desc mb-30">
@@ -191,6 +236,7 @@
                                     <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                     <div class="detail-extralink">
                                         <form>
+                                            {% if pro.sale_price > 0  %}
                                             {% csrf_token %}
                                             <input type="hidden" value='{{pro.id}}' class="prod_id">
                                             <div id="cbt" class="detail-qty border radius m-auto">
@@ -199,6 +245,7 @@
                                                 <input type="hidden" id="quantityInput" class='item_quantity' name="quantity" value="1">
                                                 <a class="qty-up" onclick="increaseQuantity()"><i class="fi-rs-angle-small-up"></i></a>
                                             </div>
+                                           
                                             <div id='cwb' class="product-extra-link2">
                                                 {% if user.is_authenticated %}
                                                     {% if pro.stock < 1 %}
@@ -208,14 +255,11 @@
                                                     {% endif %}
                                                 <a aria-label="Add To Wishlist" class="action-btn hover-up" href="{% url "user_side:add_wishlist" id=pro.id %}"><i class="fi-rs-heart"></i></a>
                                                 {% else %}
-                                                {% comment %} {% if pro.stock < 1 %}
-                                                    <img width="45" height="45" src="https://img.icons8.com/external-victoruler-linear-colour-victoruler/64/external-out-of-stock-logistics-victoruler-linear-colour-victoruler.png" alt="external-out-of-stock-logistics-victoruler-linear-colour-victoruler"/>
-                                                    {% else %}
-                                                    <button id='my_new_btn' type="submit" class="action-btn hover-up" onclick="addCart(event)"><img width="30" height="30" src="https://img.icons8.com/clouds/100/add-shopping-cart.png" alt="add-shopping-cart"/></button>
-                                                    {% endif %} {% endcomment %}
+                                              
                                                 {% endif %}
                                             
                                             </div>
+                                            {% endif %}
                                             <ul class="product-meta font-xs color-grey mt-50">
                                                 <li class="mb-5">MODEL ID: <a href="#">{{pro.model_id}}</a></li>
                                                 <li>Availability:<span class="in-stock text-success stock_val ml-5" value="{{pro.stock}}">{{pro.stock}} Items In Stock</span></li>
@@ -278,76 +322,30 @@
                                         <li class="social-linkedin"><a href="#"><img src="assets/imgs/theme/icons/icon-pinterest.svg" alt=""></a></li>
                                     </ul>
                                 </div>
-                                <h3 class="section-title style-1 mb-30 mt-30">Reviews (3)</h3>
+                                <h3 class="section-title style-1 mb-30 mt-30">Reviews ({{stars.total}})</h3>
                                 <!--Comments-->
-                                <div class="comments-area style-2">
-                                    <div class="row">
-                                        <div class="col-lg-8">
+                                <!--single-comment -->
+                                <!--single-comment -->
+                                <!--single-comment -->
+                                <div class="comments-area style-2 ">
+                                    <div class="row scrollable-div">
+                                        {% for review in review %}
+                                        <div class="col-lg-8 ">
                                             <h4 class="mb-30">Customer questions & answers</h4>
-                                            <div class="comment-list">
-                                                <div class="single-comment justify-content-between d-flex">
+                                            <div class="comment-list ">
+                                                <div class="single-comment justify-content-between d-flex ">
                                                     <div class="user justify-content-between d-flex">
                                                         <div class="thumb text-center">
                                                             <img src="assets/imgs/page/avatar-6.jpg" alt="">
-                                                            <h6><a href="#">Jacky Chan</a></h6>
-                                                            <p class="font-xxs">Since 2012</p>
+                                                            <h6><a href="#">{{review.customer.username}}</a></h6>
                                                         </div>
                                                         <div class="desc">
-                                                            <div class="product-rate d-inline-block">
-                                                                <div class="product-rating" style="width:90%">
-                                                                </div>
-                                                            </div>
-                                                            <p>Thank you very fast shipping from Poland only 3days.</p>
+                                                            <h6><strong>RATED {{review.stars}} <img width="12" height="12" src="https://img.icons8.com/ios-filled/50/FAB005/star--v1.png" alt="star--v1"/></strong></h6>
+
+                                                            <p>{{review.review}}</p>
                                                             <div class="d-flex justify-content-between">
                                                                 <div class="d-flex align-items-center">
-                                                                    <p class="font-xs mr-30">December 4, 2020 at 3:12 pm </p>
-                                                                    <a href="#" class="text-brand btn-reply">Reply <i class="fi-rs-arrow-right"></i> </a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!--single-comment -->
-                                                <div class="single-comment justify-content-between d-flex">
-                                                    <div class="user justify-content-between d-flex">
-                                                        <div class="thumb text-center">
-                                                            <img src="assets/imgs/page/avatar-7.jpg" alt="">
-                                                            <h6><a href="#">Ana Rosie</a></h6>
-                                                            <p class="font-xxs">Since 2008</p>
-                                                        </div>
-                                                        <div class="desc">
-                                                            <div class="product-rate d-inline-block">
-                                                                <div class="product-rating" style="width:90%">
-                                                                </div>
-                                                            </div>
-                                                            <p>Great low price and works well.</p>
-                                                            <div class="d-flex justify-content-between">
-                                                                <div class="d-flex align-items-center">
-                                                                    <p class="font-xs mr-30">December 4, 2020 at 3:12 pm </p>
-                                                                    <a href="#" class="text-brand btn-reply">Reply <i class="fi-rs-arrow-right"></i> </a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!--single-comment -->
-                                                <div class="single-comment justify-content-between d-flex">
-                                                    <div class="user justify-content-between d-flex">
-                                                        <div class="thumb text-center">
-                                                            <img src="assets/imgs/page/avatar-8.jpg" alt="">
-                                                            <h6><a href="#">Steven Keny</a></h6>
-                                                            <p class="font-xxs">Since 2010</p>
-                                                        </div>
-                                                        <div class="desc">
-                                                            <div class="product-rate d-inline-block">
-                                                                <div class="product-rating" style="width:90%">
-                                                                </div>
-                                                            </div>
-                                                            <p>Authentic and Beautiful, Love these way more than ever expected They are Great earphones</p>
-                                                            <div class="d-flex justify-content-between">
-                                                                <div class="d-flex align-items-center">
-                                                                    <p class="font-xs mr-30">December 4, 2020 at 3:12 pm </p>
-                                                                    <a href="#" class="text-brand btn-reply">Reply <i class="fi-rs-arrow-right"></i> </a>
+                                                                    <p class="font-xs mr-30"> {{review.customer.start_time}}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -356,78 +354,40 @@
                                                 <!--single-comment -->
                                             </div>
                                         </div>
-                                        <div class="col-lg-4">
+                                        {% endfor %}
+                                        <div class="col-lg-4 progress-column">
                                             <h4 class="mb-30">Customer reviews</h4>
                                             <div class="d-flex mb-30">
-                                                <div class="product-rate d-inline-block mr-15">
-                                                    <div class="product-rating" style="width:90%">
-                                                    </div>
-                                                </div>
-                                                <h6>4.8 out of 5</h6>
+                                               {% if stars.mean %}
+                                                <h6><strong>{{stars.mean}} <img width="12" height="12" src="https://img.icons8.com/ios-filled/50/FAB005/star--v1.png" alt="star--v1"/> OUT OF  5 </strong></h6>
+                                               {% else %}
+                                               No Reviews Yet!
+                                                {% endif %}
                                             </div>
                                             <div class="progress">
                                                 <span>5 star</span>
-                                                <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+                                                <div class="progress-bar" role="progressbar" style="width: {{stars.five}}%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{stars.five}}%</div>
                                             </div>
                                             <div class="progress">
                                                 <span>4 star</span>
-                                                <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                                                <div class="progress-bar" role="progressbar" style="width: {{stars.four}}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{stars.four}}%</div>
                                             </div>
                                             <div class="progress">
                                                 <span>3 star</span>
-                                                <div class="progress-bar" role="progressbar" style="width: 45%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">45%</div>
+                                                <div class="progress-bar" role="progressbar" style="width: {{stars.three}}%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">{{stars.three}}%</div>
                                             </div>
                                             <div class="progress">
                                                 <span>2 star</span>
-                                                <div class="progress-bar" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65%</div>
+                                                <div class="progress-bar" role="progressbar" style="width: {{stars.two}}%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">{{stars.two}}%</div>
                                             </div>
                                             <div class="progress mb-30">
                                                 <span>1 star</span>
-                                                <div class="progress-bar" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%</div>
+                                                <div class="progress-bar" role="progressbar" style="width: {{stars.one}}%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">{{stars.one}}%</div>
                                             </div>
                                             <a href="#" class="font-xs text-muted">How are ratings calculated?</a>
                                         </div>
                                     </div>
-                                </div>
-                                <!--comment form-->
-                                <div class="comment-form">
-                                    <h4 class="mb-15">Add a review</h4>
-                                    <div class="product-rate d-inline-block mb-30">
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-8 col-md-12">
-                                            <form class="form-contact comment_form" action="#" id="commentForm">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <div class="form-group">
-                                                            <textarea class="form-control w-100" name="comment" id="comment" cols="30" rows="9" placeholder="Write Comment"></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group">
-                                                            <input class="form-control" name="name" id="name" type="text" placeholder="Name">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group">
-                                                            <input class="form-control" name="email" id="email" type="email" placeholder="Email">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <div class="form-group">
-                                                            <input class="form-control" name="website" id="website" type="text" placeholder="Website">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <button type="submit" class="button button-contactForm">Submit
-                                                        Review</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                </div>  
                         </div>
                         
                         <section class="pt-25 pb-20">
@@ -445,8 +405,10 @@
                                                     </a>
                                                 </div>
                                                 <div class="product-action-1">
+                                                    {% if all.sale_price > 0 %}
                                                     {% if user.is_authenticated %}
                                                     <a aria-label="Love and View" class="action-btn small hover-up" href="{% url "user_side:add_wishlist" id=all.id %}" tabindex="0"><i class="fi-rs-heart"></i></a>
+                                                    {% endif %}
                                                     {% endif %}
                                                 </div>
                                                 <div class="product-badges product-badges-position product-badges-mrg">
@@ -459,10 +421,16 @@
                                                     <span>
                                                     </span>
                                                 </div>
+                                                {% if all.sale_price > 0 %}
                                                 <div class="product-price">
                                                     <span>{{all.sale_price}} </span>
                                                     <span class="old-price">{{all.max_price}}</span>
                                                 </div>
+                                                {% else %}
+                                                <div class="product-price">
+                                                    <span>Currently Unavailable</span>
+                                                </div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         {% endfor %}
@@ -492,17 +460,7 @@
                 }
             }
         
-            {% comment %} function increaseQuantity() {
-                var quantityElement = document.getElementById('quantitySpan');
-                var quantityInput = document.getElementById('quantityInput');
-                var currentQuantity = parseInt(quantityElement.textContent);
-        
-                // Add any maximum quantity limit if needed
-                if (currentQuantity < 15) {
-                    quantityElement.textContent = currentQuantity + 1;
-                    quantityInput.value = currentQuantity + 1;
-                }
-            }  {% endcomment %}
+            
             function increaseQuantity() {
                 var quantitySpan = document.getElementById('quantitySpan');
                 var quantityInput = document.getElementById('quantityInput');

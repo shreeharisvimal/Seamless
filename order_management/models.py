@@ -2,7 +2,7 @@ import uuid
 from django.db import models
 from user_side.models import NewUser
 from account.models import Address
-from cart.models import Cart,Cart_Item,Coupon
+from cart.models import Coupon
 from products.models import ProductVariant
 
 class Payment(models.Model):
@@ -14,26 +14,27 @@ class Payment(models.Model):
     PAYMENT_METHOD = (
         ('COD', 'Cash On Delivery'),
         ('RazorPay', 'Razor Pay'),
+        ('SeamPay', 'Seam pay'),
     )
     user = models.ForeignKey(NewUser, on_delete=models.CASCADE)
     payment_method = models.CharField(choices=PAYMENT_METHOD, max_length=100)
     payment_status = models.CharField(choices=PAYMENT_STATUS, max_length=20)
-    cod_payment_id = models.UUIDField(default=uuid.uuid4, unique=True, null=True, blank=True)
+    payment_id = models.UUIDField(default=uuid.uuid4, unique=True, null=True, blank=True)
     razorpay_payment_id = models.CharField(max_length=100, null=True, blank=True)
-    amount_paid = models.CharField(max_length=30)
+    amount_paid = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     payment_time = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        if self.payment_method == 'COD':
+        if self.payment_method == 'COD' or self.payment_method == 'SeamPay':
             self.razorpay_payment_id = None
         elif self.payment_method == 'RazorPay':
-            self.cod_payment_id = None
+            self.payment_id = None
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return str(self.cod_payment_id) if self.cod_payment_id else str(self.razorpay_payment_id)
+        return str(self.payment_id) if self.payment_id else str(self.razorpay_payment_id)
     
-
+    
 class Order(models.Model):
     
     user = models.ForeignKey(NewUser, on_delete=models.SET_NULL, null=True)
@@ -56,9 +57,10 @@ class OrderItem(models.Model):
         ("PLACED", "Order Placed"),
         ("PROCESSING", "Order Processing"),
         ("SHIPPED", "Order Shipped"),
-        ("OUT FOR DELIVERY", "out for delivery"),
+        ("OUT FOR DELIVERY", "Out For Delivery"),
         ("DELIVERED", "Order Delivered"),
         ("CANCELLED", "Order Cancelled"),
+        ("RETURNED", "Order Returned"),
     )  
     user = models.ForeignKey(NewUser, on_delete=models.SET_NULL, null=True)
     order_item_id = models.CharField(max_length=120, default='#0000000')
@@ -74,12 +76,12 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"Order {self.user}"
+    def get_total(self):
+        return self.quantity * self.product_price
     
 
 
-# class Wallet(models.Model):
-#     user = models.ForeignKey(NewUser, on_delete=models.CASCADE)
-#     wallet_balance = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+
 
     
 

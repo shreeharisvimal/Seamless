@@ -9,7 +9,7 @@ urlpatterns = [
     path('order-manage-view', views.order_view, name="order_view"),
     path('order_coupon-view', views.order_coupon, name="order_coupon"),
     path('order_coupon_delete-view', views.order_coupon_delete, name="order_coupon_delete"),
-    path('view-place_order', views.place_order, name="place_order"),
+    path('place_order', views.place_order, name="place_order"),
     path('view-order_details', views.order_details, name="order_status"),
     path('view-order_listing/<int:id>', views.order_listing, name="order_listing"),
     path('view-cancel_order/<int:id>/', views.cancel_order, name="cancel_order"),
@@ -25,11 +25,11 @@ urlpatterns = [
     path('pay_with_razor', views.pay_with_razor, name="pay_with_razor"),
     path('user_details_views/<int:id>', views.user_details_views, name="user_details_views"),
     path('order_search', views.order_search, name="order_search"),
-
-
+    path('return_order/<int:id>', views.return_order, name="return_order"),
+    path('seampay', views.seampay, name='seampay'),
+    path('order_placed_view', views.order_placed_view, name='order_placed_view'),
+    path('pay_with_razor_wallet', views.pay_with_razor_wallet, name='pay_with_razor_wallet'),
     
-
-
 
 
     

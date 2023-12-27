@@ -12,7 +12,7 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 
 OTP_EXPIRATION_SECONDS = 120
-
+    
 def email_send(email,otp):
 
     send_mail(

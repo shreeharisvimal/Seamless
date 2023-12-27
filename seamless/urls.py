@@ -47,6 +47,13 @@ urlpatterns = [
 
     path('order-management/', include('order_management.urls')), # for ordering and other stuffs
 
+
+    path('wallet-management/', include('wallet.urls')), # for wallet management and other stuffsreview
+
+    path('review_management_review_management/', include('review_management.urls')), # for wallet management and other stuffsreview
+
+
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

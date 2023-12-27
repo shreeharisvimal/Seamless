@@ -15,6 +15,8 @@ from account.models import UserProfile
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from wallet.models import SeamPay, Wallet
+from wallet.views import credit, seampay_razor
 
 
 # Create your views here.
@@ -49,8 +51,8 @@ def order_view(request):
         'default_shipping' :default_shipping if default_shipping else None,
         'billing_address':billing_address if billing_address else None,
         'shipping_address':shipping_address if shipping_address else None,
+        'seam': SeamPay.objects.get(user = request.user)
     }
-
     return render(request, 'user/checkout.html',context)
 
 
@@ -106,6 +108,7 @@ def place_order(request):
         try:
             shipping_address_id = request.POST.get('shipping')
             billing_address_id = request.POST.get('billing')
+            seampay = request.POST.get('seampay')
             if not shipping_address_id or not billing_address_id:
                 messages.error(request, 'Please select both address')
                 return JsonResponse({'success': False, 'message': 'Error placing order: Select address for delivery'})
@@ -117,7 +120,8 @@ def place_order(request):
             # payment_mode = request.POST.get('payment_choice')
             payment_mode = request.POST['payment_select']
             print(f'hdfsakjdfnas paymetn mode {payment_mode}')
-            
+            print(seampay)
+
             if payment_mode == "exampleRadios6":
                 payment_mode = 'COD'
             else:
@@ -139,15 +143,16 @@ def place_order(request):
                 payment_details = payment_maker,
                 shipping_address = shipping,
                 billing_address = billing,
-                order_total = cart.total,
+                order_total = cart.total ,
                 order_subtotal = cart.sub_total,
                 order_shipping = cart.shipping,
                 order_coupon = coupon if coupon else None,
                 )
-                request.session['order'] = new_order.order_number
+                request.session['new_order'] = new_order.pk
                 cart.coupon = None 
                 cart.save()
                 print(coupon)
+
             except Exception as e:
                 print(f' the error {e}')
             for cart_item in cart_item:
@@ -169,13 +174,13 @@ def place_order(request):
                 product.save()
                 order_item.save()
                 cart_item.delete()
-            
+            return JsonResponse({'success': True})
         except KeyError as e:
             # Log the exception for debugging purposes
             print(f"An error occurred: the error is {str(e)}")
             return JsonResponse({'error': 'An error occurred'}, status=500)
         
-    return redirect('order:order_status')
+
 
 
 
@@ -199,7 +204,7 @@ def order_details(request):
     user_details=None
 
     try:
-        new_order = request.session.get('order')
+        new_order = request.session.get('new_order')
         print(f'the payment id  {new_order}')
         order = Order.objects.get(order_number = new_order)
         order_item = OrderItem.objects.filter(order = order)
@@ -237,6 +242,7 @@ def order_details(request):
         to_email,
         html_message=mail_content,  # HTML version
         )
+        
         data = {'success': True}
         return JsonResponse(data)
     except Exception as e:
@@ -246,7 +252,7 @@ def order_details(request):
 
 
 
-def invoice_showing(request):
+def  invoice_showing(request):
     shipping=None
     billing=None
     order_item=None
@@ -254,7 +260,7 @@ def invoice_showing(request):
     user_details=None
 
     try:
-        new_order = request.session.get('order')
+        new_order = request.session.get('new_order')
         print(f'the payment id  {new_order}')
         order = Order.objects.get(order_number = new_order)
         order_item = OrderItem.objects.filter(order = order)
@@ -306,56 +312,7 @@ def cancel_order(request,id):
     }
     return render(request, 'user/order/order_cancel.html',context)
 
-def cancel_order_request(request,id):
-    print(f' ndfkasndfk the error {id}')
-    order_item = OrderItem.objects.get(id = id)
-    Product = ProductVariant.objects.get(id = order_item.order_product.id)
-    user_details = get_object_or_404(UserProfile, user = request.user)
-    print(Product)
-    if request.method =="POST":
-        try:
-            reason = request.POST['reason']
-            if reason is None:
-                messages.warning(request,'Reason for cancellation is Must')
-            order_item.cancel_reason = reason
-            order_item.order_status = 'CANCELLED'
-            Product.stock += int(order_item.quantity)
-            order_item.order.order_total -= (int(order_item.product_price) * int(order_item.quantity))
-            print((int(order_item.product_price) * int(order_item.quantity)))
-            print(order_item.order.order_total)
-            order_item.order.save()
-            print(f'the final saving {order_item.order.order_total}')
-            order_item.save()
-            if order_item.order.order_total < 0:
-                order_item.order.order_total = 0
-                order_item.order.save()
-            Product.save()
-            context = {
-                'order_item':order_item,
-                'profile':user_details, 
-                'Product':Product,
-            }
-            try:
-                mail_content = render_to_string('user/order/order_cancel_invoice.html', context)
-                subject = 'Order Cancel request Accepted '
-                from_email= 'yourseamlesslife@gmail.com'
-                to_email = [user_details.user.email]
-                send_mail(
-                    subject,
-                    strip_tags(mail_content),
-                    from_email,
-                    to_email,
-                    html_message=mail_content,
-                )
-            except Exception as e:
-                print(f'the error is {e}')
-            
-            messages.info(request,'The order has been cancelled soon you will recive confirmation mail')
-            return redirect('order:order_listing')
-        except Exception as e:
-            print(f'an error has been occured {e}')
-            return redirect('order:order_user_view')
-    return render(request, 'user/order/order_cancel.html')
+
 
 
 
@@ -424,20 +381,31 @@ def admin_order_status_all(request):
             order = get_object_or_404(Order, order_number=order_id)
             order_item = OrderItem.objects.filter(Q(order=order) & ~Q(order_status='CANCELLED') & ~Q(order_status = 'DELIVERED'))
             for item in order_item:
+
                 print('inside the looop')
+
                 item.order_status = select_status
+
                 if select_status == 'CANCELLED':
                     order.order_total -= (int(item.product_price) * int(item.quantity))
+
+
                 order.save()
                 item.save()
+
+
                 if order.order_total < 0:
                     order.order_total = 0
                     order.save()
+
+
                 print('inside the all cancel ) setting if')
                 messages.info(request, f'The order Number {order_id} status has been changed')
             data = {'success': True}
             return JsonResponse(data)
         except Exception as e:
+
+
             print(f'The error is in admin all order change: {e}')
             data = {'success': False}
             return JsonResponse(data)
@@ -448,17 +416,25 @@ def user_order_tracking(request):
     if request.method =="POST":
         order_item_id = request.POST.get('order_item_id')
         payment_id = request.POST.get('payment_id')
+
+
         if order_item_id and payment_id:
             order_item = OrderItem.objects.get(id=order_item_id, payment_details = payment_id)
             order = order_item.order
+
+
             context = {
                 'order_item':order_item,
                 'order':order
             }
+
+
             mail = render_to_string('user/order/order_tracking', context)
             subject = 'Your Order tracking request'
             from_email = 'yourseamlesslife@gmail.com'
             to_email = [request.user.email]
+
+
             send_mail(
                 subject,
                 strip_tags(mail),
@@ -467,6 +443,7 @@ def user_order_tracking(request):
                 html_message=mail,
             )
         messages.success(request,'The Order tracking details has been sent to mail')
+
     return redirect('order:order_listing')
 
 
@@ -480,18 +457,14 @@ def pay_with_razor(request):
     try:
         cart = Cart.objects.get(user = request.user)
         cart_item = Cart_Item.objects.filter(cart = cart)
-        # razor_payment_id = request.POST.get('razorpay_payment_id')
-        print(f"{shipping}    asdfasdfasfasd       asdfasdfasfasd     {request.POST.get('shipping')}")
-        print(f"{billing}   asdfasdfasfasd      asdfasdfasfasd    {request.POST.get('billing')}")
         shipping = get_object_or_404(Address, id = request.POST.get('shipping'))
         billing = get_object_or_404(Address, id = request.POST.get('billing'))
-        user_details = UserProfile.objects.get(user = request.user)
         if shipping is None or billing is None:
             messages.success(request, 'Please select your Both address')
             return JsonResponse(ValueError)
         client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
         order_response = client.order.create({
-            'amount' : int(float(cart.total)*100),
+            'amount' : int(float(cart.total)),
             'currency' : "INR",
             'receipt' : f"#{cart.id}_{uuid.uuid4().hex[:8]}",
             'payment_capture' : 1,
@@ -500,7 +473,7 @@ def pay_with_razor(request):
             user=request.user,
             razorpay_payment_id = order_response["id"],
             payment_method = 'RazorPay',
-            payment_status = 'PENDING',
+            payment_status = 'SUCCESS',
             amount_paid = cart.total,
             )
         print(payment_maker)
@@ -521,12 +494,11 @@ def pay_with_razor(request):
         order_coupon = coupon if coupon else None,
         )
         print('hello in the after order create')
-        request.session['order'] = new_order.order_number
-        print(request.session.get('order'))
+        request.session['new_order'] = new_order.pk
+        print(request.session.get('new_order'))
         cart.coupon = None 
         cart.save()
         for cart_item in cart_item:
-            print(product)
             product = ProductVariant.objects.get(id = cart_item.product.id)
             print(product)
             uu_id = int(uuid.uuid4().hex[:8],16)
@@ -547,27 +519,8 @@ def pay_with_razor(request):
             order_item.save()
             cart_item.delete()
 
-    except Exception as e:
-        print(f" the error is  {e}")
-    context = {
-    'order_item':OrderItem.objects.filter(order = new_order),   
-    'order':new_order,
-    'profile':user_details,
-    'billing':billing,
-    'shipping':shipping,
-    }
-    mail_content = render_to_string('user/order/order_invoice.html',context)
-    subject = 'Order Invoice Seamless'
-    from_email = 'yourseamlesslife@gmail.com'
-    to_email = [user_details.user.email]
-    send_mail(
-    subject,
-    strip_tags(mail_content),  # Plain text version
-    from_email,
-    to_email,
-    html_message=mail_content,  # HTML version
-    )
-    return JsonResponse({
+        return JsonResponse({
+        'success':True,
         'full_name':profile.full_name,
         'email':profile.email,
         'phone_number':profile.phone_number,
@@ -575,8 +528,18 @@ def pay_with_razor(request):
             'amount':order_response.get('amount'),
             'order_id': order_response.get('id'),
         },
-    })
+        })
+    except Exception as e:
+        print(f" the error is  {e}")
+        return JsonResponse({
+        'success':False,
+        })
 
+   
+    
+   
+
+# razor pay on top
 
 def user_details_views(request,id):
     user = get_object_or_404(NewUser, id=id)
@@ -603,8 +566,311 @@ def user_details_views(request,id):
 def order_search(request):
     if request.method == 'POST':
         search_id = request.POST['search_id']
-        order = Order.objects.filter(Q(order_number__icontains = search_id) | Q(order_time__icontains = search_id) | Q(order_total__icontains = search_id))
+        order = Order.objects.filter(Q(order_number_icontains = search_id) | Q(order_timeicontains = search_id) | Q(order_total_icontains = search_id))
     context ={
         'order':order,
     }
     return render(request, 'admin/dashboard/order/order_view.html',context)
+
+
+
+def cancel_order_request(request,id):
+
+    order_item = OrderItem.objects.get(id = id)
+    Product = ProductVariant.objects.get(id = order_item.order_product.id)
+    user_details = get_object_or_404(UserProfile, user = request.user)
+    order = Order.objects.get(pk = order_item.order.pk)
+    finder = OrderItem.objects.filter(order = order)
+    print('the lenm of the finder')
+    print(len(finder))
+    amount = None
+    print(Product)
+    if request.method =="POST":
+        try:
+            reason = request.POST['reason']
+            if reason is None:
+                messages.warning(request,'Reason for cancellation is Must')
+            order_item.cancel_reason = reason
+            order_item.order_status = 'CANCELLED'
+            Product.stock += int(order_item.quantity)
+            amount = (int(order_item.product_price) * int(order_item.quantity))
+            order_item.order.order_total -= amount
+            
+            order_item.order.save()
+            order_item.save()
+            if len(finder) <= 1:
+                order_item.order.order_total = 0
+                order_item.order.save()
+                credit(order.order_total, order_item, request.user)
+            else:
+                credit(amount, order_item, request.user)
+            Product.save()
+            context = {
+                'order_item':order_item,
+                'profile':user_details, 
+                'Product':Product,
+            }
+            try:
+                mail_content = render_to_string('user/order/order_cancel_invoice.html', context)
+                subject = 'Order Cancel request Accepted '
+                from_email= 'yourseamlesslife@gmail.com'
+                to_email = [user_details.user.email]
+                send_mail(
+                    subject,
+                    strip_tags(mail_content),
+                    from_email,
+                    to_email,
+                    html_message=mail_content,
+                )
+            except Exception as e:
+                print(f'the error is {e}')
+            
+            messages.info(request,'The order has been cancelled soon you will recive confirmation mail')
+            return redirect('order:order_listing', order_item.order.pk)
+        except Exception as e:
+            print(f'an error has been occured {e}')
+            return redirect('order:order_user_view')
+    return render(request, 'user/order/order_cancel.html')
+
+
+
+def return_order(request, id):
+    order_item = OrderItem.objects.get(id = id)
+   
+    if order_item:
+       
+        try:
+            order_item.order_status = 'RETURNED'
+            order_item.order_product.stock += order_item.quantity
+            
+            if int(order_item.product_price) * int(order_item.quantity) + int(order_item.order.order_shipping) == int(order_item.order.order_total):
+                amount = (int(order_item.product_price) * int(order_item.quantity))
+            
+            else:
+                amount = (int(order_item.product_price) * int(order_item.quantity)) 
+            order_item.order.order_total -= amount 
+            if order_item.order.order_total <= int(order_item.order.order_shipping + order_item.order.order_coupon):
+                order_item.order.order_total = 0
+                if order_item.order.order_shipping is not None :
+                    amount += Decimal(order_item.order.order_shipping)
+                if order_item.order.order_coupon is not None :
+                    amount -= order_item.order.order_coupon
+            
+            if order_item.payment_details.payment_method == 'RazorPay' or order_item.payment_details.payment_method == 'SeamPay' :
+                credit(amount, order_item, request.user)
+
+            
+
+            order_item.order_product.save()
+            order_item.order.save()
+            order_item.save()
+
+        except Exception as e:
+            print(f'there is an error {e}')
+
+    return redirect('order:order_listing', order_item.order.pk)
+
+
+
+def pay_with_razor_wallet(request):
+    new_amount = None
+    try:
+        cart = Cart.objects.get(user = request.user)
+
+        seam = SeamPay.objects.get(user = request.user)
+
+        new_amount = cart.total - seam.balance
+        cart_item = Cart_Item.objects.filter(cart = cart)
+        shipping = get_object_or_404(Address, id = request.POST.get('shipping'))
+        billing = get_object_or_404(Address, id = request.POST.get('billing'))
+        user_details = UserProfile.objects.get(user = request.user)
+        if shipping is None or billing is None:
+            messages.success(request, 'Please select your Both address')
+            return JsonResponse(ValueError)
+        client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
+        order_response = client.order.create({
+            'amount' : int(float(new_amount)),
+            'currency' : "INR",
+            'receipt' : f"#{cart.id}_{uuid.uuid4().hex[:8]}",
+            'payment_capture' : 1,
+        })
+        payment_maker = Payment.objects.create(
+            user=request.user,
+            razorpay_payment_id = order_response["id"],
+            payment_method = 'RazorPay',
+            payment_status = 'SUCCESS',
+            amount_paid = new_amount,
+            )
+        print(payment_maker)
+        order_item = None
+        coupon = None
+        product = None
+
+        if cart.coupon:
+            coupon = Coupon.objects.get(id = cart.coupon.id)
+        new_order =Order.objects.create(
+        user=request.user,
+        payment_details = payment_maker,
+        shipping_address = shipping,
+        billing_address = billing,
+        order_total = cart.total,
+        order_subtotal = cart.sub_total,
+        order_shipping = cart.shipping,
+        order_coupon = coupon if coupon else None,
+        )
+        print('hello in the after order create')
+        request.session['new_order'] = new_order.pk
+        print(request.session.get('new_order'))
+        cart.coupon = None 
+        cart.save()
+        for cart_item in cart_item:
+            product = ProductVariant.objects.get(id = cart_item.product.id)
+            print(product)
+            uu_id = int(uuid.uuid4().hex[:8],16)
+            uu_id = f'#{uu_id}'
+
+            order_item, _ = OrderItem.objects.get_or_create(
+            user=request.user, 
+            order_product=product,
+            order_item_id = uu_id,
+            quantity=cart_item.quantity, 
+            product_price=cart_item.product.sale_price, 
+            payment_details=payment_maker,
+            order = new_order,
+            order_status = 'PROCESSING',
+            )
+            product.stock -= cart_item.quantity
+            product.save()
+            order_item.save()
+            cart_item.delete()
+  
+            seampay_razor(new_order.order_total, order_item, request.user)
+
+        return JsonResponse({
+        'success':True,
+        'full_name':user_details.full_name,
+        'email':user_details.email,
+        'phone_number':user_details.phone_number,
+        'order_response':{
+            'amount':order_response.get('amount'),
+            'order_id': order_response.get('id'),
+        },
+        })
+    except Exception as e:
+        print(f'an error has been occured {e}')
+        return JsonResponse({'success': False})
+
+
+
+
+
+
+
+
+def seampay(request):
+
+    seam = get_object_or_404(SeamPay, user =request.user)
+    try:
+        shipping_address_id = request.POST.get('shipping')
+        billing_address_id = request.POST.get('billing')
+        if not shipping_address_id or not billing_address_id:
+            messages.error(request, 'Please select both address')
+            return JsonResponse({'success': False, 'message': 'Error placing order: Select address for delivery'})
+        shipping =Address.objects.get(id=(shipping_address_id))
+        billing =Address.objects.get(id=(billing_address_id))
+        cart = Cart.objects.get(user = request.user)
+        cart_item = Cart_Item.objects.filter(cart = cart)
+
+
+        payment_maker = Payment.objects.create(
+        user=request.user,
+        payment_method = 'SeamPay',
+        payment_status = 'SUCCESS',
+        amount_paid = cart.total,
+        )
+        order_item = None
+        coupon = None
+        try:
+            if cart.coupon:
+                coupon = Coupon.objects.get(id=cart.coupon.id)
+            # Create a new order instance
+            new_order =Order.objects.create(
+            user=request.user,
+            payment_details = payment_maker,
+            shipping_address = shipping,
+            billing_address = billing,
+            order_total = cart.total ,
+            order_subtotal = cart.sub_total,
+            order_shipping = cart.shipping,
+            order_coupon = coupon if coupon else None,
+            )
+            cart.coupon = None 
+            cart.save()
+        except Exception as e:
+            print(f' the error {e}')
+        for cart_item in cart_item:
+            product = ProductVariant.objects.get(id=cart_item.product.id)
+            uu_order_id = int(uuid.uuid4().hex[:8],16)
+            uu_order_id = f"#{uu_order_id}"
+
+            order_item, _ = OrderItem.objects.get_or_create(
+                user=request.user, 
+                order_product=product,
+                order_item_id = uu_order_id,
+                quantity=cart_item.quantity, 
+                product_price=cart_item.product.sale_price, 
+                payment_details=payment_maker,
+                order = new_order,
+                order_status = 'PROCESSING',
+                )
+            product.stock -= cart_item.quantity
+            product.save()
+            order_item.save()
+            cart_item.delete()
+        seam.balance = seam.balance - new_order.order_total
+        request.session['new_order'] = new_order.pk
+        for item in OrderItem.objects.filter(order = new_order):
+            Wallet.objects.get_or_create(
+            user = request.user,
+            seampay = seam,
+            payment = new_order.payment_details,
+            order_id = new_order.order_number,
+            order_item = item,
+            amount = item.product_price,
+            is_debit = True,
+            )
+        seam.save()
+        return JsonResponse({'success': True})
+    except KeyError as e:
+        # Log the exception for debugging purposes
+        print(f"An error occurred: the error is {str(e)}")
+        return JsonResponse({'error': 'An error occurred'}, status=500)
+    
+
+    
+
+
+
+def order_placed_view(request):
+    new_order = request.session.get('new_order')
+    user_details = UserProfile.objects.get(user = request.user)
+    my_new_order = Order.objects.get(pk = new_order)
+    context = {
+    'order_item':OrderItem.objects.filter(order = my_new_order.pk),   
+    'order':my_new_order,
+    'profile':user_details,
+    'billing':my_new_order.shipping_address,
+    'shipping':my_new_order.billing_address,
+    }
+    mail_content = render_to_string('user/order/order_invoice.html',context)
+    subject = 'Order Invoice Seamless'
+    from_email = 'yourseamlesslife@gmail.com'
+    to_email = [user_details.user.email]
+    send_mail(
+    subject,
+    strip_tags(mail_content),  # Plain text version
+    from_email,
+    to_email,
+    html_message=mail_content,  # HTML version
+    )
+    return render(request, 'user/order_placed_view.html')

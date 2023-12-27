@@ -54,7 +54,7 @@
             <div class="col"> <small>Qty : {{order_item.quantity}}</small></div>
             <div class="col"><h5 class="mb-0">Price: &#8377; {{Product.sale_price}}</h5>
             <div class="col"><h5 class="mb-0">Payment Method: {{order.payment_details.payment_method}}</h5>
-            <div class="col"> <small>Payment ID : {% if order_item.order.payment_details.cod_payment_id %} {{order_item.order.payment_details.cod_payment_id}} {% else %} {{order_item.order.payment_details.razorpay_payment_id}} {% endif %}</small></div>
+            <div class="col"> <small>Payment ID : {% if order_item.order.payment_details.payment_id %} {{order_item.order.payment_details.payment_id}} {% else %} {{order_item.order.payment_details.razorpay_payment_id}} {% endif %}</small></div>
             <div class="col"> <small>Order Number : {{order_item.order.order_number}}</small></div>
         </div>
         <P>Dear {{order_item.user.username}}, <br>As per Your request Your Order has have been cancelled</P>

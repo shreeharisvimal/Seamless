@@ -17,6 +17,8 @@ urlpatterns = [
     path('product-order-by-here/<str:order_by>' , views.product_sort, name='product_sort'),
     path('view-all-category' , views.category_page, name='category_page'),
     path('all_search' , views.all_search, name='all_search'),
+    path('change_profile_image/' , views.change_profile_image, name='change_profile_image'),
+    
 
     
 

@@ -92,7 +92,7 @@
                                 {% endif %}
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
                                     <a class="dropdown-item" href="{% url "account:my_dashboard" %}"> MY ACCOUNT</a>
-                                    <a class="dropdown-item" href="#"> MY ORDERS</a>
+                                    <a class="dropdown-item" href="{% url "order:order_user_view" %}"> MY ORDERS</a>
                                     <a class="dropdown-item" href="#"> COUPONS</a>
                                     <a class="dropdown-item text-danger" href="#"> HELPLINE</a>
  
@@ -141,7 +141,7 @@
                                     <option>NoteBook</option>
                                 </select>
                                 <input type="text" name="search_id" placeholder="Search for items...">
-                                <button type="submit"></button>
+                                
                             </form>
                         </div>
                     </div>

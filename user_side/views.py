@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.shortcuts import  get_object_or_404, render, redirect
 from django.views.decorators.cache import cache_control
 from django.contrib import messages
@@ -6,7 +7,9 @@ from category_manage.models import Category
 from django.db.models import Q
 from .models import Wishlist
 import math
-
+from account.models import UserProfile 
+from django.http import JsonResponse
+from review_management.models import review
 
 
 @cache_control(no_cache=True, must_revalidate=True, max_age=0)
@@ -33,15 +36,34 @@ def landing_handler(request):
 
 @cache_control(no_cache=True, must_revalidate=True, max_age=0)
 def product_details(request, id):
-    
+    mean = Decimal(0.0)
+    print(id)
     pro = ProductVariant.objects.filter(Q(id = id) & Q(is_active=True))
     val = ProductVariant.objects.get(Q(id = id) & Q(is_active=True))
     product = ProductVariant.objects.filter(Q(is_active= True) & ~Q(id=id))
+    rev = review.objects.filter(product = id)
     for prod in product:
             prod.get_variant_name
-   
-
+    try:    
+        print(rev)
+        if rev.exists():
+            mean = sum(review.stars for review in rev) / len(rev)
+            print(mean)
+            mean = round(mean, 2)
+            print("Mean Rating:", mean)
+    except Exception as e:
+        print(e)
     context = {
+        'stars' : {
+            'mean':mean,
+            'total':rev.count(),
+            'one': round((review.objects.filter(stars=1, product = id).count() / max(1, rev.count())) * 100),
+            'two': round((review.objects.filter(stars=2, product = id).count() / max(1, rev.count())) * 100),
+            'three': round((review.objects.filter(stars=3, product = id).count() / max(1, rev.count())) * 100),
+            'four': round((review.objects.filter(stars=4, product = id).count() / max(1, rev.count())) * 100),
+            'five': round((review.objects.filter(stars=5, product = id).count() / max(1, rev.count())) * 100),
+        },
+        'review': rev,
         'product' : pro,
         'per' : math.floor((100-((val.sale_price/val.max_price)*100))),
         'prod':product,
@@ -89,7 +111,6 @@ def delete_wishlist(request,id):
 
  
 def product_list(request,id=None):
-    variant=''
     if id is None:
         all_products = ProductVariant.objects.filter(is_active = True)
         for pro in all_products:
@@ -142,4 +163,16 @@ def all_search(request):
             'total':all_products.count(),
         }
         return render(request, 'user/products_list.html',context)
-
+    
+def change_profile_image(request):
+    acc_user = UserProfile.objects.get(user = request.user)
+    try:
+        if request.FILES.get('Profile_img'):
+            acc_user.profile_pic = request.FILES.get('Profile_img')
+            acc_user.save()
+            data = {
+                'success': True,
+            }
+        return JsonResponse(data)
+    except Exception as e:
+        pass

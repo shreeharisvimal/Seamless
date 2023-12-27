@@ -1,0 +1,34 @@
+{% extends "admin/admin_base.html" %} 
+{% block title %}ADD OFFER{% endblock title %} 
+{%block main %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/admin_css/admin_main.css' %}">
+
+
+<section>
+    <br>
+    <br>
+    <h2>CATEGORY OFFER EDIT</h2>
+    <hr>
+    <hr>
+
+    <div class="col-lg-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <form action="{% url "category_manage:edit_categoryoffer" id=cate.id %}" method="POST">
+                    {% csrf_token %}
+                    <input type="text" class="form-control" value="{{cate.category_name}}" readonly>
+                    <input type="text" class="form-control" value="{{cate.discount}}" name="amount">
+                <input type="submit" value="submit" class='btn btn-button secondary'>
+                    
+               </form><!-- card end// -->
+            </div>
+        </div>
+    </div>          
+</div>
+</section>
+
+
+
+
+{% endblock main %}

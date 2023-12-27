@@ -6,16 +6,16 @@
 {% load static %}
 <style type="text/css">
   @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
-  body { margin: 0; padding: 0; background: #e1e1e1; }
+  body { margin: 0; padding: 0; background: #000000; }
   div, p, a, li, td { -webkit-text-size-adjust: none; }
-  .ReadMsgBody { width: 100%; background-color: #ffffff; }
-  .ExternalClass { width: 100%; background-color: #ffffff; }
-  body { width: 100%; height: 100%; background-color: #e1e1e1; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  .ReadMsgBody { width: 100%; background-color: #000000; }
+  .ExternalClass { width: 100%; background-color: #000000; }
+  body { width: 100%; height: 100%; background-color: #000000; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
   html { width: 100%; }
   p { padding: 0 !important; margin-top: 0 !important; margin-right: 0 !important; margin-bottom: 0 !important; margin-left: 0 !important; }
   .visibleMobile { display: none; }
   .hiddenMobile { display: block; }
-
+  
   @media only screen and (max-width: 600px) {
   body { width: auto !important; }
   table[class=fullTable] { width: 96% !important; clear: both; }
@@ -23,7 +23,7 @@
   table[class=col] { width: 45% !important; }
   .erase { display: none; }
   }
-
+  
   @media only screen and (max-width: 420px) {
   table[class=fullTable] { width: 100% !important; clear: both; }
   table[class=fullPadding] { width: 85% !important; clear: both; }
@@ -33,8 +33,8 @@
   .visibleMobile { display: block !important; }
   .hiddenMobile { display: none !important; }
   }
-
 </style>
+
 
 <!-- Header -->
 <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" bgcolor="#e1e1e1">
@@ -68,7 +68,7 @@
                         </tr>
                         <a href="http://127.0.0.1:8000/" style="color:red; text-decoration:none;"><h2> ← Go to Home</h2></a>
                         <tr>
-                          <td style="font-size: 12px; color: #5b5b5b; font-family: 'Open Sans', sans-serif; line-height: 18px; vertical-align: top; text-align: left;">
+                          <td style="font-size: 12px; color: #00000; font-family: 'Open Sans', sans-serif; line-height: 18px; vertical-align: top; text-align: left;">
                             Hello  {% if profile.full_name %}{{profile.full_name}}{% else %}{{request.user}}{% endif %}
                             <br> Thank you for shopping with Seamless.
                           </td>
@@ -84,7 +84,7 @@
                           <td height="5"></td>
                         </tr>
                         <tr>
-                          <td style="font-size: 21px; color: #ff0000; letter-spacing: -1px; font-family: 'Open Sans', sans-serif; line-height: 1; vertical-align: top; text-align: right;">
+                          <td style="font-size: 21px; color: black; letter-spacing: -1px; font-family: 'Open Sans', sans-serif; line-height: 1; vertical-align: top; text-align: right;">
                             INVOICE
                           </td>
                         </tr>
@@ -96,7 +96,7 @@
                           <td height="20"></td>
                         </tr>
                         <tr>
-                          <td style="font-size: 12px; color: #5b5b5b; font-family: 'Open Sans', sans-serif; line-height: 18px; vertical-align: top; text-align: right;">
+                          <td style="font-size: 12px; color: black; font-family: 'Open Sans', sans-serif; line-height: 18px; vertical-align: top; text-align: right;">
                             <small>ORDER NUMBER</small># {{order.order_number}}<br />
                             <small>{{order.order_time}}</small>
                           </td>
@@ -134,7 +134,7 @@
                 <table width="480" border="0" cellpadding="0" cellspacing="0" align="center" class="fullPadding">
                   <tbody>
                     <tr>
-                      <th style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; font-weight: normal; line-height: 1; vertical-align: top; padding: 0 10px 7px 0;" width="52%" align="left">
+                      <th style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: black; font-weight: normal; line-height: 1; vertical-align: top; padding: 0 10px 7px 0;" width="52%" align="left">
                         Item
                       </th>
                       
@@ -156,7 +156,7 @@
                     </tr>
                     {% for item in order_item %}
                     <tr>
-                      <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #ff0000;  line-height: 18px;  vertical-align: top; padding:10px 0;" class="article">
+                      <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color:black;  line-height: 18px;  vertical-align: top; padding:10px 0;" class="article">
                         {{item.order_product.get_variant_name}}
                       </td>
                       <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #646a6e;  line-height: 18px;  vertical-align: top; padding:10px 0;" align="center">{{item.quantity}}</td>
@@ -304,7 +304,7 @@
                             </tr>
                             <tr>
                               <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 20px; vertical-align: top; ">
-                                METHOD : {{order.payment_details.payment_method}} <br>PAYMENT ID :<br> <p style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #ff0000;">{% if order.payment_details.cod_payment_id %} {{order.payment_details.cod_payment_id}} {% else %} {{order.payment_details.razorpay_payment_id}} {% endif %}</p> 
+                                METHOD : {{order.payment_details.payment_method}} <br>PAYMENT ID :<br> <p style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: black;">{% if order.payment_details.payment_id %} {{order.payment_details.payment_id}} {% else %} {{order.payment_details.razorpay_payment_id}} {% endif %}</p> 
                               </td>
                             </tr>
                           </tbody>

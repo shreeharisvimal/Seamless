@@ -35,16 +35,20 @@
                                         </a>
                                     </div>
                                     <div class="product-action-1">
+                                        {% if all.sale_price > 0 %}
                                         {% if user.is_authenticated %}
                                         <a aria-label="Love and View" class="action-btn hover-up" href="{% url "user_side:add_wishlist" id=all.id %}"><i class="fi-rs-heart"></i></a>
+                                        {% endif %}
                                         {% endif %}
                                     </div>
                                     <div class="product-badges product-badges-position product-badges-mrg">
                                         <span class="hot">Hot</span>
                                     </div>
                                 </div>
+                                
                                 <div class="product-content-wrap">
                                     <h2><a href="shop-product-right.html">{{ all.get_variant_name }}</a></h2>
+                                    {% if all.sale_price > 0 %}
                                     <div class="rating-result" title="90%">
                                         <span>
                                             <span>90%</span>
@@ -65,7 +69,12 @@
                                         
                                     </div>
                                     {% endif %}
+                                    {% else %}
+                                    <span  class="text-brand" style="padding-top:30px;">Currently Unavailable</span>
+                                
+                                    {% endif %}
                                 </div>
+                                
                             </div>
                         </div>
                         {% endfor %}

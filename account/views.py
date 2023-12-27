@@ -1,10 +1,12 @@
 import traceback
+from django.http import JsonResponse
 from django.shortcuts import render, redirect,get_object_or_404
 from django.urls import reverse_lazy
 from django.views.decorators.cache import cache_control
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
-
+from account.forms import ImageForm
+from wallet.models import SeamPay
 from django.contrib import messages
 from psycopg import IntegrityError
 from account.models import Address
@@ -30,6 +32,7 @@ def my_dashboard(request):
         'shipping': shipping ,
         'billing':  billing ,
         'myuser':  myuser ,
+        'seam': SeamPay.objects.get(user = request.user),
     }
     return render(request, 'user/dashboard/dashboard.html',context)
 
@@ -139,8 +142,8 @@ def account_edit(request):
         acc_user.full_name = request.POST['name']
         acc_user.phone_number = request.POST['phnumber'] if request.POST['phnumber'] else request.user.phone_number
         acc_user.email = request.POST['email'] if request.POST['email'] else request.user.email
-        if request.FILES.get('Profile_img'):
-            acc_user.profile_pic = request.FILES.get('Profile_img')
+        # if request.FILES.get('Profile_img'):
+        #     acc_user.profile_pic = request.FILES.get('Profile_img')
         acc_user.nationality = request.POST['nationality']
         if not acc_user.DOB:
             acc_user.DOB = request.POST['DOB']
@@ -161,8 +164,16 @@ def account_edit(request):
 
     return render(request, 'user/dashboard/edit_account.html', context)
 
-
+def pic_uploading(request):
+    form = ImageForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        form.save()
+        return JsonResponse({'message': 'works'})
+    context = {'form': form}
+    return render(request, 'user/dashboard/edit_account.html', context)
 
 class PasswordChangeView(PasswordChangeView):
     form_class = PasswordChangeForm
     success_url = reverse_lazy('account:account_edit')
+
+

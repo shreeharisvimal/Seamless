@@ -10,7 +10,7 @@
         color:black;
     }
 </style>
-<link rel="stylesheet"  href="{% static 'css/main.css' %}"> 
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
 <div>
     
 </div>
@@ -307,17 +307,33 @@
                           </div>
                           <div class="payment_option">
                             <div class="custome-radio">
-                                <input class="form-check-input" required type="radio" name="payment_option" id="exampleRadios6" checked>
+                                <input class="form-check-input" required type="radio" onclick="getSelectedPaymentOption();" name="payment_option" id="exampleRadios6" checked>
                                 <label class="form-check-label" for="exampleRadios6" data-bs-toggle="collapse" data-target="#cod" aria-controls="cod">Cash On Delivery</label>
                                 <div class="form-group collapse in" id="cod">
                                     <p class="text-muted mt-5">Cash on delivery; you can pay with your credit card if you don't have a PayPal account.</p>
                                 </div>
                                 <img style="position: relative; left: 45px; top: 15px" width="45" height="45" src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/external-cash-on-delivery-web-store-flaticons-lineal-color-flat-icons-4.png" alt="external-cash-on-delivery-web-store-flaticons-lineal-color-flat-icons-4"/>
                             </div>
+                            
+                            <div class="custome-radio">
+                                <input class="form-check-input" onclick="getSelectedPaymentOption();" required type="radio" name="payment_option" id="exampleRadios3" checked>
+                                <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#cod" aria-controls="cod">Razor Pay</label>
+                                <div class="form-group collapse in" id="cod">
+                                    <p class="text-muted mt-5">Cash on delivery; you can pay with your credit card if you don't have a PayPal account.</p>
+                                </div>
+                                <img style="position: relative; left: 80px; top: 15px" width="125" height="45" src="https://hostbillapp.com/appstore/payment_razorpay/images/logo.png"/>
+                            </div>
+                            </div>
+                            <div id="seamPayDiv" class="form-check" style="display: none;">
+                                {% if seam.balance > 0 %}
+                                <input class="form-check-input" type="checkbox" value="" id="seampay">
+                                {% else %}
+                                <input class="form-check-input" style='cursor: not-allowed; pointer-events: none;' type="checkbox" value="" id="seampay" >
+                                {% endif %}
+                                <div id="seampay_balance" class="form-check-label seamPayDiv" for="exampleCheck1" >SeamPay <br> available Balance : {{seam.balance}} </div>
                             </div>
                       </div>
-                      <button Style="margin-top:33px;" type="button" id="paywithrazor" class="btn button">PAY WITH RAZOR</button>
-                      <a href="#" onclick="getSelectedPaymentOption(); place_order()" class="btn btn-fill-out btn-block mt-30">Place Order</a>
+                      <a href="#" onclick="getSelectedPaymentOption(); place_order(); mess();" class="btn btn-fill-out btn-block mt-30">Place Order</a>
                   </div>
               </div>
           </div>
@@ -325,166 +341,9 @@
   </section>
 </main>
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-    $(document).ready(function() {
-        function openAddress() {
-            $('#my_address_form').toggle($('#flexCheckChecked').prop('checked'));
-        }
-        $('#flexCheckChecked').change(openAddress);
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="{% static "js/my_chekout.js" %}" ></script>
 
-        openAddress();
-    });
-    var shippingAddressId;
-    var billingAddressId;
-    $('#select_ship').change(function () {
-        shippingAddressId = $(this).val();
-        console.log('Selected shipping Address ID:', shippingAddressId);
-    });
-    $('#select_bill').change(function () {
-        billingAddressId = $(this).val();
-        console.log('Selected billing Address ID:', billingAddressId);
-    });
-    var payment;
 
-    function getSelectedPaymentOption() {
-        var radioButtons = document.querySelectorAll('input[name="payment_option"]');
-    
-        for (var i = 0; i < radioButtons.length; i++) {
-            console.log('RadioButton:', radioButtons[i].id, 'Checked:', radioButtons[i].checked);
-
-            if (radioButtons[i].checked) {
-                payment = radioButtons[i].id;
-                console.log('Selected payment option:', payment);
-                break;
-            }
-        }
-    }
-    function place_order(){ 
-        var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
-        console.log('Data being sent:', { 'shipping': shippingAddressId, 'billing': billingAddressId, 'payment_select': payment, 'csrfmiddlewaretoken': csrfToken });
-        
-
-        $.ajax({
-            url: "{% url 'order:place_order'%}",  
-            method: "POST",
-            dataType: 'json',
-            data: {
-                'shipping': shippingAddressId,
-                'billing': billingAddressId,
-                'payment_select': payment,  // Correct key here
-                'csrfmiddlewaretoken': csrfToken,
-            },
-            success: function (data) {
-                if(data.success){
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Hooray',
-                        text: 'The order has Been placed succesfully',
-                    });
-                    window.location.href='view-invoice_showing';
-                }
-                else{
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Please select Your address',
-                        text: 'Select your Billing or shipping address',
-                    });
-                }
-                
-            },
-           
-        });
-    
-        
-    }
-    var shippingAddressId;
-    var billingAddressId;
-    $('#select_ship').change(function () {
-        shippingAddressId = $(this).val();
-        console.log('Selected shipping Address ID:', shippingAddressId);
-    });
-    $('#select_bill').change(function () {
-        billingAddressId = $(this).val();
-        console.log('Selected billing Address ID:', billingAddressId);
-    });
-    $('#paywithrazor').click(function (e) {
-        e.preventDefault(); // Add parentheses to call the function
-    
-        var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
-    
-        // Assuming shippingAddressId and billingAddressId are defined somewhere in your code
-        console.log(shippingAddressId)
-        console.log(billingAddressId)
-    
-        // Use POST method to send data to the server
-        $.ajax({
-            method: "POST", // Change to POST
-            url: "pay_with_razor",
-            data: {
-                'shipping': shippingAddressId,
-                'billing': billingAddressId,
-                'csrfmiddlewaretoken': csrfToken
-            },
-            success: function (response) {
-                console.log(response);
-                console.log(shippingAddressId)
-                console.log(billingAddressId)
-    
-                var options = {
-                    "key": "rzp_test_WOCu4tYSeELze1",
-                    "amount": 1*100, // Amount should be in paise
-                    "currency": "INR",
-                    "name": "SEAMLESS",
-                    "description": "Thank you for purchasing with seamless",
-                    "order_id": response.order_response.id,
-                    "image": "imgs/favicon.png",
-                    "handler": function (response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Hooray',
-                            text: 'The order has Been placed succesfully',
-                        });
-                        window.location.href='view-invoice_showing';
-                    },
-                    "prefill": {
-                        "name": response.full_name,
-                        "email": response.email,
-                        "contact": response.phone_number
-                    },
-                    "theme": {
-                        "color": "#3399cc"
-                    }
-                };
-    
-                var rzp1 = new Razorpay(options);
-    
-                rzp1.on('payment.failed', function (response) {
-                    // Handle payment failure
-                    console.log(shippingAddressId)
-                    console.log(billingAddressId)
-                    alert(response.error.code);
-                    alert(response.error.description);
-                    alert(response.error.source);
-                    alert(response.error.step);
-                    alert(response.error.reason);
-                    alert(response.error.metadata.order_id);
-                    alert(response.error.metadata.payment_id);
-                });
-    
-                rzp1.open();
-            },
-            error: function (error) {
-                console.log(error.responseText);
-                // Handle the error if necessary
-            }
-        });
-    });
-    
-    
-    
-
-</script>
-
-{% endblock main %}
+{% endblock main %} 
