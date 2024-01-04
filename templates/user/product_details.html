@@ -194,7 +194,9 @@
                                         {% else %}
                                         <div class="product-price primary-color float-left">
                                             <ins><span class="text-brand">Rs {{pro.sale_price}}</span></ins>
+                                            {% if  pro.sale_price != pro.max_price%}
                                             <ins><span class="old-price font-md ml-15">{{pro.max_price}}</span></ins>
+                                            {% endif %}
                                             {% if per != 0 %}
                                             <span class="save-price  font-md color3 ml-15">{{per}}.0 % OFF</span>
                                             {% endif %}

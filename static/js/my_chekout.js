@@ -1,5 +1,19 @@
 
-    
+$(document).ready(function () {
+    // Add change event listener to both select elements
+    $("#select_ship, #select_bill").change(function () {
+        // Check if both shipping and billing addresses are selected
+        if ($("#select_ship").val() && $("#select_bill").val()) {
+            // Enable the "Place Order" button
+            $("#placeOrderBtn").prop("disabled", false);
+        } else {
+            // Disable the "Place Order" button
+            $("#placeOrderBtn").prop("disabled", true);
+        }
+    });
+});
+
+
     var payment;
     var shippingAddressId;
     var billingAddressId;
@@ -179,7 +193,7 @@
                                 Swal.fire({
                                     icon: 'Warning',
                                     title: 'Something went wrong',
-                                    text: 'Cannot place order',
+                                    text: 'Cannot place order Check if address are Selected',
                                 });
                             }
                         },
@@ -276,7 +290,7 @@
                             Swal.fire({
                                 icon: 'Warning',
                                 title: 'Something went wrong',
-                                text: 'Cannot palce order',
+                                text: 'Cannot place order Check if address are Selected',
                             });
                         }
                     },

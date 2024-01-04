@@ -96,12 +96,15 @@ def product_variant(request):
             uu_order_id = f"#{uu_order_id}"
             model_id = uu_order_id
             stock = request.POST['stock']
+
             if '-' in str(max_price) or  '-' in str(sale_price) or  '-' in str(stock):
                 messages.warning(request,'cant add negative values')
                 return redirect('products:product_variant')
+            
             if  str(max_price) == '0' or  str(sale_price)=='0' or  str(stock)=='0' :
                 messages.warning(request,'cant add only 0 as values ')
                 return redirect('products:product_variant')
+            
             else:
                 images = request.FILES.getlist('images')
                 color = get_object_or_404(AttributeValue, id=request.POST['color'])
@@ -109,9 +112,7 @@ def product_variant(request):
                 storage = get_object_or_404(AttributeValue, id= request.POST['rom'])
                 os = get_object_or_404(AttributeValue, id=request.POST['os'])
                 screen_size = get_object_or_404(AttributeValue, id=request.POST['size'])
-                print(color)
-                print(os)
-                print(storage)
+
                 variant_new = ProductVariant.objects.create(
                     product = get_object_or_404(Product, id=request.POST['product']),
                     model_id = model_id,
@@ -125,11 +126,13 @@ def product_variant(request):
                     stock = stock,
                     description =  request.POST['description'],
                 )
+
                 variant_new.save()
                 for image in images:
                     VariantImage.objects.create(variant = variant_new, images = image,)
                 messages.success(request, f'the product variant has added succesfully')
                 return redirect('products:product_variant')
+            
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         messages.warning(request,f'{str(e)}')

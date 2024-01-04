@@ -1,11 +1,8 @@
 from django.shortcuts import  get_object_or_404, render, redirect
-from django.views.decorators.cache import cache_control
-from django.contrib import messages
-from products.models import ProductVariant, Brand
-from wallet.models import Wallet, SeamPay
-from category_manage.models import Category
+from wallet.models import Wallet, SeamPay, Referral
 from django.db.models import Q
-import math
+from django.contrib import messages
+from uuid import UUID
 
 # Create your views here.
 
@@ -89,6 +86,30 @@ def seampay(total, order_item, user):
     seam.save()
     print(f'the main from the function {main_balance}')
     
+
+
+def get_refferal_code(request):
+    try:
+        if request.method == "POST":
+            code = request.POST.get('referral_code')
+            thisuser = Referral.objects.get(user = request.user)
+            if thisuser.my_referral == UUID(code):
+                messages.warning(request, 'Cannot use Your own code Try different One')
+                return redirect('account:my_dashboard')
+            else:
+                referral = Referral.objects.get(my_referral = code)
+                wallet = SeamPay.objects.get(user = referral.user.pk)
+                print(code+ ' this is the code for reffreell')
+                wallet.balance += 10000
+                wallet.save()
+                thisuser.referral_code = code
+                thisuser.save()
+                messages.success(request, 'The referral has been added')
+                return redirect('account:my_dashboard')
+    except Exception as e:
+        print(f'the error is that {e}')
+        messages.warning(request, 'The referral code is not valid')
+        return redirect('account:my_dashboard')
 
 
     

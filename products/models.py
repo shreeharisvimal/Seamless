@@ -102,6 +102,11 @@ class ProductVariant(models.Model):
             )
         ]
 
+
+    
+    def name(self):
+        return f'{self.product.product_name} {self.color} {self.ram} {self.storage}'
+
     
     def get_variant_name(self):
 

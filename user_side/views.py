@@ -2,14 +2,17 @@ from decimal import Decimal
 from django.shortcuts import  get_object_or_404, render, redirect
 from django.views.decorators.cache import cache_control
 from django.contrib import messages
-from products.models import ProductVariant, Brand
+from products.models import ProductVariant, Brand, Product
 from category_manage.models import Category
 from django.db.models import Q
+
+from cart.models import Cart, Cart_Item
 from .models import Wishlist
 import math
 from account.models import UserProfile 
 from django.http import JsonResponse
 from review_management.models import review
+import json
 
 
 @cache_control(no_cache=True, must_revalidate=True, max_age=0)
@@ -85,7 +88,7 @@ def add_wishlist(request,id):
     else:
         Wishlist.objects.create(my_user = request.user, wish_item = product)
         messages.success(request, "the product added to Wishlist successfully")
-        return redirect('user_side:product_details', id = id)
+        return redirect('user_side:product_list')
     return redirect('user_side:product_details', id=id) 
 
 
@@ -102,6 +105,28 @@ def view_wishlist(request):
     return render(request, 'user/wishlist.html' ,context)
 
 
+def search(request):
+    search_id = request.POST.get('search_term')
+    print(search_id)
+    if search_id:
+        all_products = ProductVariant.objects.filter(
+            Q(is_active=True) &
+            (Q(product_varient_slug__icontains=search_id) |
+            Q(ram__icontains=search_id) |
+            Q(storage__icontains=search_id) |
+            Q(sale_price__icontains=search_id) |
+            Q(color__icontains=search_id))
+        ).values()
+        if all_products:
+            return JsonResponse({ 'data': list(all_products)})
+        else:
+            return JsonResponse({'success': 'Nothing', 'message': 'No matching products'})
+    else:
+        return JsonResponse({'success': 'Nothing'})
+
+
+
+
 def delete_wishlist(request,id):
     product = Wishlist.objects.get(my_user = request.user, wish_item_id= id)
     messages.warning(request,"item has been removed")
@@ -111,6 +136,10 @@ def delete_wishlist(request,id):
 
  
 def product_list(request,id=None):
+    Mycategory = None
+    myProducts = []
+
+    cart_id = Cart.objects.get(user = request.user)
     if id is None:
         all_products = ProductVariant.objects.filter(is_active = True)
         for pro in all_products:
@@ -126,11 +155,31 @@ def product_list(request,id=None):
         all_products= all_products.order_by(request.session['order_by'])
         for pro in all_products:
             pro.get_variant_name
-
+    request.session['cart_id'] = cart_id.pk
+    try:
+        for cart_items in Cart_Item.objects.filter(cart = cart_id.pk):
+            Mycategory = cart_items.product.product.product_catg
+            for prod in Product.objects.filter(product_catg = Mycategory):
+                for variant in ProductVariant.objects.filter(product = prod):
+                    if cart_items.product.pk != variant.pk:
+                        if cart_items.product not in myProducts:
+                            myProducts.append(variant)
+                
+        for wish in Wishlist.objects.filter(my_user = request.user):
+            for prod in Product.objects.filter(product_catg = wish.wish_item.product.product_catg):
+                for variant in ProductVariant.objects.filter(product = prod):
+                    if wish.wish_item.pk != variant.pk:
+                        if wish.wish_item not in myProducts:
+                            myProducts.append(variant)
+       
+    except Exception as e:
+        print(f'the error is that {e}')
     context = {
         'all_products':all_products,
         'total':all_products.count(),
         'category': catagory,
+        'recommend_products': myProducts[:6] if myProducts else None,
+
     }
     
     return render(request, 'user/products_list.html',context)
@@ -141,6 +190,41 @@ def product_sort(request,order_by):
 
     request.session['order_by'] = order_by
     return redirect('user_side:product_list')
+
+
+def product_filter(request):
+    min_price = None
+    max_price = None
+    myProducts  = []
+    if request.method == "POST":
+        min_price = request.POST.get('min_price')
+        max_price = request.POST.get('max_price')
+        print(min_price)
+        print(max_price)
+        
+        if max_price and min_price:
+            for cart_items in Cart_Item.objects.filter(cart = request.session.get('cart_id')  ):
+                Mycategory = cart_items.product.product.product_catg
+                for prod in Product.objects.filter(product_catg = Mycategory):
+                    for variant in ProductVariant.objects.filter(product = prod):
+                        myProducts.append(variant)
+
+            all_products = ProductVariant.objects.filter(Q(sale_price__gte = min_price) & Q(sale_price__lte = max_price))
+
+            context  ={
+                'all_products' : all_products,
+                'recommend_products': myProducts[:6] if myProducts else None,
+
+            }
+        
+            return render(request, 'user/products_list.html',context)
+        else:
+            messages.error(request,"Please Enter Both The Values")
+            return redirect('user_side:product_list')
+        
+
+
+         
 
 
 

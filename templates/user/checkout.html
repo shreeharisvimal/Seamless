@@ -74,7 +74,7 @@
                 <div class="form-group">
                     <div  class="custom_select">
                         <select id='select_ship' class="form-control">
-                            <option value="">Please select Your shipping address</option>
+                           <option value="">No Shipping address selected</option>
 
                             {% if default_shipping or shipping_address  %}
                                 {% for default_shipping in default_shipping  %}
@@ -94,7 +94,8 @@
                 <div class="form-group">
                     <div  class="custom_select">
                         <select id='select_bill' class="form-control">
-                            <option value="">Please select Your billing address</option>        
+                           <option value="">No Billing address selected</option>
+                                   
 
                             {% if default_billing or billing_address  %}
                                 {% for default_billing in default_billing %}
@@ -333,8 +334,12 @@
                                 <div id="seampay_balance" class="form-check-label seamPayDiv" for="exampleCheck1" >SeamPay <br> available Balance : {{seam.balance}} </div>
                             </div>
                       </div>
+                      {% if cart.total > 0 %}
                       <a href="#" onclick="getSelectedPaymentOption(); place_order(); mess();" class="btn btn-fill-out btn-block mt-30">Place Order</a>
-                  </div>
+                      {% else %}
+                      <a href="#"   class="btn btn-fill-out btn-block mt-30 non-clickable">Place Order</a>
+                      {% endif %}
+                    </div>
               </div>
           </div>
       </div>

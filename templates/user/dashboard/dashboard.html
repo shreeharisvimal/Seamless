@@ -11,13 +11,7 @@
     }
 </style>
 <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
-<div>
-    {% for message in messages  %}
-    <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
-      <strong>{{message}}</strong>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    {% endfor %}
-</div>
+
 
 <div class="page-header breadcrumb-wrap">
     <div class="container">
@@ -66,12 +60,12 @@
                                             <p>NAME :<strong> {{myuser.full_name}}</strong></p>
                                             <p>USER NAME :<strong> {{request.user}}</strong></p>
                                             <p>PH :<strong> {{myuser.phone_number}}</strong></p>
-                                            <p>EMAIL :<strong> {{myuser.email}}</strong></p>
+                                            <p>EMAIL :<strong> {{request.user.email}}</strong></p>
                                             {% else %}
                                             <p>NAME :<strong> No name Yet</strong></p>
                                             <p>USER NAME :<strong> {{request.user}}</strong></p>
                                             <p>PH :<strong> {{myuser.phone_number}}</strong></p>
-                                            <p>EMAIL :<strong> {{myuser.email}}</strong></p>
+                                            <p>EMAIL :<strong> {{request.user.email}}</strong></p>
                                             {% endif %}
                                         </div>
                                         <h5 class="mb-0">Hello {{myuser.full_name}}! </h5>
@@ -118,6 +112,25 @@
                                         </tbody>
                                     </table>
                                    <a href="{% url "wallet:wallet_view" %}"><button type="button" class="button btn">Full Statement</button></a>
+                                </div>
+                                <div class="card-header" style="margin-top:30px;">
+                                    <h3>REFERRAL AND REDEEM</h3>
+                                    <div class="card-body">
+                                        <div>My Referral Code :  {{ref.my_referral}}</div>
+                                        
+                                        {% if ref.referral_code is none %}
+                                        <hr>
+                                        <form action="{% url "wallet:get_refferal_code" %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="text" name="referral_code">
+                                            <br>
+                                            <br>
+                                            <div>
+                                                <button type="submit" class="btn button">GET REFERRAL</button>
+                                              </div>
+                                        </form>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">

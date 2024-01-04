@@ -15,8 +15,12 @@ urlpatterns = [
     path('product-list-here/' , views.product_list, name='product_list'),
     path('product-list-here/<int:id>' , views.product_list, name='product_list'),
     path('product-order-by-here/<str:order_by>' , views.product_sort, name='product_sort'),
+    path('product_filter' , views.product_filter, name='product_filter'),
     path('view-all-category' , views.category_page, name='category_page'),
     path('all_search' , views.all_search, name='all_search'),
+    path('search' , views.search, name='search'),
+
+
     path('change_profile_image/' , views.change_profile_image, name='change_profile_image'),
     
 

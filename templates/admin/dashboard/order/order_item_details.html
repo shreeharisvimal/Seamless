@@ -16,7 +16,7 @@
     <div class="card">
         <header class="card-header">
             <div class="row align-items-center">
-                {% if 'CANCELLED' in order_item.order_status %}
+                {% if 'CANCELLED' in order_item.order_status or 'RETURNED' in order_item.order_status or 'DELIVERED' in order_item.order_status %}
                 {% else %}
                 <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                     <select id="statusDropdown" class="form-select d-inline-block mb-lg-0 mb-15 mw-200">

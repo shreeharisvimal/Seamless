@@ -6,7 +6,7 @@ from django.views.decorators.cache import cache_control
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
 from account.forms import ImageForm
-from wallet.models import SeamPay
+from wallet.models import Referral, SeamPay
 from django.contrib import messages
 from psycopg import IntegrityError
 from account.models import Address
@@ -23,16 +23,17 @@ def my_dashboard(request):
 
     shipping = Address.objects.filter(user = request.user, is_shipping=True, is_default=True)
     billing = Address.objects.filter(user = request.user, is_billing=True, is_default=True)
-    myuser = None
-    try:
-        myuser = UserProfile.objects.get(user = request.user)
-    except Exception as e:
-        print(f'the error {e}')
+    UserProfile.objects.get_or_create(user = request.user)
+    SeamPay.objects.get_or_create(user = request.user)
+    Referral.objects.get_or_create(user = request.user)
+    ref = Referral.objects.get(user = request.user)
+    print(ref.my_referral)
     context = {
         'shipping': shipping ,
         'billing':  billing ,
-        'myuser':  myuser ,
+        'myuser':  UserProfile.objects.get(user = request.user) ,
         'seam': SeamPay.objects.get(user = request.user),
+        'ref':  ref,
     }
     return render(request, 'user/dashboard/dashboard.html',context)
 
@@ -139,12 +140,14 @@ def del_address(request,id):
 def account_edit(request):
     if request.method =="POST":
         acc_user, check = UserProfile.objects.get_or_create(user = request.user)
-        acc_user.full_name = request.POST['name']
-        acc_user.phone_number = request.POST['phnumber'] if request.POST['phnumber'] else request.user.phone_number
-        acc_user.email = request.POST['email'] if request.POST['email'] else request.user.email
-        # if request.FILES.get('Profile_img'):
-        #     acc_user.profile_pic = request.FILES.get('Profile_img')
-        acc_user.nationality = request.POST['nationality']
+        acc_user.full_name = request.POST.get('name')
+        acc_user.phone_number = request.POST.get('phnumber') if request.POST.get('phnumber') else request.user.phone_number
+        acc_user.email = request.POST.get('email') if request.POST.get('email') else request.user.email
+        if request.FILES.get('Profile_img'):
+            acc_user.profile_pic = request.FILES.get('Profile_img')
+        if request.POST.get('nationality'):
+            acc_user.nationality = request.POST.get('nationality')
+        print(request.POST.get('nationality'))
         if not acc_user.DOB:
             acc_user.DOB = request.POST['DOB']
         try:
@@ -164,13 +167,9 @@ def account_edit(request):
 
     return render(request, 'user/dashboard/edit_account.html', context)
 
-def pic_uploading(request):
-    form = ImageForm(request.POST or None, request.FILES or None)
-    if form.is_valid():
-        form.save()
-        return JsonResponse({'message': 'works'})
-    context = {'form': form}
-    return render(request, 'user/dashboard/edit_account.html', context)
+
+
+
 
 class PasswordChangeView(PasswordChangeView):
     form_class = PasswordChangeForm

@@ -123,7 +123,7 @@ def admin_dash_handler(request):
         'yearly_sales': yearly_sales,
         'orders': orders,
         'total_users_count': user,
-        'new_members': new_member if new_member else 0,
+        'new_members': new_member.count() if new_member else 0,
     }
     return render(request, 'admin/dashboard/index.html', context)
 

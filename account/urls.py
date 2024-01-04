@@ -10,8 +10,7 @@ urlpatterns = [
     path('manage-view-address/', views.manage_address, name='manage_address'),
     path('edit_address/<int:id>', views.edit_address, name='edit_address'),
     path('del_address/<int:id>', views.del_address, name='del_address'),
-    path('Account-details-edit/', views.account_edit, name='account_edit'),
-    path('Acc-pic_uploading/', views.pic_uploading, name='pic_uploading'),
+    path('Account_details_edit/>', views.account_edit, name='account_edit'),
     path('change_password/', views.PasswordChangeView.as_view(template_name ='registration/change_password.html'), name='change_password'),  
 
 
