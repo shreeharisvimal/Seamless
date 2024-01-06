@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-gu&h!sriz!75m4!(6xphz4qq5tl0#aob^xoc)3j4e&9n%^&qvn'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -107,11 +108,11 @@ WSGI_APPLICATION = 'seamless.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'seamless',
-        'USER' : 'seamless(role)',
-        'PASSWORD': '5137',
-        'HOST': 'localhost',
+        'ENGINE': config('ENGINE'),
+        'NAME': config('NAME'),
+        'USER' : config('USER'),
+        'PASSWORD': config('PASSWORD'),
+        'HOST': config('HOST'),
     }
 }
 
@@ -187,16 +188,16 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1017029845031-a8jl5qi2lli4k3309rai0nsjrnil38kf.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 SOCIAL_AUTH_EMAIL_REQUIRED = True
 
 
 
 
 
-RAZORPAY_API_KEY = 'rzp_test_WOCu4tYSeELze1'
-RAZORPAY_API_SECRET = '6VjyPr9Lu6PtfgUSibZY319p'
+RAZORPAY_API_KEY = config('RAZORPAY_API_KEY')
+RAZORPAY_API_SECRET = config('RAZORPAY_API_SECRET')
 
 
 
@@ -214,9 +215,9 @@ MESSAGE_TAGS={
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'yourseamlesslife@gmail.com'
-EMAIL_HOST_PASSWORD = 'bbndjdnoschakdwy'
+EMAIL_BACKEND = config('EMAIL_BACKEND')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
