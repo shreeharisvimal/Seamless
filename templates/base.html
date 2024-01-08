@@ -417,46 +417,6 @@
         }
     });
 </script>
-{% comment %} <script>
-    $(document).ready(function () {
-        // Attach keyup event to the input field
-        $("#search_id").keyup(function () {
-            // Get the value from the input field
-            var searchTerm = $(this).val();
-
-            // Make an AJAX request
-            $.ajax({
-                type: "POST",
-                url: "{% url 'user_side:search' %}",  // Replace 'your_ajax_endpoint' with the actual URL for handling AJAX requests
-                data: {
-                    'search_term': searchTerm,
-                    'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
-                },
-                success: function (data) {
-                    // Update the options based on the AJAX response
-                    updateOptions(data);
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
-        });
-
-        // Function to update options based on the AJAX response
-        function updateOptions(data) {
-            // Clear existing options
-            $(".select-active").empty();
-
-            // Add new options based on the AJAX response
-            data.forEach(function (item) {
-            console.log(item.name())
-
-                // Assuming 'name' is a field in your queryset
-                $(".select-active").append("<option>" + item.name() + "</option>");
-            });
-        }
-    });
-</script> {% endcomment %}
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -510,5 +470,6 @@
         });
     });
 </script>
+
 </body>
 </html>

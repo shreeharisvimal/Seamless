@@ -426,7 +426,9 @@
                                                 {% if all.sale_price > 0 %}
                                                 <div class="product-price">
                                                     <span>{{all.sale_price}} </span>
+                                                    {% if all.max_price > all.sale_price %}
                                                     <span class="old-price">{{all.max_price}}</span>
+                                                    {% endif %}
                                                 </div>
                                                 {% else %}
                                                 <div class="product-price">

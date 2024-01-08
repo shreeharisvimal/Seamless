@@ -84,7 +84,9 @@
                             </div>
                             <div class="product-price">
                                 <span>{{pro.sale_price}} </span>
+                                {% if pro.max_price > pro.sale_price %}
                                 <span class="old-price">{{pro.max_price}}</span>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

@@ -335,10 +335,10 @@
                             </div>
                       </div>
                       {% if cart.total > 0 %}
-                      <a href="#" onclick="getSelectedPaymentOption(); place_order(); mess();" class="btn btn-fill-out btn-block mt-30">Place Order</a>
-                      {% else %}
-                      <a href="#"   class="btn btn-fill-out btn-block mt-30 non-clickable">Place Order</a>
-                      {% endif %}
+                        <a href="#" id="placeOrderLink" onclick="getSelectedPaymentOption(); place_order(); mess();" class="btn btn-fill-out btn-block mt-30">Place Order</a>
+                        {% else %}
+                        <a href="#" id="placeOrderLink" class="btn btn-fill-out btn-block mt-30 non-clickable" disabled>Place Order</a>
+                        {% endif %}
                     </div>
               </div>
           </div>
