@@ -139,7 +139,9 @@ def product_list(request,id=None):
     Mycategory = None
     myProducts = []
     if request.user.is_authenticated:
+        Cart.objects.get_or_create(user = request.user)
         cart_id = Cart.objects.get(user = request.user)
+
         request.session['cart_id'] = cart_id.pk
 
     if id is None:
