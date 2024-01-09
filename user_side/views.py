@@ -138,8 +138,10 @@ def delete_wishlist(request,id):
 def product_list(request,id=None):
     Mycategory = None
     myProducts = []
+    if request.user.is_authenticated:
+        cart_id = Cart.objects.get(user = request.user)
+        request.session['cart_id'] = cart_id.pk
 
-    cart_id = Cart.objects.get(user = request.user)
     if id is None:
         all_products = ProductVariant.objects.filter(is_active = True)
         for pro in all_products:
@@ -155,7 +157,6 @@ def product_list(request,id=None):
         all_products= all_products.order_by(request.session['order_by'])
         for pro in all_products:
             pro.get_variant_name
-    request.session['cart_id'] = cart_id.pk
     try:
         for cart_items in Cart_Item.objects.filter(cart = cart_id.pk):
             Mycategory = cart_items.product.product.product_catg
