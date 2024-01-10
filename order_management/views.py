@@ -25,7 +25,7 @@ from django.core.paginator import Paginator
 
 
 def order_view(request):
-
+    SeamPay.objects.get_or_create(user = request.user)
     cart = Cart.objects.get(user = request.user)
     cart_item = Cart_Item.objects.filter(cart = cart.id)
     myuser =request.user

@@ -141,11 +141,11 @@ def product_variant(request):
     print(request.POST)
     product = Product.objects.filter(is_active = True)
     print(product)
-    color = AttributeValue.objects.filter(Q(Attribute_id =4) & Q(is_active = True))
-    ram = AttributeValue.objects.filter(Q(Attribute_id =1) & Q(is_active = True))
-    storage = AttributeValue.objects.filter(Q(Attribute_id =2) & Q(is_active = True))
-    os = AttributeValue.objects.filter(Q(Attribute_id =5) & Q(is_active = True))
-    size = AttributeValue.objects.filter(Q(Attribute_id =3) & Q(is_active = True))
+    color = AttributeValue.objects.filter(Q(Attribute_id =3) & Q(is_active = True))
+    ram = AttributeValue.objects.filter(Q(Attribute_id =2) & Q(is_active = True))
+    storage = AttributeValue.objects.filter(Q(Attribute_id =5) & Q(is_active = True))
+    os = AttributeValue.objects.filter(Q(Attribute_id =6) & Q(is_active = True))
+    size = AttributeValue.objects.filter(Q(Attribute_id =4) & Q(is_active = True))
 
     context = {
         'product' : product,
@@ -294,10 +294,10 @@ def variant_edit(request,id):
             pass
 
     else:
-        color = AttributeValue.objects.filter(Q(Attribute_id =4) & Q(is_active = True))
-        ram = AttributeValue.objects.filter(Q(Attribute_id =1) & Q(is_active = True))
-        storage = AttributeValue.objects.filter(Q(Attribute_id =2) & Q(is_active = True))
-        size = AttributeValue.objects.filter(Q(Attribute_id =3) & Q(is_active = True))
+        color = AttributeValue.objects.filter(Q(Attribute_id =3) & Q(is_active = True))
+        ram = AttributeValue.objects.filter(Q(Attribute_id =2) & Q(is_active = True))
+        storage = AttributeValue.objects.filter(Q(Attribute_id =5) & Q(is_active = True))
+        size = AttributeValue.objects.filter(Q(Attribute_id =4) & Q(is_active = True))
         context = {
             'var': var,
             'color' : color,
