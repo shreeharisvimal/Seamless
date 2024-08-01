@@ -14,7 +14,7 @@ from django.core.exceptions import ValidationError
 OTP_EXPIRATION_SECONDS = 120
     
 def email_send(email,otp):
-
+    print(f'the otp {otp}')
     send_mail(
         'Seamless OTP Verification Code',
         f'''Dear {email},
@@ -60,6 +60,7 @@ def otp_verify(request):
                 return redirect('user_side:landing')            
         elif 'resend' in request.POST:
             login_otp = random.randint(100000, 999999)
+            
             request.session['otp_key'] = str(login_otp)
             email_send(request.session.get('email'), request.session.get('otp_key'))
             messages.info(request, 'OTP resent successfully!')

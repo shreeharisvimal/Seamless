@@ -360,7 +360,7 @@
                                         <div class="col-lg-4 progress-column">
                                             <h4 class="mb-30">Customer reviews</h4>
                                             <div class="d-flex mb-30">
-                                               {% if stars.mean %}
+                                                {% if stars.mean %}
                                                 <h6><strong>{{stars.mean}} <img width="12" height="12" src="https://img.icons8.com/ios-filled/50/FAB005/star--v1.png" alt="star--v1"/> OUT OF  5 </strong></h6>
                                                {% else %}
                                                No Reviews Yet!
@@ -539,7 +539,7 @@
                     $("#my_new_btn").hide();
                 }
                 else if
-                (prodQty >= stockValue){
+                (prodQty > stockValue){
                     $("#my_new_btn").hide();
                 }
             });

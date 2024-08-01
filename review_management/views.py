@@ -1,11 +1,6 @@
 import math
-from django.shortcuts import  get_object_or_404, render, redirect
-from django.views.decorators.cache import cache_control
-from django.contrib import messages
-from products.models import ProductVariant, Brand
-from wallet.models import Wallet, SeamPay
-from category_manage.models import Category
-from django.db.models import Q
+from django.shortcuts import render, redirect
+from products.models import ProductVariant
 from order_management.models import OrderItem
 from .models import review
 

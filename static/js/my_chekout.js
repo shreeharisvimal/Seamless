@@ -248,7 +248,7 @@ $(document).ready(function () {
             
                             var options = {
                                 "key": "rzp_test_WOCu4tYSeELze1",
-                                "amount": response.order_response.amount, // Amount should be in paise
+                                "amount": response.order_response.amount, 
                                 "currency": "INR",
                                 "name": "SEAMLESS",
                                 "description": "Thank you for purchasing with seamless",

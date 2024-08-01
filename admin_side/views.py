@@ -58,15 +58,16 @@ def admin_login_handler(request):
         except Exception:
             pass
         try:
-            user = authenticate(username=username,password=password)
-            if user is None:
-                messages.warning(request,f"the given details does not match")
-            else:       
-                if user.is_superuser:
-                    login(request, user)
-                    return redirect('admin_side:admin_dash_handler')
-                else:
-                    messages.warning(request,f"the given id is not an super user details")
+            user = NewUser.objects.get(email=username)
+            if user.check_password(password):
+                if user is None:
+                    messages.warning(request,f"the given details does not match")
+                else:       
+                    if user.is_superuser:
+                        login(request, user)
+                        return redirect('admin_side:admin_dash_handler')
+                    else:
+                        messages.warning(request,f"the given id is not an super user details")
         except Exception:
              pass
                     

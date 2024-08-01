@@ -26,7 +26,7 @@ class Cart(models.Model):
     def __str__(self):
         return f'{self.user}-cart'
 
-    
+
 
 class Cart_Item(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
@@ -39,4 +39,4 @@ class Cart_Item(models.Model):
     
     
 
-
+    

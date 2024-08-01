@@ -1,4 +1,4 @@
-(function ($) {
+git (function ($) {
     'use strict';
     /*Product Details*/
     var productDetails = function () {
