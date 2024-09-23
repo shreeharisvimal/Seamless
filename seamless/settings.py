@@ -157,9 +157,9 @@ USE_TZ = True
 
 import os
 
-# STATIC_URL = 'asset/'
-# STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
-# STATIC_ROOT = os.path.join(BASE_DIR, 'asset/')
+STATIC_URL = 'asset/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'asset/')
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
