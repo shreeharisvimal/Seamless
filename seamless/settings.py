@@ -53,9 +53,6 @@ INSTALLED_APPS = [
     'order_management',
     'wallet',
     'review_management',
-
-
-
 ]
 
 MIDDLEWARE = [
@@ -183,7 +180,7 @@ AUTHENTICATION_BACKENDS = [
 
 LOGIN_URL = 'login/'
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_URL = 'logout/'
+LOGOUT_REDIRECT_URL = 'logout/'
 LOGIN_REDIRECT_URL = '/'
 
 
