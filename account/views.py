@@ -8,7 +8,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from account.forms import ImageForm
 from wallet.models import Referral, SeamPay
 from django.contrib import messages
-from psycopg import IntegrityError
+from psycopg2 import IntegrityError
 from account.models import Address
 from django.db.models import Q
 from user_side.models import NewUser

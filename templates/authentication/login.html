@@ -27,7 +27,7 @@
             <h1>Login</h1>
             <input type="text" name="log_id" placeholder="USERNAME OR EMAIL" />
             <input type="password" name="password" placeholder="PASSWORD" />
-            <a class="forgot text-muted" href="{% url "authentication:password_reset" %}" ID='FORGOT'  style="color:black;" >FORGOT PASSWORD?</a>
+            {% comment %} <a class="forgot text-muted" href="{% url "authentication:password_reset" %}" ID='FORGOT'  style="color:black;" >FORGOT PASSWORD?</a> {% endcomment %}
             <input type="submit" name="" value="LOGIN" href="#" />
             <div class="col-md-12">
 
