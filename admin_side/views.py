@@ -47,7 +47,7 @@ def admin_login_handler(request):
                 messages.warning(request,'Password must be at least 5 characters long')
                 return redirect('admin_side:admin_login_handler')
             
-            if not username.is_superuser:
+            if not username:
                 messages.warning(request,'the user is not an superuser')
                 return redirect('admin_side:admin_login_handler')
             
@@ -55,10 +55,10 @@ def admin_login_handler(request):
                 messages.warning(request,'the password and the email is same')
                 return redirect('admin_side:admin_login_handler')
 
-        except Exception:
-            pass
+        except Exception as e:
+            print(e)
         try:
-            user = NewUser.objects.get(email=username)
+            user = NewUser.new_manager.get(username = username)
             if user.check_password(password):
                 if user is None:
                     messages.warning(request,f"the given details does not match")
@@ -68,8 +68,8 @@ def admin_login_handler(request):
                         return redirect('admin_side:admin_dash_handler')
                     else:
                         messages.warning(request,f"the given id is not an super user details")
-        except Exception:
-             pass
+        except Exception as e:
+            print(e)
                     
 
     return render(request, 'admin/authentication/login.html')

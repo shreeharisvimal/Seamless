@@ -160,23 +160,14 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT =  os.path.join(BASE_DIR,'media')
 
 
-LOGIN_URL = '/authentication/login_handler/'
-LOGIN_REDIRECT_URL = '/landing/'
 
 
 
 AUTH_USER_MODEL = 'user_side.NewUser'
 
 AUTHENTICATION_BACKENDS = [
-    'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 ]
-
-
-LOGIN_URL = 'login/'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = 'logout/'
-LOGIN_REDIRECT_URL = '/'
 
 
 
@@ -186,7 +177,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
-SOCIAL_AUTH_EMAIL_REQUIRED = True
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = '/'
 
 
 
